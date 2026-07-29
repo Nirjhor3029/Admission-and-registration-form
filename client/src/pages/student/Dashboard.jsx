@@ -146,7 +146,7 @@ export default function StudentDashboard() {
                   <span className="text-body-sm text-on-surface-variant mt-0.5">{p.payment_date ? new Date(p.payment_date).toLocaleDateString() : ''}</span>
                 </div>
                 <div className="flex flex-col items-end">
-                  <span className="text-label-md text-on-surface">${p.amount}</span>
+                  <span className="text-label-md text-on-surface">৳{p.amount}</span>
                   <span className={`text-label-sm flex items-center gap-1 mt-0.5 ${p.status === 'verified' ? 'text-tertiary' : 'text-secondary'}`}>
                     <span className="material-symbols-outlined text-[14px]">{p.status === 'verified' ? 'check_circle' : 'schedule'}</span>
                     {p.status === 'verified' ? 'Paid' : p.status}

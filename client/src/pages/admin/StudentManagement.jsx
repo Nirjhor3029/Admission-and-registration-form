@@ -126,7 +126,7 @@ export default function StudentManagement() {
                       <div>{s.course_id?.name || s.course_id?.title || '—'}</div>
                       <div className="text-xs text-on-surface-variant">{s.batch_id?.name || s.batch_id?.code || ''}</div>
                     </td>
-                    <td className="px-4 py-3 font-medium">${s.payment_amount || s.amount || '—'}</td>
+                    <td className="px-4 py-3 font-medium">৳{s.payment_amount || s.amount || '—'}</td>
                     <td className="px-4 py-3 text-on-surface-variant">{s.createdAt ? new Date(s.createdAt).toLocaleDateString() : '—'}</td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-label-sm border ${statusColors[s.status] || 'bg-surface-variant text-on-surface-variant'}`}>
@@ -185,7 +185,7 @@ export default function StudentManagement() {
               </div>
               <div className="border-t border-outline-variant/30 pt-4">
                 <p className="text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Payment</p>
-                <p className="text-body-md text-on-surface">${student.payment_amount || student.amount || '—'}</p>
+                <p className="text-body-md text-on-surface">৳{student.payment_amount || student.amount || '—'}</p>
                 <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-label-sm border mt-1 ${statusColors[student.status] || 'bg-surface-variant'}`}>
                   {statusLabels[student.status] || student.status}
                 </span>

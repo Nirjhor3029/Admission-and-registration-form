@@ -74,7 +74,7 @@ export default function PaymentVerification() {
                     </div>
                     <div>
                       <p className="text-body-md text-on-surface font-medium">{s.student_name || s.name}</p>
-                      <p className="text-body-sm text-on-surface-variant">{s.mobile} · ${s.payment_amount || s.amount || '—'}</p>
+                      <p className="text-body-sm text-on-surface-variant">{s.mobile} · ৳{s.payment_amount || s.amount || '—'}</p>
                     </div>
                   </div>
                   <span className="material-symbols-outlined text-outline">chevron_right</span>
@@ -116,7 +116,7 @@ export default function PaymentVerification() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Amount</p>
-                      <p className="text-body-md text-on-surface font-medium">${payment.amount}</p>
+                      <p className="text-body-md text-on-surface font-medium">৳{payment.amount}</p>
                     </div>
                     <div>
                       <p className="text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Method</p>

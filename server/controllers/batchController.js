@@ -8,7 +8,7 @@ const listBatches = async (req, res, next) => {
     const filter = {};
     if (course_id) filter.course_id = course_id;
     if (level_id) filter.level_id = level_id;
-    const batches = await Batch.find(filter).populate('course_id', 'name code').sort('start_date');
+    const batches = await Batch.find(filter).populate('course_id', 'name code').sort({ sort_order: 1, start_date: 1 });
     res.json({ success: true, data: { batches } });
   } catch (err) {
     next(err);

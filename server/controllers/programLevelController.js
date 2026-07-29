@@ -3,7 +3,7 @@ const AppError = require('../utils/AppError');
 
 const listLevels = async (req, res, next) => {
   try {
-    const levels = await ProgramLevel.find({ status: 'active' }).sort('name');
+    const levels = await ProgramLevel.find({ status: 'active' }).sort({ sort_order: 1, name: 1 });
     res.json({ success: true, data: levels });
   } catch (err) {
     next(err);

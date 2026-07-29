@@ -27,6 +27,7 @@ export default function RegistrationStep1() {
   const [sameAsMobile, setSameAsMobile] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState('');
   const [selectedLevel, setSelectedLevel] = useState('');
+  const [serverError, setServerError] = useState('');
 
   const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
@@ -94,13 +95,15 @@ export default function RegistrationStep1() {
     if (photoFile) formData.append('student_photo', photoFile);
 
     try {
+      setServerError('');
       const res = await api.post('/registrations', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      const student = res.data.data || res.data.student;
-      navigate('/register/step2', { state: { studentId: student.id || student._id, ...data } });
-    } catch {
-      alert('Registration failed. Please try again.');
+      const student = res.data.data?.student || res.data.student || res.data.data;
+      navigate('/register/step2', { state: { studentId: student?.id || student?._id, ...data } });
+    } catch (err) {
+      setServerError(err.response?.data?.message || 'Registration failed. Please try again.');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -133,6 +136,15 @@ export default function RegistrationStep1() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="bg-surface-container-lowest rounded-xl shadow-[0_10px_25px_-5px_rgba(0,53,95,0.05)] border border-outline-variant/30 p-4 md:p-8">
+          {serverError && (
+            <div className="flex items-start gap-3 p-4 mb-6 bg-error-container text-on-error-container rounded-lg border border-error/20">
+              <span className="material-symbols-outlined shrink-0 mt-0.5">error</span>
+              <p className="text-body-sm md:text-body-md flex-1">{serverError}</p>
+              <button type="button" onClick={() => setServerError('')} className="shrink-0 text-on-error-container/60 hover:text-on-error-container">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+          )}
           <div className="mb-8">
             <h2 className="text-headline-md text-on-surface mb-4 flex items-center gap-2 border-b border-surface-variant pb-2">
               <span className="material-symbols-outlined text-primary/70">person</span>
@@ -152,7 +164,7 @@ export default function RegistrationStep1() {
                   </div>
                   <div className="flex flex-col justify-center pt-2">
                     <span className="text-label-md text-on-surface">Upload a clear photo</span>
-                    <span className="text-body-sm text-on-surface-variant max-w-xs mt-1">This will be used for your student ID card. Max size: 2MB. Format: JPG/PNG.</span>
+                    <span className="text-body-sm text-on-surface-variant max-w-xs mt-1">This will be used for your student ID card. Max size: 5MB. Formats: JPG, PNG, WebP, GIF.</span>
                   </div>
                 </div>
               </div>
@@ -170,7 +182,7 @@ export default function RegistrationStep1() {
                 <label className="text-label-sm text-on-surface-variant" htmlFor="mobile">Mobile Number <span className="text-error">*</span></label>
                 <div className="relative">
                   <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">phone_iphone</span>
-                  <input id="mobile" placeholder="+1 (555) 000-0000" type="tel" className={`w-full h-12 pl-10 pr-3 border ${errors.mobile ? 'border-error' : 'border-outline-variant'} rounded-md bg-surface-container-lowest text-body-md text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm`} {...register('mobile')} />
+                  <input id="mobile" placeholder="01XXXXXXXXX" type="tel" className={`w-full h-12 pl-10 pr-3 border ${errors.mobile ? 'border-error' : 'border-outline-variant'} rounded-md bg-surface-container-lowest text-body-md text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm`} {...register('mobile')} />
                 </div>
                 {errors.mobile && <span className="text-body-sm text-error">{errors.mobile.message}</span>}
               </div>
@@ -271,7 +283,7 @@ export default function RegistrationStep1() {
                   <select id="level_id" className={`w-full h-12 pl-3 pr-10 border ${errors.level_id ? 'border-error' : 'border-outline-variant'} rounded-md bg-surface-container-lowest text-body-md text-on-surface appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm`} value={selectedLevel} onChange={handleLevelChange}>
                     <option value="">Select Level</option>
                     {levels.map((l) => (
-                      <option key={l._id} value={l._id}>{l.name} — ${l.fee} ({l.duration})</option>
+                      <option key={l._id} value={l._id}>{l.name} — ৳{l.fee} ({l.duration})</option>
                     ))}
                   </select>
                   <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>

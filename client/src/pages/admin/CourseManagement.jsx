@@ -27,9 +27,9 @@ export default function CourseManagement() {
   const [editBatch, setEditBatch] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const courseForm = useState({ name: '', code: '', fee: '', duration: '', description: '' });
-  const levelForm = useState({ name: '', duration: '', fee: '', time_slots: '' });
-  const batchForm = useState({ course_id: '', level_id: '', batch_name: '', start_date: '', capacity: '', class_schedule: '' });
+  const courseForm = useState({ name: '', code: '', fee: '', duration: '', sort_order: '', description: '' });
+  const levelForm = useState({ name: '', duration: '', fee: '', sort_order: '', time_slots: '' });
+  const batchForm = useState({ course_id: '', level_id: '', batch_name: '', start_date: '', capacity: '', sort_order: '', class_schedule: '' });
 
   const { data: coursesData } = useQuery({
     queryKey: ['courses'],
@@ -77,7 +77,7 @@ export default function CourseManagement() {
 
   const openAddBatch = () => {
     setEditBatch(null);
-    batchForm[1]({ course_id: '', level_id: '', batch_name: '', start_date: '', capacity: '', class_schedule: '' });
+    batchForm[1]({ course_id: '', level_id: '', batch_name: '', start_date: '', capacity: '', sort_order: '', class_schedule: '' });
     setShowBatchForm(true);
   };
 
@@ -90,6 +90,7 @@ export default function CourseManagement() {
       batch_name: batch.batch_name || '',
       start_date: batch.start_date ? batch.start_date.split('T')[0] : '',
       capacity: batch.capacity?.toString() || '',
+      sort_order: batch.sort_order?.toString() || '',
       class_schedule: batch.class_schedule || '',
     });
     setShowBatchForm(true);
@@ -97,13 +98,13 @@ export default function CourseManagement() {
 
   const openEditCourse = (course) => {
     setEditCourse(course);
-    courseForm[1]({ name: course.name, code: course.code || '', fee: course.fee?.toString() || '', duration: course.duration || '', description: course.description || '' });
+    courseForm[1]({ name: course.name, code: course.code || '', fee: course.fee?.toString() || '', duration: course.duration || '', sort_order: course.sort_order?.toString() || '', description: course.description || '' });
     setShowCourseForm(true);
   };
 
   const openAddLevel = () => {
     setEditLevel(null);
-    levelForm[1]({ name: '', duration: '', fee: '', time_slots: '' });
+    levelForm[1]({ name: '', duration: '', fee: '', sort_order: '', time_slots: '' });
     setShowLevelForm(true);
   };
 
@@ -113,6 +114,7 @@ export default function CourseManagement() {
       name: level.name,
       duration: level.duration || '',
       fee: level.fee?.toString() || '',
+      sort_order: level.sort_order?.toString() || '',
       time_slots: Array.isArray(level.time_slots) ? level.time_slots.join(', ') : (level.time_slots || ''),
     });
     setShowLevelForm(true);
@@ -180,9 +182,10 @@ export default function CourseManagement() {
                   <span className="material-symbols-outlined">edit</span>
                 </button>
               </div>
-              <div className="flex gap-4 mb-4 text-body-sm">
-                <span className="text-on-surface-variant">Fee: <strong className="text-on-surface">${course.fee}</strong></span>
+              <div className="flex flex-wrap gap-x-4 gap-y-1 mb-4 text-body-sm">
+                <span className="text-on-surface-variant">Fee: <strong className="text-on-surface">৳{course.fee}</strong></span>
                 <span className="text-on-surface-variant">Duration: <strong className="text-on-surface">{course.duration}</strong></span>
+                {course.sort_order ? <span className="text-on-surface-variant">Order: <strong className="text-on-surface">{course.sort_order}</strong></span> : null}
               </div>
               {courseBatches.length > 0 && (
                 <div className="space-y-3 border-t border-outline-variant/30 pt-4">
@@ -247,9 +250,10 @@ export default function CourseManagement() {
                   </button>
                 </div>
               </div>
-              <div className="flex gap-4 mb-4 text-body-sm">
-                <span className="text-on-surface-variant">Fee: <strong className="text-on-surface">${level.fee}</strong></span>
+              <div className="flex flex-wrap gap-x-4 gap-y-1 mb-4 text-body-sm">
+                <span className="text-on-surface-variant">Fee: <strong className="text-on-surface">৳{level.fee}</strong></span>
                 <span className="text-on-surface-variant">Duration: <strong className="text-on-surface">{level.duration}</strong></span>
+                {level.sort_order ? <span className="text-on-surface-variant">Order: <strong className="text-on-surface">{level.sort_order}</strong></span> : null}
               </div>
               {level.time_slots?.length > 0 && (
                 <div className="flex flex-wrap gap-2 border-t border-outline-variant/30 pt-4">
@@ -265,13 +269,16 @@ export default function CourseManagement() {
 
       {showCourseForm && (
         <Modal title={editCourse ? 'Edit Course' : 'Add Course'} onClose={() => { setShowCourseForm(false); setEditCourse(null); }}>
-          <form onSubmit={(e) => { e.preventDefault(); const f = courseForm[0]; createCourseMutation.mutate({ name: f.name, code: f.code, fee: Number(f.fee), duration: f.duration, description: f.description }); }} className="flex flex-col gap-4">
+          <form onSubmit={(e) => { e.preventDefault(); const f = courseForm[0]; createCourseMutation.mutate({ name: f.name, code: f.code, fee: Number(f.fee), duration: f.duration, sort_order: f.sort_order ? Number(f.sort_order) : 0, description: f.description }); }} className="flex flex-col gap-4">
             <input placeholder="Course Name" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].name} onChange={(e) => courseForm[1](p => ({ ...p, name: e.target.value }))} required />
             <div className="grid grid-cols-2 gap-4">
               <input placeholder="Code (optional)" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].code} onChange={(e) => courseForm[1](p => ({ ...p, code: e.target.value }))} />
               <input placeholder="Fee" type="number" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].fee} onChange={(e) => courseForm[1](p => ({ ...p, fee: e.target.value }))} required />
             </div>
-            <input placeholder="Duration (e.g. 4 years)" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].duration} onChange={(e) => courseForm[1](p => ({ ...p, duration: e.target.value }))} required />
+            <div className="grid grid-cols-2 gap-4">
+              <input placeholder="Duration (e.g. 4 years)" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].duration} onChange={(e) => courseForm[1](p => ({ ...p, duration: e.target.value }))} required />
+              <input placeholder="Sort Order" type="number" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].sort_order} onChange={(e) => courseForm[1](p => ({ ...p, sort_order: e.target.value }))} />
+            </div>
             <textarea placeholder="Description (optional)" rows={3} className="p-3 border border-outline-variant rounded-lg text-body-md resize-none focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].description} onChange={(e) => courseForm[1](p => ({ ...p, description: e.target.value }))} />
             <button type="submit" disabled={createCourseMutation.isPending} className="h-12 bg-primary text-on-primary rounded-lg text-label-md hover:bg-primary-container transition-colors disabled:opacity-50">{editCourse ? 'Update Course' : 'Create Course'}</button>
           </form>
@@ -280,11 +287,12 @@ export default function CourseManagement() {
 
       {showLevelForm && (
         <Modal title={editLevel ? 'Edit Level' : 'Add Level'} onClose={() => { setShowLevelForm(false); setEditLevel(null); }}>
-          <form onSubmit={(e) => { e.preventDefault(); const f = levelForm[0]; createLevelMutation.mutate({ name: f.name, duration: f.duration, fee: Number(f.fee), time_slots: f.time_slots ? f.time_slots.split(',').map(s => s.trim()).filter(Boolean) : [] }); }} className="flex flex-col gap-4">
+          <form onSubmit={(e) => { e.preventDefault(); const f = levelForm[0]; createLevelMutation.mutate({ name: f.name, duration: f.duration, fee: Number(f.fee), sort_order: f.sort_order ? Number(f.sort_order) : 0, time_slots: f.time_slots ? f.time_slots.split(',').map(s => s.trim()).filter(Boolean) : [] }); }} className="flex flex-col gap-4">
             <input placeholder="Level Name (e.g. Workshop, Bootcamp)" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={levelForm[0].name} onChange={(e) => levelForm[1](p => ({ ...p, name: e.target.value }))} required />
-            <div className="grid grid-cols-2 gap-4">
-              <input placeholder="Duration (e.g. 3 months)" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={levelForm[0].duration} onChange={(e) => levelForm[1](p => ({ ...p, duration: e.target.value }))} required />
+            <div className="grid grid-cols-3 gap-4">
+              <input placeholder="Duration" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={levelForm[0].duration} onChange={(e) => levelForm[1](p => ({ ...p, duration: e.target.value }))} required />
               <input placeholder="Fee" type="number" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={levelForm[0].fee} onChange={(e) => levelForm[1](p => ({ ...p, fee: e.target.value }))} required />
+              <input placeholder="Sort Order" type="number" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={levelForm[0].sort_order} onChange={(e) => levelForm[1](p => ({ ...p, sort_order: e.target.value }))} />
             </div>
             <input placeholder="Time slots (comma-separated, e.g. Mon-Wed 9AM, Tue-Thu 2PM)" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={levelForm[0].time_slots} onChange={(e) => levelForm[1](p => ({ ...p, time_slots: e.target.value }))} />
             <button type="submit" disabled={createLevelMutation.isPending} className="h-12 bg-primary text-on-primary rounded-lg text-label-md hover:bg-primary-container transition-colors disabled:opacity-50">{editLevel ? 'Update Level' : 'Create Level'}</button>
@@ -294,7 +302,7 @@ export default function CourseManagement() {
 
       {showBatchForm && (
         <Modal title={editBatch ? 'Edit Batch' : 'Add Batch'} onClose={() => { setShowBatchForm(false); setEditBatch(null); }}>
-          <form onSubmit={(e) => { e.preventDefault(); const f = batchForm[0]; createBatchMutation.mutate({ course_id: f.course_id, level_id: f.level_id || undefined, batch_name: f.batch_name, start_date: f.start_date, capacity: Number(f.capacity), class_schedule: f.class_schedule }); }} className="flex flex-col gap-4">
+          <form onSubmit={(e) => { e.preventDefault(); const f = batchForm[0]; createBatchMutation.mutate({ course_id: f.course_id, level_id: f.level_id || undefined, batch_name: f.batch_name, start_date: f.start_date, capacity: Number(f.capacity), sort_order: f.sort_order ? Number(f.sort_order) : 0, class_schedule: f.class_schedule }); }} className="flex flex-col gap-4">
             <select className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={batchForm[0].course_id} onChange={(e) => { batchForm[1](p => ({ ...p, course_id: e.target.value, level_id: '' })); }} required>
               <option value="">Select Course</option>
               {courses.map((c) => <option key={c._id} value={c._id}>{c.name}</option>)}
@@ -307,6 +315,7 @@ export default function CourseManagement() {
             <div className="grid grid-cols-2 gap-4">
               <input type="date" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={batchForm[0].start_date} onChange={(e) => batchForm[1](p => ({ ...p, start_date: e.target.value }))} required />
               <input placeholder="Capacity" type="number" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={batchForm[0].capacity} onChange={(e) => batchForm[1](p => ({ ...p, capacity: e.target.value }))} required />
+              <input placeholder="Sort Order" type="number" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={batchForm[0].sort_order} onChange={(e) => batchForm[1](p => ({ ...p, sort_order: e.target.value }))} />
             </div>
             <input placeholder="Class Schedule (e.g. Mon-Wed 9AM)" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={batchForm[0].class_schedule} onChange={(e) => batchForm[1](p => ({ ...p, class_schedule: e.target.value }))} />
             <button type="submit" disabled={createBatchMutation.isPending} className="h-12 bg-primary text-on-primary rounded-lg text-label-md hover:bg-primary-container transition-colors disabled:opacity-50">{editBatch ? 'Update Batch' : 'Create Batch'}</button>

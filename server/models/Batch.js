@@ -30,6 +30,10 @@ const batchSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
+    sort_order: {
+      type: Number,
+      default: 0,
+    },
     class_schedule: {
       type: String,
       default: '',

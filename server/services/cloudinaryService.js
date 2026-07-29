@@ -12,7 +12,7 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: 'fars',
-    allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'pdf'],
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'pdf'],
     max_file_size: 5 * 1024 * 1024,
   },
 });
@@ -21,7 +21,7 @@ const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'];
     if (!allowed.includes(file.mimetype)) {
       return cb(new Error('Only JPG, PNG, WebP images and PDF files are allowed.'));
     }

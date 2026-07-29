@@ -20,6 +20,10 @@ const programLevelSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    sort_order: {
+      type: Number,
+      default: 0,
+    },
     status: {
       type: String,
       enum: ['active', 'inactive'],

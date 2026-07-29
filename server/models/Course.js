@@ -21,6 +21,10 @@ const courseSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Duration is required'],
     },
+    sort_order: {
+      type: Number,
+      default: 0,
+    },
     description: {
       type: String,
       default: '',

@@ -37,7 +37,7 @@ const activities = [
   { time: 'Yesterday, 4:30 PM', text: 'Batch enrollment processed for Fall 2024 semester.', detail: '245 students processed.', tag: null },
 ];
 
-const formatCurrency = (value) => `$${(value / 1000).toFixed(1)}k`;
+const formatCurrency = (value) => `৳${(value / 1000).toFixed(1)}k`;
 
 export default function Overview() {
   const { data: stats } = useQuery({
@@ -118,7 +118,7 @@ export default function Overview() {
             </div>
           </div>
           <div className="relative z-10">
-            <h3 className="text-headline-lg text-white">${(s.revenueThisMonth / 1000).toFixed(1)}k</h3>
+            <h3 className="text-headline-lg text-white">৳{(s.revenueThisMonth / 1000).toFixed(1)}k</h3>
             <p className="text-body-sm text-[#ffb95f] flex items-center gap-1 mt-1">
               <span className="material-symbols-outlined text-[16px]">trending_up</span> +8.4% vs last month
             </p>

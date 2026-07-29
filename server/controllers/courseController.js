@@ -9,7 +9,7 @@ const listCourses = async (req, res, next) => {
     const { status } = req.query;
     const filter = {};
     if (status) filter.status = status;
-    const courses = await Course.find(filter).sort('name');
+    const courses = await Course.find(filter).sort({ sort_order: 1, name: 1 });
     res.json({ success: true, data: { courses } });
   } catch (err) {
     next(err);
