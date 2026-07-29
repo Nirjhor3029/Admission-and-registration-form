@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FARS - Student Dashboard</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary": "#003b35",
+                    "on-tertiary-fixed-variant": "#005049",
+                    "outline": "#727780",
+                    "on-background": "#0b1c30",
+                    "surface-tint": "#2d6197",
+                    "on-primary": "#ffffff",
+                    "surface-variant": "#d3e4fe",
+                    "background": "#f8f9ff",
+                    "surface-container-low": "#eff4ff",
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#cbdbf5",
+                    "outline-variant": "#c2c7d1",
+                    "secondary": "#855300",
+                    "surface-container-lowest": "#ffffff",
+                    "on-surface": "#0b1c30",
+                    "on-primary-container": "#8ebdf9",
+                    "primary-fixed-dim": "#a0c9ff",
+                    "on-primary-fixed": "#001c37",
+                    "secondary-fixed": "#ffddb8",
+                    "surface-container-high": "#dce9ff",
+                    "primary-fixed": "#d2e4ff",
+                    "on-secondary-container": "#684000",
+                    "on-tertiary-container": "#5eccbe",
+                    "primary": "#00355f",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed-variant": "#07497d",
+                    "tertiary-fixed-dim": "#6bd8cb",
+                    "error-container": "#ffdad6",
+                    "tertiary-container": "#00544d",
+                    "error": "#ba1a1a",
+                    "inverse-primary": "#a0c9ff",
+                    "surface-bright": "#f8f9ff",
+                    "on-secondary-fixed-variant": "#653e00",
+                    "on-tertiary": "#ffffff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "secondary-fixed-dim": "#ffb95f",
+                    "on-surface-variant": "#42474f",
+                    "on-tertiary-fixed": "#00201d",
+                    "surface": "#f8f9ff",
+                    "tertiary-fixed": "#89f5e7",
+                    "inverse-surface": "#213145",
+                    "on-error-container": "#93000a",
+                    "surface-container-highest": "#d3e4fe",
+                    "primary-container": "#0f4c81",
+                    "surface-container": "#e5eeff",
+                    "secondary-container": "#fea619",
+                    "on-secondary-fixed": "#2a1700"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-lg": "2rem",
+                    "stack-sm": "0.5rem",
+                    "gutter": "1.5rem",
+                    "margin-mobile": "1rem",
+                    "margin-desktop": "2.5rem",
+                    "stack-md": "1rem",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Inter", "sans-serif"],
+                    "label-sm": ["Inter", "sans-serif"],
+                    "headline-lg-mobile": ["Inter", "sans-serif"],
+                    "headline-lg": ["Inter", "sans-serif"],
+                    "headline-md": ["Inter", "sans-serif"],
+                    "label-md": ["Inter", "sans-serif"],
+                    "headline-xl": ["Inter", "sans-serif"],
+                    "body-lg": ["Inter", "sans-serif"],
+                    "body-md": ["Inter", "sans-serif"]
+            },
+            "fontSize": {
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        /* Fallback if Inter isn't loaded */
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background antialiased md:hidden selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-surface dark:bg-surface-dim shadow-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary text-[24px]" style="font-variation-settings: 'FILL' 1;">school</span>
+<h1 class="text-headline-md font-headline-md font-bold text-primary dark:text-inverse-primary tracking-tight">FARS</h1>
+</div>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A small, circular profile picture of a young adult student looking directly at the camera with a friendly expression. The background is a soft, blurred studio grey. The lighting is bright, even, and highly professional, typical of an official university ID photo." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMb7CoFTweZPW9q0DRXPCrNWwu8Qf-1zjXcgStP6ZakCqgFo3xNwmLxqt5qaQwUqai1c7Fzy9yWbaMQ4QASuwj-0r9vVZ9jgM9qqbe_2lfamn_wBgpPrtHPE9KdRWxrO2RA_uERavj_J6hkA_5T4QpXlivWGiknPkH90hhbqiOOQSGh8J1zKLDuC_f3hJTzvXf_-Sg6Se5Fk2PMhWantfS260ZjdhVoaPnNokrb-szQ-sgsIgSlND-cQ"/>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-24 pb-28 px-margin-mobile flex flex-col gap-stack-lg max-w-[600px] mx-auto w-full">
+<!-- Welcome & Status Banner -->
+<section class="flex flex-col gap-stack-sm">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Overview</h2>
+<div class="inline-flex items-center gap-2 self-start bg-secondary-container text-on-secondary-container px-3 py-1.5 rounded-full border border-secondary/20 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">pending_actions</span>
+<span class="font-label-md text-label-md">Status: Under Review</span>
+</div>
+</section>
+<!-- Upcoming Class (Featured Card) -->
+<section class="bg-surface rounded-xl border border-outline-variant p-5 shadow-sm flex flex-col gap-4 relative overflow-hidden">
+<!-- Decorative gradient element -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+<div class="flex justify-between items-start z-10">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-wider mb-1">Up Next</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Intro to Computer Science</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">CS101 • Section A</p>
+</div>
+<div class="bg-surface-container-highest rounded-lg p-2 flex flex-col items-center justify-center min-w-[60px]">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Today</span>
+<span class="font-headline-md text-headline-md text-primary -mt-1">2:00</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant -mt-1">PM</span>
+</div>
+</div>
+<div class="flex items-center gap-2 font-body-sm text-body-sm text-on-surface-variant z-10">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+                Building 4, Room 402
+            </div>
+<button class="w-full h-12 mt-2 bg-primary text-on-primary font-label-md text-label-md rounded-lg flex items-center justify-center gap-2 active:scale-[0.98] transition-transform z-10 shadow-sm">
+<span class="material-symbols-outlined text-[18px]">video_camera_front</span>
+                Join Virtual Class
+            </button>
+</section>
+<!-- Bento Grid: Downloads & Documents -->
+<section>
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-3">Documents</h3>
+<div class="grid grid-cols-2 gap-3">
+<!-- ID Preview (Spans full width top) -->
+<div class="col-span-2 bg-surface rounded-xl border border-outline-variant p-4 shadow-sm flex items-center gap-4">
+<div class="w-16 h-10 rounded shadow-sm overflow-hidden bg-surface-container-high border border-outline-variant flex-shrink-0 relative">
+<img class="w-full h-full object-cover opacity-80" data-alt="A stylized, flat illustration of a university student ID card template. It features a placeholder photo box on the left, geometric blue branding elements, and dummy text lines on the right, set against a pristine white background. The style is modern, vector-based, and highly legible." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9jEEdxi8NwZ55QUzEiwSAmMw4WT6yQF5r8dwUVAz_THf8GIufzb8Lwzrj3V0AUze2S6IS990BIiANUo-J61JioYgYjPYKZ4hDyZYNdlMOPEHaYwq3_RjTGLdUHGk072rtZWIDgqzWv4LNY0a9rMlEyzIwXaUPlZY8VDDyVw02B-w8zqvb9RZv6qQhyIwHVESqYgC4zxQSsl9Zby31jKQzB-QMmV9DjrWQdC4Oxg2FVErvGP99u3AKnw"/>
+</div>
+<div class="flex flex-col flex-grow">
+<span class="font-label-md text-label-md text-on-surface">Student ID Card</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Digital Preview</span>
+</div>
+<button class="w-8 h-8 rounded-full bg-surface-container hover:bg-surface-variant flex items-center justify-center text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">download</span>
+</button>
+</div>
+<!-- Invoice -->
+<div class="bg-surface rounded-xl border border-outline-variant p-4 shadow-sm flex flex-col justify-between aspect-square">
+<span class="material-symbols-outlined text-primary text-[28px]">receipt_long</span>
+<div class="mt-auto">
+<h4 class="font-label-md text-label-md text-on-surface">Term Invoice</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 mb-3">Fall 2024</p>
+<button class="text-primary font-label-sm text-label-sm flex items-center gap-1 active:opacity-70">
+                            Download <span class="material-symbols-outlined text-[14px]">arrow_downward</span>
+</button>
+</div>
+</div>
+<!-- Admission Letter -->
+<div class="bg-surface rounded-xl border border-outline-variant p-4 shadow-sm flex flex-col justify-between aspect-square">
+<span class="material-symbols-outlined text-primary text-[28px]">mail</span>
+<div class="mt-auto">
+<h4 class="font-label-md text-label-md text-on-surface">Admission</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 mb-3">Official Letter</p>
+<button class="text-primary font-label-sm text-label-sm flex items-center gap-1 active:opacity-70">
+                            Download <span class="material-symbols-outlined text-[14px]">arrow_downward</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Payment History -->
+<section>
+<div class="flex justify-between items-end mb-3">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Payment History</h3>
+<button class="font-label-sm text-label-sm text-primary">View All</button>
+</div>
+<div class="bg-surface rounded-xl border border-outline-variant shadow-sm overflow-hidden flex flex-col">
+<!-- Row 1 -->
+<div class="flex justify-between items-center p-4 border-b border-outline-variant/50 hover:bg-surface-container-lowest transition-colors">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Registration Fee</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Aug 15, 2024</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-md text-label-md text-on-surface">$150.00</span>
+<span class="font-label-sm text-label-sm text-tertiary flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Paid
+                        </span>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="flex justify-between items-center p-4 hover:bg-surface-container-lowest transition-colors">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Fall Tuition Installment 1</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Sep 01, 2024</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-label-md text-label-md text-on-surface">$1,200.00</span>
+<span class="font-label-sm text-label-sm text-secondary flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[14px]">schedule</span> Pending
+                        </span>
+</div>
+</div>
+</div>
+</section>
+<!-- Course Materials & Progression -->
+<section>
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-3">Course Progression</h3>
+<div class="bg-surface rounded-xl border border-outline-variant p-1 shadow-sm flex flex-col">
+<!-- Unlocked Item -->
+<div class="flex items-center gap-4 p-3 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">menu_book</span>
+</div>
+<div class="flex flex-col flex-grow">
+<span class="font-label-md text-label-md text-on-surface">Module 1: Introduction</span>
+<span class="font-body-sm text-body-sm text-primary mt-0.5">Available Now</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+<!-- Locked Item -->
+<div class="flex items-center gap-4 p-3 rounded-lg opacity-60 bg-surface-container-lowest">
+<div class="w-10 h-10 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+</div>
+<div class="flex flex-col flex-grow">
+<span class="font-label-md text-label-md text-on-surface">Module 2: Fundamentals</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Unlocks Week 3</span>
+</div>
+</div>
+<div class="w-full h-px bg-outline-variant/30 my-2"></div>
+<!-- Certificate (Locked) -->
+<div class="flex items-center gap-4 p-3 rounded-lg opacity-50 bg-surface-container-lowest">
+<div class="w-12 h-12 rounded border border-dashed border-outline-variant flex items-center justify-center flex-shrink-0 bg-surface">
+<span class="material-symbols-outlined text-outline">workspace_premium</span>
+</div>
+<div class="flex flex-col flex-grow">
+<span class="font-label-md text-label-md text-on-surface">Completion Certificate</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Complete all modules to unlock</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-2 border-t border-outline-variant bg-surface shadow-lg z-50">
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl p-2 active:scale-90 transition-all w-16">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-sm text-label-sm text-on-primary-container mt-1">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-variant active:scale-90 transition-all rounded-xl w-16">
+<span class="material-symbols-outlined">assignment_turned_in</span>
+<span class="font-label-sm text-label-sm mt-1">Status</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-variant active:scale-90 transition-all rounded-xl w-16">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm mt-1">Profile</span>
+</button>
+</nav>
+</body></html>

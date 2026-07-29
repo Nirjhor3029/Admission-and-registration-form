@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FARS - Payment Verification</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Design System Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#003b35",
+                        "on-tertiary-fixed-variant": "#005049",
+                        "outline": "#727780",
+                        "on-background": "#0b1c30",
+                        "surface-tint": "#2d6197",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#d3e4fe",
+                        "background": "#f8f9ff",
+                        "surface-container-low": "#eff4ff",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#cbdbf5",
+                        "outline-variant": "#c2c7d1",
+                        "secondary": "#855300",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#0b1c30",
+                        "on-primary-container": "#8ebdf9",
+                        "primary-fixed-dim": "#a0c9ff",
+                        "on-primary-fixed": "#001c37",
+                        "secondary-fixed": "#ffddb8",
+                        "surface-container-high": "#dce9ff",
+                        "primary-fixed": "#d2e4ff",
+                        "on-secondary-container": "#684000",
+                        "on-tertiary-container": "#5eccbe",
+                        "primary": "#00355f",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed-variant": "#07497d",
+                        "tertiary-fixed-dim": "#6bd8cb",
+                        "error-container": "#ffdad6",
+                        "tertiary-container": "#00544d",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#a0c9ff",
+                        "surface-bright": "#f8f9ff",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "on-surface-variant": "#42474f",
+                        "on-tertiary-fixed": "#00201d",
+                        "surface": "#f8f9ff",
+                        "tertiary-fixed": "#89f5e7",
+                        "inverse-surface": "#213145",
+                        "on-error-container": "#93000a",
+                        "surface-container-highest": "#d3e4fe",
+                        "primary-container": "#0f4c81",
+                        "surface-container": "#e5eeff",
+                        "secondary-container": "#fea619",
+                        "on-secondary-fixed": "#2a1700"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "2rem",
+                        "stack-sm": "0.5rem",
+                        "gutter": "1.5rem",
+                        "margin-mobile": "1rem",
+                        "margin-desktop": "2.5rem",
+                        "stack-md": "1rem",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-xl": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen font-body-md antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopAppBar -->
+<header class="sticky top-0 w-full z-50 flex justify-between items-center px-margin-mobile h-16 bg-surface shadow-sm">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="school">school</span>
+<span class="font-headline-md text-headline-md font-bold text-primary">FARS</span>
+</div>
+<div>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A small, professional portrait photograph of a university student looking directly at the camera with a neutral, friendly expression, well-lit against a plain light background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRkYmixE36FXcK4bzwPcgqRcF9Uky9BPE2IA6_CoPwPkaYQHN_1qNLqCPg_WDcfcfjm-Sz8Lqr0TDs9YVguhZmT7LVTf50VzwEbhgRfc_D-sbWWhUuej2TCMRT82ZVkoxVylIhkqnBo3C1ttGVsFZgBk9r5NPu7tBjvCrM9ZdIv8V-UGrvfdBirlU-yRDtisBO2YDbGrkeJE5ppCiqKQBPecJFI3HIUzTur4AYK5tVIfKO6FmFa7oh7Q"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas (Transactional Page - Navigation Shelled Suppressed) -->
+<main class="w-full pb-stack-lg">
+<!-- Single Column Fluid Container for Mobile-First -->
+<div class="max-w-md mx-auto px-margin-mobile pt-stack-lg flex flex-col gap-stack-lg">
+<!-- Section 1: Progress & Header -->
+<section class="flex flex-col gap-2">
+<div class="flex items-center gap-3 mb-2">
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-widest">Step 2 of 2</span>
+<div class="h-1.5 flex-1 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-full rounded-full rounded-r-none"></div>
+</div>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-background">Payment Verification</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Securely submit your payment details to complete your academic registration process.</p>
+</section>
+<!-- Section 2: Official Merchant Info -->
+<section class="bg-surface-container-low border border-primary-fixed-dim rounded-xl p-5 flex items-center justify-between shadow-sm relative overflow-hidden">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary-fixed opacity-50 rounded-full blur-2xl pointer-events-none"></div>
+<div class="relative z-10">
+<p class="font-label-sm text-label-sm text-primary mb-1">Official University Merchant Number</p>
+<p class="font-headline-md text-headline-md text-on-background font-bold tracking-tight">017XX-XXXXXX</p>
+</div>
+<button class="relative z-10 w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-primary hover:bg-primary-fixed transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" type="button">
+<span class="material-symbols-outlined" data-icon="content_copy">content_copy</span>
+</button>
+</section>
+<!-- Section 3: Payment Method Selection -->
+<section class="flex flex-col gap-stack-sm">
+<label class="font-label-md text-label-md text-on-background">Select Payment Method</label>
+<div class="grid grid-cols-2 gap-3">
+<!-- Option 1: bKash (Selected State) -->
+<label class="relative bg-surface-container-lowest border-2 border-primary rounded-xl p-4 flex flex-col items-center gap-3 cursor-pointer shadow-[0_4px_12px_rgba(45,97,151,0.08)] transition-all">
+<input checked="" class="sr-only" name="payment_method" type="radio" value="bkash"/>
+<div class="absolute top-2 right-2 w-5 h-5 rounded-full border-2 border-primary flex items-center justify-center">
+<div class="w-2.5 h-2.5 bg-primary rounded-full"></div>
+</div>
+<div class="w-14 h-14 bg-surface rounded-full flex items-center justify-center overflow-hidden border border-outline-variant shadow-sm">
+<img class="w-10 h-10 object-contain" data-alt="A high-quality, flat vector logo of the bKash mobile financial service, displaying the iconic pink color palette and flying bird motif, centered on a clean white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyrxmDP9WNJLm9QuJaVqQ23gVLi8AIpxzgQTBnBbQMu1FxNAzV9Vurn9WFWPKwQXwdF37D3ZeTNy4mK0A31b4BdxEGKDMDZfzEH290m3vUdS_YWThhpJu7gYNcpsCgWQFl_18sEbE2lBroUhDGHFFsFlRmtqCEjcDRDPOzZWzuVL4HZ2tHCrpfhi0UAcEzCEmq3DkJJFlt-VfcPh7bsajgflnCh2YbRncz9EU0M3WUhgJCzxQy83ojxg"/>
+</div>
+<span class="font-label-md text-label-md text-on-background font-bold">bKash</span>
+</label>
+<!-- Option 2: Nagad (Unselected State) -->
+<label class="relative bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col items-center gap-3 cursor-pointer hover:border-primary-fixed-dim hover:bg-surface-container-low transition-all">
+<input class="sr-only" name="payment_method" type="radio" value="nagad"/>
+<div class="absolute top-2 right-2 w-5 h-5 rounded-full border-2 border-outline-variant"></div>
+<div class="w-14 h-14 bg-surface rounded-full flex items-center justify-center overflow-hidden border border-outline-variant shadow-sm grayscale opacity-70 transition-all hover:grayscale-0 hover:opacity-100">
+<img class="w-10 h-10 object-contain" data-alt="A high-quality, flat vector logo of the Nagad digital financial service, displaying its distinct bright orange brand color and typography, centered on a clean white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHfNfmRoBd4X-JNM336ZgHGnCvc8Xn0Ey2s2yXDXZIERMmK8BFIbcJEiFb6U-oP5UELmIeWfQJ7ESe_xSQWFn6pFQfslvBspYXC6f5iwivQzVDwoTGTSg5eDzwxC6zluXkXjmxW36S6kUIB8DCM9eN6vHESMeLE-5bQDYgPApwxyU8n76qaenu2YbhnuRms2Y-PTZVoGxFXhLRhfJB1udabXrOHOosf6lBfVhptT1mPv3kqNsjoHKf9g"/>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant font-medium">Nagad</span>
+</label>
+</div>
+</section>
+<!-- Section 4: Transaction Details Form -->
+<form class="flex flex-col gap-4 bg-surface-container-lowest rounded-xl border border-outline-variant p-5 shadow-[0_2px_8px_rgba(11,28,48,0.04)]">
+<!-- Field: Amount Paid -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="amount">Amount Paid</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 font-label-md text-on-surface-variant select-none">BDT</span>
+<input class="w-full h-12 pl-12 pr-3 rounded-lg border border-outline-variant bg-surface-container-lowest font-body-md text-on-background focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-outline-variant/60" id="amount" name="amount" placeholder="e.g. 15000" required="" type="number"/>
+</div>
+</div>
+<!-- Field: Transaction ID -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="trx_id">Transaction ID</label>
+<input class="w-full h-12 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest font-body-md text-on-background focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all uppercase placeholder:normal-case placeholder:text-outline-variant/60" id="trx_id" name="trx_id" placeholder="Enter the 10-digit ID from your SMS" required="" type="text"/>
+</div>
+<!-- Field: Payment Date -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="payment_date">Date of Payment</label>
+<input class="w-full h-12 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest font-body-md text-on-background focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-on-surface-variant" id="payment_date" name="payment_date" required="" type="date"/>
+</div>
+<!-- Field: Screenshot Upload (Drag & Drop area) -->
+<div class="flex flex-col gap-1.5 mt-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Upload Payment Screenshot</label>
+<div class="relative w-full rounded-xl border-2 border-dashed border-outline-variant bg-surface hover:bg-surface-container-low hover:border-primary flex flex-col items-center justify-center py-6 px-4 cursor-pointer transition-all group overflow-hidden">
+<input accept="image/png, image/jpeg" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" type="file"/>
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-primary mb-3 group-hover:scale-110 group-hover:bg-primary-fixed transition-all">
+<span class="material-symbols-outlined" data-icon="cloud_upload">cloud_upload</span>
+</div>
+<span class="font-label-md text-label-md text-primary mb-1 text-center group-hover:text-primary-container transition-colors">Tap to browse or drag file here</span>
+<span class="font-body-sm text-body-sm text-outline text-center">Supports JPG, PNG (Max 5MB)</span>
+</div>
+</div>
+</form>
+<!-- Section 5: CTA Actions -->
+<section class="mt-2">
+<button class="w-full h-12 bg-secondary-container text-on-secondary-container rounded-lg font-label-md text-label-md shadow-[0_4px_14px_rgba(254,166,25,0.25)] hover:opacity-90 hover:shadow-[0_6px_20px_rgba(254,166,25,0.35)] active:scale-[0.98] transition-all flex items-center justify-center gap-2" type="submit">
+                    Submit Registration
+                    <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<div class="flex items-center justify-center gap-1.5 mt-4 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]" data-icon="lock">lock</span>
+<span class="font-label-sm text-label-sm tracking-wide">SECURE 256-BIT ENCRYPTION</span>
+</div>
+</section>
+</div>
+</main>
+<script>
+        // Micro-interaction for radio buttons visual selection (Vanilla JS)
+        document.addEventListener('DOMContentLoaded', () => {
+            const radioLabels = document.querySelectorAll('input[type="radio"][name="payment_method"]');
+            
+            radioLabels.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    // Reset all
+                    document.querySelectorAll('input[name="payment_method"]').forEach(r => {
+                        const parent = r.parentElement;
+                        const outerCircle = parent.querySelector('.rounded-full.border-2.border-outline-variant, .rounded-full.border-2.border-primary');
+                        const innerCircle = parent.querySelector('.bg-primary.rounded-full');
+                        const logoWrapper = parent.querySelector('.bg-surface.rounded-full');
+                        const textLabel = parent.querySelector('span:not(.material-symbols-outlined)');
+                        
+                        // Reset parent classes
+                        parent.className = "relative bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col items-center gap-3 cursor-pointer hover:border-primary-fixed-dim hover:bg-surface-container-low transition-all";
+                        
+                        // Reset circle
+                        if(outerCircle) outerCircle.className = "absolute top-2 right-2 w-5 h-5 rounded-full border-2 border-outline-variant";
+                        if(innerCircle) innerCircle.remove();
+                        
+                        // Reset logo wrapper
+                        if(logoWrapper) logoWrapper.className = "w-14 h-14 bg-surface rounded-full flex items-center justify-center overflow-hidden border border-outline-variant shadow-sm grayscale opacity-70 transition-all hover:grayscale-0 hover:opacity-100";
+                        
+                        // Reset text
+                        if(textLabel) textLabel.className = "font-label-md text-label-md text-on-surface-variant font-medium";
+                    });
+
+                    // Set Active
+                    const parent = e.target.parentElement;
+                    parent.className = "relative bg-surface-container-lowest border-2 border-primary rounded-xl p-4 flex flex-col items-center gap-3 cursor-pointer shadow-[0_4px_12px_rgba(45,97,151,0.08)] transition-all";
+                    
+                    const outerCircle = parent.querySelector('.rounded-full.border-2');
+                    outerCircle.className = "absolute top-2 right-2 w-5 h-5 rounded-full border-2 border-primary flex items-center justify-center";
+                    outerCircle.innerHTML = '<div class="w-2.5 h-2.5 bg-primary rounded-full"></div>';
+                    
+                    const logoWrapper = parent.querySelector('.bg-surface.rounded-full');
+                    logoWrapper.className = "w-14 h-14 bg-surface rounded-full flex items-center justify-center overflow-hidden border border-outline-variant shadow-sm";
+                    
+                    const textLabel = parent.querySelector('span.font-label-md');
+                    textLabel.className = "font-label-md text-label-md text-on-background font-bold";
+                });
+            });
+        });
+    </script>
+</body></html>

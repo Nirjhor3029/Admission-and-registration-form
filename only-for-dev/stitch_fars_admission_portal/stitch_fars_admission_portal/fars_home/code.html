@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FARS - Empowering Future Leaders</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#003b35",
+                        "on-tertiary-fixed-variant": "#005049",
+                        "outline": "#727780",
+                        "on-background": "#0b1c30",
+                        "surface-tint": "#2d6197",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#d3e4fe",
+                        "background": "#f8f9ff",
+                        "surface-container-low": "#eff4ff",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#cbdbf5",
+                        "outline-variant": "#c2c7d1",
+                        "secondary": "#855300",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#0b1c30",
+                        "on-primary-container": "#8ebdf9",
+                        "primary-fixed-dim": "#a0c9ff",
+                        "on-primary-fixed": "#001c37",
+                        "secondary-fixed": "#ffddb8",
+                        "surface-container-high": "#dce9ff",
+                        "primary-fixed": "#d2e4ff",
+                        "on-secondary-container": "#684000",
+                        "on-tertiary-container": "#5eccbe",
+                        "primary": "#00355f",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed-variant": "#07497d",
+                        "tertiary-fixed-dim": "#6bd8cb",
+                        "error-container": "#ffdad6",
+                        "tertiary-container": "#00544d",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#a0c9ff",
+                        "surface-bright": "#f8f9ff",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "on-surface-variant": "#42474f",
+                        "on-tertiary-fixed": "#00201d",
+                        "surface": "#f8f9ff",
+                        "tertiary-fixed": "#89f5e7",
+                        "inverse-surface": "#213145",
+                        "on-error-container": "#93000a",
+                        "surface-container-highest": "#d3e4fe",
+                        "primary-container": "#0f4c81",
+                        "surface-container": "#e5eeff",
+                        "secondary-container": "#fea619",
+                        "on-secondary-fixed": "#2a1700"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "2rem",
+                        "stack-sm": "0.5rem",
+                        "gutter": "1.5rem",
+                        "margin-mobile": "1rem",
+                        "margin-desktop": "2.5rem",
+                        "stack-md": "1rem",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-xl": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.background'); color: theme('colors.on-background'); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased min-h-screen flex flex-col pt-16 pb-20 md:pb-0">
+<!-- TopAppBar (Web & Mobile, fixed top) -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface shadow-sm">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-16 max-w-container-max mx-auto">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="school" style="font-variation-settings: 'FILL' 1;">school</span>
+<span class="font-headline-md text-headline-md font-bold text-primary tracking-tight">FARS</span>
+</div>
+<!-- Web Navigation -->
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-primary font-bold hover:bg-surface-variant transition-colors px-3 py-2 rounded-lg" href="#">Home</a>
+<a class="text-on-surface-variant hover:bg-surface-variant transition-colors px-3 py-2 rounded-lg" href="#">Status</a>
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center ml-4 cursor-pointer hover:bg-surface-variant transition-colors">
+<span class="font-label-sm">US</span>
+</div>
+</nav>
+<!-- Mobile Avatar -->
+<div class="md:hidden w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center">
+<span class="font-label-sm">US</span>
+</div>
+</div>
+</header>
+<main class="flex-grow max-w-container-max mx-auto w-full">
+<!-- Hero Section -->
+<section class="px-margin-mobile md:px-margin-desktop py-12 md:py-24 grid md:grid-cols-2 gap-stack-lg items-center">
+<div class="flex flex-col gap-stack-md">
+<div class="inline-flex items-center gap-2 bg-surface-container-high px-3 py-1.5 rounded-full w-fit mb-4">
+<span class="material-symbols-outlined text-sm text-primary" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span class="font-label-sm text-label-sm text-primary font-medium">New Semester Enrollment Open</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl md:text-5xl lg:text-6xl text-primary font-extrabold leading-tight">
+                    Advance Your Academic Journey with FARS
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
+                    Experience a seamless, secure, and intuitive platform designed to streamline your registration, course management, and academic progress tracking.
+                </p>
+<div class="flex flex-col sm:flex-row gap-4 mt-4">
+<button class="bg-secondary-container hover:bg-secondary-fixed text-on-secondary-container font-label-md text-label-md px-8 py-4 rounded-lg shadow-md transition-all active:scale-95 flex items-center justify-center gap-2">
+                        Apply Now
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+<button class="bg-surface hover:bg-surface-container border border-outline-variant text-primary font-label-md text-label-md px-8 py-4 rounded-lg transition-all active:scale-95">
+                        Explore Courses
+                    </button>
+</div>
+<!-- Trust Badges -->
+<div class="flex items-center gap-6 mt-8 pt-8 border-t border-outline-variant/30">
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-primary font-bold">10k+</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Active Students</span>
+</div>
+<div class="w-px h-8 bg-outline-variant/50"></div>
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-primary font-bold">500+</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Expert Mentors</span>
+</div>
+<div class="w-px h-8 bg-outline-variant/50"></div>
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-primary font-bold">98%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Success Rate</span>
+</div>
+</div>
+</div>
+<div class="relative w-full h-[400px] md:h-[500px] rounded-2xl overflow-hidden shadow-lg border border-outline-variant/20 bg-surface-container-low group">
+<img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A bright, modern educational technology scene featuring a diverse group of college students collaborating around laptops in a sunlit university library. The lighting is high-key and soft, emphasizing a clean, optimistic atmosphere. The color palette incorporates crisp whites, soft grays, and subtle accents of deep primary blue to match a professional, corporate academic aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAx6jzKsWBEoEfRDGO0dBadtDNn5WPQbRiU9nV2ew4Ob4o2omEPxXDMViPsfrqRA-_3yfhRq39QNoeP3VGVUj73A02nF2nDcqbOI9kOHiHYO2v6gJ2KFspQG0YXLqhKArU2R7wBwDskn5XBLjzLIMWgVLGHEyMO0W-kGKlW8A1cevxlzc9ZeKTEiXPjhB4p-kKeK4P2K5baoNWNAivvICUMQkL2kXsMisyFz3jOLgmiOj9Bk0L3j9_s8g"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+<!-- Floating UI Element -->
+<div class="absolute bottom-6 left-6 bg-surface/90 backdrop-blur-md p-4 rounded-xl shadow-lg border border-outline-variant/30 flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-tertiary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-tertiary-container" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-bold">Accredited Platform</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Globally recognized standards</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-2 bg-surface border-t border-outline-variant z-50 shadow-lg">
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl p-2 min-w-[64px] active:scale-90 transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-sm text-[10px] mt-1 font-medium">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-2 min-w-[64px] hover:bg-surface-variant active:scale-90 transition-all rounded-xl cursor-pointer">
+<span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+<span class="font-label-sm text-[10px] mt-1">Status</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant p-2 min-w-[64px] hover:bg-surface-variant active:scale-90 transition-all rounded-xl cursor-pointer">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-sm text-[10px] mt-1">Profile</span>
+</div>
+</nav>
+<!-- Footer -->
+<footer class="w-full bg-primary dark:bg-primary-container text-on-primary dark:text-on-primary-container mt-auto">
+<div class="max-w-container-max mx-auto py-stack-md px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="font-label-md text-label-md uppercase tracking-wider font-bold">
+                FARS Platform
+            </div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="font-body-sm text-body-sm text-on-primary/80 hover:text-secondary-fixed transition-colors" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-on-primary/80 hover:text-secondary-fixed transition-colors" href="#">Terms of Service</a>
+<a class="font-body-sm text-body-sm text-on-primary/80 hover:text-secondary-fixed transition-colors" href="#">Contact Support</a>
+</div>
+<div class="font-body-sm text-body-sm text-on-primary/60">
+                © 2024 FARS Platform. All rights reserved.
+            </div>
+</div>
+</footer>
+</body></html>

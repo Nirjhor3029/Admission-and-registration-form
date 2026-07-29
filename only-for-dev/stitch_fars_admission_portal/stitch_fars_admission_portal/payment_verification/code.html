@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FARS - Payment Verification</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary": "#003b35",
+                      "on-tertiary-fixed-variant": "#005049",
+                      "outline": "#727780",
+                      "on-background": "#0b1c30",
+                      "surface-tint": "#2d6197",
+                      "on-primary": "#ffffff",
+                      "surface-variant": "#d3e4fe",
+                      "background": "#f8f9ff",
+                      "surface-container-low": "#eff4ff",
+                      "on-secondary": "#ffffff",
+                      "surface-dim": "#cbdbf5",
+                      "outline-variant": "#c2c7d1",
+                      "secondary": "#855300",
+                      "surface-container-lowest": "#ffffff",
+                      "on-surface": "#0b1c30",
+                      "on-primary-container": "#8ebdf9",
+                      "primary-fixed-dim": "#a0c9ff",
+                      "on-primary-fixed": "#001c37",
+                      "secondary-fixed": "#ffddb8",
+                      "surface-container-high": "#dce9ff",
+                      "primary-fixed": "#d2e4ff",
+                      "on-secondary-container": "#684000",
+                      "on-tertiary-container": "#5eccbe",
+                      "primary": "#00355f",
+                      "on-error": "#ffffff",
+                      "on-primary-fixed-variant": "#07497d",
+                      "tertiary-fixed-dim": "#6bd8cb",
+                      "error-container": "#ffdad6",
+                      "tertiary-container": "#00544d",
+                      "error": "#ba1a1a",
+                      "inverse-primary": "#a0c9ff",
+                      "surface-bright": "#f8f9ff",
+                      "on-secondary-fixed-variant": "#653e00",
+                      "on-tertiary": "#ffffff",
+                      "inverse-on-surface": "#eaf1ff",
+                      "secondary-fixed-dim": "#ffb95f",
+                      "on-surface-variant": "#42474f",
+                      "on-tertiary-fixed": "#00201d",
+                      "surface": "#f8f9ff",
+                      "tertiary-fixed": "#89f5e7",
+                      "inverse-surface": "#213145",
+                      "on-error-container": "#93000a",
+                      "surface-container-highest": "#d3e4fe",
+                      "primary-container": "#0f4c81",
+                      "surface-container": "#e5eeff",
+                      "secondary-container": "#fea619",
+                      "on-secondary-fixed": "#2a1700"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-lg": "2rem",
+                      "stack-sm": "0.5rem",
+                      "gutter": "1.5rem",
+                      "margin-mobile": "1rem",
+                      "margin-desktop": "2.5rem",
+                      "stack-md": "1rem",
+                      "container-max": "1280px"
+              },
+              "fontFamily": {
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "headline-xl": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-xl": [
+                              "36px",
+                              {
+                                      "lineHeight": "44px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        /* Ambient subtle backdrop for split view depth */
+        body {
+            background-color: theme('colors.background');
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: theme('colors.outline-variant');
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body class="text-on-background font-body-md antialiased overflow-hidden flex">
+<!-- JSON Component: NavigationDrawer (Admin Desktop Context) -->
+<nav class="bg-surface-container-low dark:bg-surface-container-lowest text-primary dark:text-primary-fixed-dim font-label-md text-label-md fixed left-0 top-0 h-full w-[280px] border-r border-outline-variant flex flex-col py-stack-lg z-20">
+<!-- Header: Profile Layout -->
+<div class="px-6 mb-8 flex flex-col items-start gap-4">
+<div class="font-headline-lg text-headline-lg font-black text-primary">FARS</div>
+<div class="flex items-center gap-3 w-full">
+<img class="w-12 h-12 rounded-full object-cover border-2 border-surface shadow-sm" data-alt="A professional, clean 3D rendered avatar of a university administrator. Soft studio lighting, neutral background, modern corporate aesthetic. High resolution, 8k, photorealistic textures." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyvuduMOmZEdlUhk9anvTt0RMtzLrftZcypOTye4hlAP2XKeQkRyQNivSHaMJsbbIys0oHK1N8lIpM4-qu2BM5UuwRgp8z5K09CyQh5zdYBAHdFTXoSHW9UPlW6P6m_LdLnCuJgNoHgc2quhmmPnJYEoO56ZUJRtyD8svcQtsKOxXIe6cITEY7-xHmIHS8MAl9VQdj8UMFoHsGD43ExHZfmLzVGRCmfR-zdRzEgA5naHQ64V7p7-nrgw"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Admin Panel</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">FARS Registrar</span>
+</div>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex-1 flex flex-col gap-1 pr-4">
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant rounded-r-full px-4 py-3 transition-all duration-200 ease-in-out ml-2" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+                Overview
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant rounded-r-full px-4 py-3 transition-all duration-200 ease-in-out ml-2" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">group</span>
+                Students
+            </a>
+<!-- ACTIVE STATE -->
+<a class="flex items-center gap-3 bg-secondary-container text-on-secondary-container rounded-r-full font-bold px-4 py-3 transition-all duration-200 ease-in-out ml-2 relative" href="#">
+<span class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-secondary rounded-r-full"></span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+                Payments
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant rounded-r-full px-4 py-3 transition-all duration-200 ease-in-out ml-2" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">library_books</span>
+                Courses
+            </a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-variant rounded-r-full px-4 py-3 transition-all duration-200 ease-in-out ml-2" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">analytics</span>
+                Reports
+            </a>
+</div>
+<!-- Meta Text -->
+<div class="px-6 mt-auto">
+<span class="font-label-sm text-label-sm text-outline">v1.0.4</span>
+</div>
+</nav>
+<!-- Main Canvas Area -->
+<main class="ml-[280px] flex-1 h-screen flex flex-col bg-background relative z-10">
+<!-- Context Header -->
+<header class="h-20 shrink-0 px-margin-desktop flex items-center justify-between border-b border-outline-variant bg-surface/80 backdrop-blur-md sticky top-0 z-10">
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<div>
+<h1 class="font-headline-md text-headline-md text-on-surface">Verify Transaction</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Reference: #TRX-2024-8892</p>
+</div>
+</div>
+<div class="flex items-center gap-2 bg-secondary-container/30 border border-secondary/20 px-3 py-1.5 rounded-full">
+<span class="material-symbols-outlined text-secondary text-[18px]">pending</span>
+<span class="font-label-sm text-label-sm text-on-secondary-container">Awaiting Review</span>
+</div>
+</header>
+<!-- Split View Layout -->
+<div class="flex-1 flex gap-gutter p-margin-desktop overflow-hidden min-h-0">
+<!-- Left Pane: Data & Details (Level 1 Surface) -->
+<section class="w-[400px] shrink-0 bg-surface border border-outline-variant rounded-xl shadow-[0_4px_20px_-4px_rgba(15,76,129,0.05)] flex flex-col overflow-hidden">
+<div class="p-6 border-b border-outline-variant/50 bg-surface-container-lowest flex items-center gap-4">
+<img class="w-16 h-16 rounded-lg object-cover border border-outline-variant shadow-sm" data-alt="A bright, professional headshot portrait of a young male university student. He is wearing a clean white shirt and a dark blue blazer. The background is a soft, out-of-focus modern campus library setting. High-key lighting, trustworthy and academic aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDprdBQjy-WrGAriPX1n3mWARDJNeQYoU23vzg0Q0RSPuQwc-fQw85LNuGYRnTCkNvifq2Mn42a5RoHVzwsya1bZFVqMLJLsibeH0YHwEqdZmmP-2BzipHJaXcntDvDcC5PQAyHzrlFdO57T2TJW2W_5F4Fp5JKHZ_lDSTjkyD9tuWZxfRQq3WRJoLRxgy6sEGjAhjOyfCs893TCApUp1OLz5JffWu5QeUAyiRAdQ0_hhmGCYSgynuQrQ"/>
+<div>
+<h2 class="font-label-md text-label-md text-on-surface text-lg">Marcus Sterling</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">ID: 2021-09438</p>
+<p class="font-body-sm text-body-sm text-primary mt-1">BSc Computer Science</p>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar p-6 flex flex-col gap-stack-lg">
+<!-- Detail Block: Payment Meta -->
+<div>
+<h3 class="font-label-sm text-label-sm text-outline uppercase tracking-widest mb-4">Payment Details</h3>
+<dl class="flex flex-col gap-4">
+<div class="flex justify-between items-start border-b border-outline-variant/30 pb-3">
+<dt class="font-body-sm text-body-sm text-on-surface-variant">Amount Submitted</dt>
+<dd class="font-headline-md text-headline-md text-primary font-bold">$2,450.00</dd>
+</div>
+<div class="flex justify-between items-start border-b border-outline-variant/30 pb-3">
+<dt class="font-body-sm text-body-sm text-on-surface-variant">Date Uploaded</dt>
+<dd class="font-body-md text-body-md text-on-surface font-medium text-right">Oct 24, 2024<br/><span class="text-on-surface-variant text-sm font-normal">14:32 PST</span></dd>
+</div>
+<div class="flex justify-between items-start border-b border-outline-variant/30 pb-3">
+<dt class="font-body-sm text-body-sm text-on-surface-variant">Payment Method</dt>
+<dd class="font-body-md text-body-md text-on-surface font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-primary">account_balance</span>
+                                    Bank Transfer
+                                </dd>
+</div>
+<div class="flex justify-between items-start border-b border-outline-variant/30 pb-3">
+<dt class="font-body-sm text-body-sm text-on-surface-variant">Bank Name</dt>
+<dd class="font-body-md text-body-md text-on-surface font-medium">Global Heritage Bank</dd>
+</div>
+</dl>
+</div>
+<!-- Detail Block: Purpose -->
+<div>
+<h3 class="font-label-sm text-label-sm text-outline uppercase tracking-widest mb-4">Allocation</h3>
+<div class="bg-surface-container-low rounded-lg p-4 border border-outline-variant/50">
+<div class="flex justify-between items-center mb-2">
+<span class="font-body-sm text-body-sm text-on-surface">Fall Semester 2024 Tuition</span>
+<span class="font-label-md text-label-md text-on-surface">$2,000.00</span>
+</div>
+<div class="flex justify-between items-center mb-2">
+<span class="font-body-sm text-body-sm text-on-surface">Lab Equipment Fee</span>
+<span class="font-label-md text-label-md text-on-surface">$350.00</span>
+</div>
+<div class="flex justify-between items-center pt-2 border-t border-outline-variant/50">
+<span class="font-body-sm text-body-sm text-on-surface">Late Registration Penalty</span>
+<span class="font-label-md text-label-md text-on-surface">$100.00</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Pane: Image Preview Viewer (Level 0/1 Hybrid) -->
+<section class="flex-1 bg-surface border border-outline-variant rounded-xl shadow-[0_4px_20px_-4px_rgba(15,76,129,0.05)] overflow-hidden flex flex-col relative group">
+<!-- Viewer Toolbar -->
+<div class="absolute top-4 right-4 z-10 flex items-center gap-2 bg-surface/90 backdrop-blur-md p-1.5 rounded-lg border border-outline-variant shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-variant text-on-surface transition-colors" title="Zoom Out">
+<span class="material-symbols-outlined text-[20px]">zoom_out</span>
+</button>
+<span class="font-label-sm text-label-sm text-on-surface-variant px-1 w-12 text-center">100%</span>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-variant text-on-surface transition-colors" title="Zoom In">
+<span class="material-symbols-outlined text-[20px]">zoom_in</span>
+</button>
+<div class="w-px h-5 bg-outline-variant mx-1"></div>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-variant text-on-surface transition-colors" title="Rotate">
+<span class="material-symbols-outlined text-[20px]">rotate_right</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-variant text-on-surface transition-colors" title="Open Fullscreen">
+<span class="material-symbols-outlined text-[20px]">open_in_full</span>
+</button>
+</div>
+<!-- Image Container -->
+<div class="flex-1 bg-surface-container-highest flex items-center justify-center p-8 overflow-auto relative cursor-grab active:cursor-grabbing">
+<!-- Checkerboard pattern for transparent/white images contrast -->
+<div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(theme('colors.primary') 1px, transparent 1px); background-size: 20px 20px;"></div>
+<img class="max-w-full h-auto object-contain shadow-lg border border-outline-variant/20 rounded z-0 select-none transition-transform duration-200 transform scale-100 origin-center" data-alt="A high-resolution, perfectly clear photograph of a bank transfer receipt printed on crisp white paper. The receipt is laid flat against a dark, contrasting modern desk surface. The text on the receipt is highly legible, showing transaction IDs, dates, and a total amount of $2450.00. The lighting is bright and even, casting subtle, realistic shadows, conveying a sense of official administrative documentation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAV1RcBiktfzOo1Xwhp4CHcrrXH8AlDxWkLRm_AINKyXExf0GM2U7aWgHPrhBX31-iQi3M929wi0Wlotgkcl0N-gozOF89ZlJm6K-A0DACUvq-O2MtqabF7uY8UxmUrqO5Rvh8OZ4WFiBlrgT4cuCHodGAw1WgSiAtK3fGEXch2plsHReVANErwZMS-_HPUgpXWKa_1YSO-VxiEI1xuove2eKa9tlXHfyaPr6-lPguAtIcZJcRKYmQGiQ"/>
+</div>
+</section>
+</div>
+<!-- Floating Action Bar (Level 2 Elevation context) -->
+<footer class="shrink-0 bg-surface border-t border-outline-variant px-margin-desktop py-4 flex items-center justify-between shadow-[0_-8px_30px_-10px_rgba(15,76,129,0.15)] z-20">
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined">info</span>
+<span class="font-body-sm text-body-sm">Ensure all details match the university ledger before approving.</span>
+</div>
+<div class="flex items-center gap-4">
+<!-- Rejection Input Container -->
+<div class="relative group">
+<input class="w-80 h-12 bg-surface-container-low border border-outline-variant rounded-lg px-4 pr-10 font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:border-error focus:ring-1 focus:ring-error transition-all outline-none peer" id="rejectReason" placeholder="Reason for rejection (required if rejecting)" type="text"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline peer-focus:text-error transition-colors">edit_note</span>
+</div>
+<!-- Actions -->
+<button class="h-12 px-6 rounded-lg border border-error text-error font-label-md text-label-md flex items-center gap-2 hover:bg-error-container hover:text-on-error-container hover:border-error-container transition-all active:scale-95">
+<span class="material-symbols-outlined text-[20px]">cancel</span>
+                    Reject
+                </button>
+<button class="h-12 px-8 rounded-lg bg-primary text-on-primary font-label-md text-label-md flex items-center gap-2 hover:bg-primary-container hover:text-on-primary-container shadow-sm hover:shadow transition-all active:scale-95">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+                    Approve Payment
+                </button>
+</div>
+</footer>
+</main>
+</body></html>

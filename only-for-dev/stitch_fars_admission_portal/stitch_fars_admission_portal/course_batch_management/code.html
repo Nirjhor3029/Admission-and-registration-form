@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FARS - Course &amp; Batch Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary": "#003b35",
+                      "on-tertiary-fixed-variant": "#005049",
+                      "outline": "#727780",
+                      "on-background": "#0b1c30",
+                      "surface-tint": "#2d6197",
+                      "on-primary": "#ffffff",
+                      "surface-variant": "#d3e4fe",
+                      "background": "#f8f9ff",
+                      "surface-container-low": "#eff4ff",
+                      "on-secondary": "#ffffff",
+                      "surface-dim": "#cbdbf5",
+                      "outline-variant": "#c2c7d1",
+                      "secondary": "#855300",
+                      "surface-container-lowest": "#ffffff",
+                      "on-surface": "#0b1c30",
+                      "on-primary-container": "#8ebdf9",
+                      "primary-fixed-dim": "#a0c9ff",
+                      "on-primary-fixed": "#001c37",
+                      "secondary-fixed": "#ffddb8",
+                      "surface-container-high": "#dce9ff",
+                      "primary-fixed": "#d2e4ff",
+                      "on-secondary-container": "#684000",
+                      "on-tertiary-container": "#5eccbe",
+                      "primary": "#00355f",
+                      "on-error": "#ffffff",
+                      "on-primary-fixed-variant": "#07497d",
+                      "tertiary-fixed-dim": "#6bd8cb",
+                      "error-container": "#ffdad6",
+                      "tertiary-container": "#00544d",
+                      "error": "#ba1a1a",
+                      "inverse-primary": "#a0c9ff",
+                      "surface-bright": "#f8f9ff",
+                      "on-secondary-fixed-variant": "#653e00",
+                      "on-tertiary": "#ffffff",
+                      "inverse-on-surface": "#eaf1ff",
+                      "secondary-fixed-dim": "#ffb95f",
+                      "on-surface-variant": "#42474f",
+                      "on-tertiary-fixed": "#00201d",
+                      "surface": "#f8f9ff",
+                      "tertiary-fixed": "#89f5e7",
+                      "inverse-surface": "#213145",
+                      "on-error-container": "#93000a",
+                      "surface-container-highest": "#d3e4fe",
+                      "primary-container": "#0f4c81",
+                      "surface-container": "#e5eeff",
+                      "secondary-container": "#fea619",
+                      "on-secondary-fixed": "#2a1700"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-lg": "2rem",
+                      "stack-sm": "0.5rem",
+                      "gutter": "1.5rem",
+                      "margin-mobile": "1rem",
+                      "margin-desktop": "2.5rem",
+                      "stack-md": "1rem",
+                      "container-max": "1280px"
+              },
+              "fontFamily": {
+                      "body-sm": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-xl": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "body-md": ["Inter"]
+              },
+              "fontSize": {
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                      "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        body {
+            background-color: #f8f9ff;
+            color: #0b1c30;
+        }
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 53, 95, 0.1), 0 2px 4px -1px rgba(0, 53, 95, 0.06);
+        }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row min-h-screen bg-background text-on-background font-body-md overflow-x-hidden">
+<!-- TopAppBar (Mobile Only) -->
+<header class="md:hidden flex justify-between items-center w-full px-margin-mobile h-16 bg-surface shadow-sm z-40 fixed top-0 left-0">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[24px]" data-icon="school">school</span>
+<span class="text-headline-md font-headline-md font-bold text-primary">FARS</span>
+</div>
+<img class="w-8 h-8 rounded-full object-cover" data-alt="A small circular avatar portrait of a professional academic administrator looking friendly and approachable, set against a bright modern office background. Soft natural lighting emphasizes competence and reliability in this educational management context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1_-bKCdkjJkLLNbJdA81PHkKno6bd4y-n0Udq4VaT-5Z-UsKhgzfmgJR-CfCDjSKjqa4c3GGmrrZQ5q764-1KH4GVgh-TRLLBPcB3idtqmycYezF4ikym5dyWDWmkTp2N04DdfJCAHpa7jW7HQOyHwl2VKLrp8kswQohfXca70qYdU7vgKTkiE17289EmyI_vTWgKm_UahtTnsU7zJwe51cqQCU_d_2ZqT1nBK53PB6omEec-0eQy8A"/>
+</header>
+<!-- NavigationDrawer (Desktop Only) -->
+<nav class="hidden md:flex flex-col h-screen py-stack-lg bg-surface-container-low fixed left-0 top-0 w-[280px] border-r border-outline-variant z-40">
+<div class="px-6 mb-8 flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A professional circular avatar portrait of an administrative registrar for an educational platform. The person appears organized and authoritative yet accessible, positioned in a well-lit, contemporary academic administrative office setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSOKcUlHAT4pHN_kLSavVHVMsPRWUG6wo6TTomjESMzgd2EDU9G9Juov7oWH0rGcsA42RtzUUEkVaRFLBHKSgEZgRT6YhSUoHM9mk_ekdFZUjVMR7LBcmED9PgZ4HAukGTuteex_Y7xq7AreBXYVlpD28Wxfh4RdvSgjzvfDVC1oUPGoW20qZmqBCvVZlPez-NzLBY4lpJh55YzdEaURxUTUMryszsB4KCKQKc7Uafxw4697mrvhi6Sg"/>
+<div>
+<h2 class="font-headline-md text-headline-md font-bold text-primary">Admin Panel</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant">FARS Registrar</p>
+</div>
+</div>
+<ul class="flex flex-col gap-2 pr-4">
+<li>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-variant rounded-r-full px-4 py-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Overview</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-variant rounded-r-full px-4 py-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Students</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-variant rounded-r-full px-4 py-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md text-label-md">Payments</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 bg-secondary-container text-on-secondary-container rounded-r-full font-bold px-4 py-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined fill">library_books</span>
+<span class="font-label-md text-label-md">Courses</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-variant rounded-r-full px-4 py-3 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+</li>
+</ul>
+<div class="mt-auto px-6">
+<span class="font-label-sm text-label-sm text-outline">v1.0.4</span>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 mt-16 md:mt-0 md:ml-[280px] p-margin-mobile md:p-margin-desktop bg-surface-bright min-h-screen pb-24 md:pb-8">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-stack-lg gap-4">
+<div>
+<h1 class="font-headline-xl text-headline-lg-mobile md:text-headline-xl text-primary font-bold">Course Management</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Manage academic programs, track active batches, and monitor enrollment capacity.</p>
+</div>
+<div class="flex gap-3 w-full md:w-auto">
+<button class="flex-1 md:flex-none h-12 md:h-10 px-4 md:px-6 bg-surface-variant text-primary font-label-md text-label-md rounded-lg flex items-center justify-center gap-2 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                    Add Batch
+                </button>
+<button class="flex-1 md:flex-none h-12 md:h-10 px-4 md:px-6 bg-primary text-on-primary font-label-md text-label-md rounded-lg flex items-center justify-center gap-2 hover:bg-primary-container transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[20px]">library_add</span>
+                    Add Course
+                </button>
+</div>
+</div>
+<!-- Filters / Controls -->
+<div class="bg-surface rounded-xl border border-outline-variant p-4 mb-stack-lg flex flex-col md:flex-row gap-4 items-center justify-between card-shadow">
+<div class="relative w-full md:w-96">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full h-10 pl-10 pr-4 rounded-lg border-outline-variant text-body-md focus:border-primary focus:ring-1 focus:ring-primary bg-surface transition-all" placeholder="Search courses or batches..." type="text"/>
+</div>
+<div class="flex gap-3 w-full md:w-auto">
+<select class="h-10 rounded-lg border-outline-variant text-body-sm text-on-surface-variant bg-surface focus:border-primary focus:ring-1 focus:ring-primary w-full md:w-auto">
+<option>All Departments</option>
+<option>Technology</option>
+<option>Language Arts</option>
+<option>Design</option>
+</select>
+<select class="h-10 rounded-lg border-outline-variant text-body-sm text-on-surface-variant bg-surface focus:border-primary focus:ring-1 focus:ring-primary w-full md:w-auto">
+<option>Status: Active</option>
+<option>Status: Upcoming</option>
+<option>Status: Archived</option>
+</select>
+</div>
+</div>
+<!-- Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-gutter">
+<!-- Course Card 1 -->
+<div class="bg-surface rounded-xl border border-outline-variant overflow-hidden card-shadow flex flex-col">
+<div class="p-6 border-b border-outline-variant bg-surface-container-low flex justify-between items-start">
+<div class="flex gap-4 items-start">
+<div class="w-12 h-12 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined fill text-[28px]">computer</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary font-bold">BSc Computer Science</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">CS-101 • 4 Years • Dept. of Technology</p>
+</div>
+</div>
+<button class="text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="p-6 flex-1">
+<h4 class="font-label-md text-label-md text-on-surface mb-4">Active Batches</h4>
+<div class="space-y-4">
+<!-- Batch Item -->
+<div class="p-4 rounded-lg border border-outline-variant bg-surface-bright hover:border-primary-fixed-dim transition-colors group cursor-pointer">
+<div class="flex justify-between items-center mb-2">
+<span class="font-label-md text-label-md text-primary">Fall 2024 - A</span>
+<span class="px-2 py-1 bg-surface-container-highest text-on-surface text-[11px] font-bold rounded-full">Started</span>
+</div>
+<div class="flex justify-between text-body-sm text-on-surface-variant mb-1">
+<span>Enrollment</span>
+<span>45 / 50 Seats</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 90%;"></div>
+</div>
+</div>
+<!-- Batch Item -->
+<div class="p-4 rounded-lg border border-outline-variant bg-surface-bright hover:border-primary-fixed-dim transition-colors group cursor-pointer">
+<div class="flex justify-between items-center mb-2">
+<span class="font-label-md text-label-md text-primary">Spring 2025 - B</span>
+<span class="px-2 py-1 bg-secondary-container/30 text-on-secondary-container text-[11px] font-bold rounded-full border border-secondary-container">Open</span>
+</div>
+<div class="flex justify-between text-body-sm text-on-surface-variant mb-1">
+<span>Enrollment</span>
+<span>12 / 50 Seats</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 24%;"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="px-6 py-4 border-t border-outline-variant bg-surface-bright flex justify-end">
+<button class="text-primary font-label-md text-label-md hover:underline flex items-center gap-1">
+                        View Details <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Course Card 2 -->
+<div class="bg-surface rounded-xl border border-outline-variant overflow-hidden card-shadow flex flex-col">
+<div class="p-6 border-b border-outline-variant bg-surface-container-low flex justify-between items-start">
+<div class="flex gap-4 items-start">
+<div class="w-12 h-12 rounded-lg bg-tertiary-container text-on-tertiary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined fill text-[28px]">language</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary font-bold">IELTS Preparation</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">ENG-202 • 3 Months • Language Arts</p>
+</div>
+</div>
+<button class="text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="p-6 flex-1">
+<h4 class="font-label-md text-label-md text-on-surface mb-4">Active Batches</h4>
+<div class="space-y-4">
+<!-- Batch Item -->
+<div class="p-4 rounded-lg border border-outline-variant bg-surface-bright hover:border-primary-fixed-dim transition-colors group cursor-pointer">
+<div class="flex justify-between items-center mb-2">
+<span class="font-label-md text-label-md text-primary">Weekend Morning Batch</span>
+<span class="px-2 py-1 bg-surface-container-highest text-on-surface text-[11px] font-bold rounded-full">Started</span>
+</div>
+<div class="flex justify-between text-body-sm text-on-surface-variant mb-1">
+<span>Enrollment</span>
+<span>30 / 30 Seats</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-error rounded-full" style="width: 100%;"></div>
+</div>
+<p class="text-[11px] text-error mt-1 text-right">Full Capacity</p>
+</div>
+</div>
+</div>
+<div class="px-6 py-4 border-t border-outline-variant bg-surface-bright flex justify-end">
+<button class="text-primary font-label-md text-label-md hover:underline flex items-center gap-1">
+                        View Details <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Course Card 3 -->
+<div class="bg-surface rounded-xl border border-outline-variant overflow-hidden card-shadow flex flex-col">
+<div class="p-6 border-b border-outline-variant bg-surface-container-low flex justify-between items-start">
+<div class="flex gap-4 items-start">
+<div class="w-12 h-12 rounded-lg bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined fill text-[28px]">brush</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-primary font-bold">Advanced Graphic Design</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">DES-305 • 6 Months • Dept. of Design</p>
+</div>
+</div>
+<button class="text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="p-6 flex-1 flex flex-col items-center justify-center text-center">
+<div class="w-16 h-16 rounded-full bg-surface-variant flex items-center justify-center mb-3">
+<span class="material-symbols-outlined text-outline text-[32px]">event_busy</span>
+</div>
+<h4 class="font-label-md text-label-md text-on-surface">No Active Batches</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 max-w-[200px]">Create a new batch to start enrolling students in this course.</p>
+<button class="mt-4 h-10 px-4 bg-surface-variant text-primary font-label-md text-label-md rounded-lg flex items-center justify-center gap-2 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                        Create Batch
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-2 border-t border-outline-variant bg-surface shadow-lg z-50">
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-variant rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl p-2 active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined fill">library_books</span>
+<span class="font-label-sm text-label-sm mt-1 font-bold">Courses</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 hover:bg-surface-variant rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm mt-1">Profile</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FARS - Course Registration Step 1</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary": "#003b35",
+                    "on-tertiary-fixed-variant": "#005049",
+                    "outline": "#727780",
+                    "on-background": "#0b1c30",
+                    "surface-tint": "#2d6197",
+                    "on-primary": "#ffffff",
+                    "surface-variant": "#d3e4fe",
+                    "background": "#f8f9ff",
+                    "surface-container-low": "#eff4ff",
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#cbdbf5",
+                    "outline-variant": "#c2c7d1",
+                    "secondary": "#855300",
+                    "surface-container-lowest": "#ffffff",
+                    "on-surface": "#0b1c30",
+                    "on-primary-container": "#8ebdf9",
+                    "primary-fixed-dim": "#a0c9ff",
+                    "on-primary-fixed": "#001c37",
+                    "secondary-fixed": "#ffddb8",
+                    "surface-container-high": "#dce9ff",
+                    "primary-fixed": "#d2e4ff",
+                    "on-secondary-container": "#684000",
+                    "on-tertiary-container": "#5eccbe",
+                    "primary": "#00355f",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed-variant": "#07497d",
+                    "tertiary-fixed-dim": "#6bd8cb",
+                    "error-container": "#ffdad6",
+                    "tertiary-container": "#00544d",
+                    "error": "#ba1a1a",
+                    "inverse-primary": "#a0c9ff",
+                    "surface-bright": "#f8f9ff",
+                    "on-secondary-fixed-variant": "#653e00",
+                    "on-tertiary": "#ffffff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "secondary-fixed-dim": "#ffb95f",
+                    "on-surface-variant": "#42474f",
+                    "on-tertiary-fixed": "#00201d",
+                    "surface": "#f8f9ff",
+                    "tertiary-fixed": "#89f5e7",
+                    "inverse-surface": "#213145",
+                    "on-error-container": "#93000a",
+                    "surface-container-highest": "#d3e4fe",
+                    "primary-container": "#0f4c81",
+                    "surface-container": "#e5eeff",
+                    "secondary-container": "#fea619",
+                    "on-secondary-fixed": "#2a1700"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-lg": "2rem",
+                    "stack-sm": "0.5rem",
+                    "gutter": "1.5rem",
+                    "margin-mobile": "1rem",
+                    "margin-desktop": "2.5rem",
+                    "stack-md": "1rem",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-xl": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-low min-h-screen font-body-md text-on-surface antialiased flex flex-col">
+<!-- Minimal Header for Transactional Flow -->
+<header class="w-full bg-surface-container-lowest border-b border-outline-variant px-margin-mobile md:px-margin-desktop h-16 flex items-center justify-between sticky top-0 z-50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">school</span>
+<span class="font-headline-md text-headline-md font-bold text-primary tracking-tight">FARS</span>
+</div>
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+<span class="font-label-sm text-label-sm uppercase tracking-wider hidden md:block">Cancel</span>
+<span class="material-symbols-outlined">close</span>
+</button>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 w-full max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop py-stack-lg">
+<!-- Progress Indicator -->
+<div class="mb-stack-lg">
+<div class="flex items-center justify-between mb-stack-sm">
+<span class="font-label-md text-label-md text-primary">Step 1 of 2</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Personal &amp; Course Info</span>
+</div>
+<div class="w-full bg-surface-variant h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full transition-all duration-500 w-1/2"></div>
+</div>
+</div>
+<!-- Registration Form Card -->
+<form action="#" class="bg-surface-container-lowest rounded-xl shadow-[0_10px_25px_-5px_rgba(0,53,95,0.05)] border border-outline-variant/30 p-margin-mobile md:p-stack-lg overflow-hidden" method="POST">
+<!-- Section: Personal Info -->
+<div class="mb-stack-lg">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-stack-md flex items-center gap-2 border-b border-surface-variant pb-2">
+<span class="material-symbols-outlined text-primary/70">person</span>
+                    Personal Information
+                </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Photo Upload -->
+<div class="col-span-1 md:col-span-2 flex flex-col gap-stack-sm mb-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Profile Photo</label>
+<div class="flex items-start gap-4">
+<div class="w-24 h-24 rounded-full bg-surface-container border-2 border-dashed border-outline-variant flex items-center justify-center overflow-hidden flex-shrink-0 relative group cursor-pointer transition-colors hover:border-primary">
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors text-3xl">add_a_photo</span>
+<!-- Hidden File Input -->
+<input accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" type="file"/>
+</div>
+<div class="flex flex-col justify-center pt-2">
+<span class="font-label-md text-label-md text-on-surface">Upload a clear photo</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant max-w-xs mt-1">This will be used for your student ID card. Max size: 2MB. Format: JPG/PNG.</span>
+</div>
+</div>
+</div>
+<!-- Full Name -->
+<div class="col-span-1 md:col-span-2 flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="fullName">Full Name (as per documents) <span class="text-error">*</span></label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant">badge</span>
+<input class="w-full h-12 pl-10 pr-3 border border-outline-variant rounded-md bg-surface-container-lowest font-body-md text-body-md text-on-surface placeholder:text-outline-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" id="fullName" name="fullName" placeholder="e.g. Jane Doe" required="" type="text"/>
+</div>
+</div>
+<!-- Mobile Number -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="mobile">Mobile Number <span class="text-error">*</span></label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant">phone_iphone</span>
+<input class="w-full h-12 pl-10 pr-3 border border-outline-variant rounded-md bg-surface-container-lowest font-body-md text-body-md text-on-surface placeholder:text-outline-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" id="mobile" name="mobile" placeholder="+1 (555) 000-0000" required="" type="tel"/>
+</div>
+</div>
+<!-- Email -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="email">Email Address <span class="text-error">*</span></label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant">mail</span>
+<input class="w-full h-12 pl-10 pr-3 border border-outline-variant rounded-md bg-surface-container-lowest font-body-md text-body-md text-on-surface placeholder:text-outline-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" id="email" name="email" placeholder="jane@example.com" required="" type="email"/>
+</div>
+</div>
+<!-- WhatsApp Number -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="whatsapp">WhatsApp Number</label>
+<label class="flex items-center gap-2 cursor-pointer group">
+<input class="w-4 h-4 rounded text-primary border-outline-variant focus:ring-primary/50 bg-surface-container-lowest" type="checkbox"/>
+<span class="font-label-sm text-label-sm text-on-surface-variant group-hover:text-primary transition-colors">Same as Mobile</span>
+</label>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant">chat</span>
+<input class="w-full h-12 pl-10 pr-3 border border-outline-variant rounded-md bg-surface-container-lowest font-body-md text-body-md text-on-surface placeholder:text-outline-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" id="whatsapp" name="whatsapp" placeholder="For important updates" type="tel"/>
+</div>
+</div>
+<!-- Gender -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="gender">Gender <span class="text-error">*</span></label>
+<div class="relative">
+<select class="w-full h-12 pl-3 pr-10 border border-outline-variant rounded-md bg-surface-container-lowest font-body-md text-body-md text-on-surface appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" id="gender" name="gender" required="">
+<option disabled="" selected="" value="">Select Gender</option>
+<option value="female">Female</option>
+<option value="male">Male</option>
+<option value="other">Other</option>
+<option value="prefer_not_to_say">Prefer not to say</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline-variant pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Address -->
+<div class="col-span-1 md:col-span-2 flex flex-col gap-1.5 mt-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="address">Current Address</label>
+<textarea class="w-full p-3 border border-outline-variant rounded-md bg-surface-container-lowest font-body-md text-body-md text-on-surface placeholder:text-outline-variant/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm resize-y" id="address" name="address" placeholder="Enter your full residential address..." rows="3"></textarea>
+</div>
+</div>
+</div>
+<!-- Section: Course Info -->
+<div class="mb-stack-lg">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-stack-md flex items-center gap-2 border-b border-surface-variant pb-2">
+<span class="material-symbols-outlined text-primary/70">library_books</span>
+                    Course Details
+                </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Educational Qualification -->
+<div class="col-span-1 md:col-span-2 flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="education">Highest Educational Qualification <span class="text-error">*</span></label>
+<div class="relative">
+<select class="w-full h-12 pl-3 pr-10 border border-outline-variant rounded-md bg-surface-container-lowest font-body-md text-body-md text-on-surface appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" id="education" name="education" required="">
+<option disabled="" selected="" value="">Select Qualification</option>
+<option value="high_school">High School Diploma</option>
+<option value="bachelors">Bachelor's Degree</option>
+<option value="masters">Master's Degree</option>
+<option value="phd">Doctorate / PhD</option>
+<option value="other">Other</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline-variant pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Course -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="course">Desired Course <span class="text-error">*</span></label>
+<div class="relative">
+<select class="w-full h-12 pl-3 pr-10 border border-outline-variant rounded-md bg-surface-container-lowest font-body-md text-body-md text-on-surface appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" id="course" name="course" required="">
+<option disabled="" selected="" value="">Select Course</option>
+<option value="cs101">Intro to Computer Science</option>
+<option value="ds201">Data Structures &amp; Algorithms</option>
+<option value="wd301">Full-Stack Web Development</option>
+<option value="ai401">Artificial Intelligence Basics</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline-variant pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Batch -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="batch">Preferred Batch <span class="text-error">*</span></label>
+<div class="relative">
+<select class="w-full h-12 pl-3 pr-10 border border-outline-variant rounded-md bg-surface-container-lowest/50 font-body-md text-body-md text-on-surface/50 appearance-none focus:outline-none cursor-not-allowed shadow-sm" disabled="" id="batch" name="batch" required="">
+<option disabled="" selected="" value="">Select a course first</option>
+<!-- Populated dynamically based on course -->
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline-variant/50 pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Referral Source -->
+<div class="col-span-1 md:col-span-2 flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-on-surface-variant" for="referral">How did you hear about us?</label>
+<div class="relative">
+<select class="w-full h-12 pl-3 pr-10 border border-outline-variant rounded-md bg-surface-container-lowest font-body-md text-body-md text-on-surface appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" id="referral" name="referral">
+<option disabled="" selected="" value="">Select Source</option>
+<option value="social">Social Media (FB/IG/LinkedIn)</option>
+<option value="friend">Friend / Colleague</option>
+<option value="search">Search Engine (Google)</option>
+<option value="advertisement">Online Advertisement</option>
+<option value="other">Other</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline-variant pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Form Actions -->
+<div class="pt-stack-md border-t border-surface-variant mt-stack-md flex flex-col-reverse md:flex-row items-center justify-end gap-4">
+<button class="w-full md:w-auto h-12 px-6 rounded-lg font-label-md text-label-md text-primary bg-transparent hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2" type="button">
+                    Save Draft
+                </button>
+<button class="w-full md:w-auto h-12 px-8 rounded-lg font-label-md text-label-md text-on-primary bg-primary hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-md flex items-center justify-center gap-2 active:scale-95 group" type="submit">
+                    Next: Payment
+                    <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</form>
+<p class="text-center mt-stack-md font-body-sm text-body-sm text-on-surface-variant">
+            Need help with your registration? <a class="text-primary hover:underline font-medium" href="#">Contact Support</a>
+</p>
+</main>
+<!-- Suppressed Global Nav/Footer to maintain transactional focus as per mandates -->
+</body></html>

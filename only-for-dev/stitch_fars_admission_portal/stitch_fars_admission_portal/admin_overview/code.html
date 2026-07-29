@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FARS - Admin Overview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#003b35",
+                        "on-tertiary-fixed-variant": "#005049",
+                        "outline": "#727780",
+                        "on-background": "#0b1c30",
+                        "surface-tint": "#2d6197",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#d3e4fe",
+                        "background": "#f8f9ff",
+                        "surface-container-low": "#eff4ff",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#cbdbf5",
+                        "outline-variant": "#c2c7d1",
+                        "secondary": "#855300",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#0b1c30",
+                        "on-primary-container": "#8ebdf9",
+                        "primary-fixed-dim": "#a0c9ff",
+                        "on-primary-fixed": "#001c37",
+                        "secondary-fixed": "#ffddb8",
+                        "surface-container-high": "#dce9ff",
+                        "primary-fixed": "#d2e4ff",
+                        "on-secondary-container": "#684000",
+                        "on-tertiary-container": "#5eccbe",
+                        "primary": "#00355f",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed-variant": "#07497d",
+                        "tertiary-fixed-dim": "#6bd8cb",
+                        "error-container": "#ffdad6",
+                        "tertiary-container": "#00544d",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#a0c9ff",
+                        "surface-bright": "#f8f9ff",
+                        "on-secondary-fixed-variant": "#653e00",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "secondary-fixed-dim": "#ffb95f",
+                        "on-surface-variant": "#42474f",
+                        "on-tertiary-fixed": "#00201d",
+                        "surface": "#f8f9ff",
+                        "tertiary-fixed": "#89f5e7",
+                        "inverse-surface": "#213145",
+                        "on-error-container": "#93000a",
+                        "surface-container-highest": "#d3e4fe",
+                        "primary-container": "#0f4c81",
+                        "surface-container": "#e5eeff",
+                        "secondary-container": "#fea619",
+                        "on-secondary-fixed": "#2a1700"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "2rem",
+                        "stack-sm": "0.5rem",
+                        "gutter": "1.5rem",
+                        "margin-mobile": "1rem",
+                        "margin-desktop": "2.5rem",
+                        "stack-md": "1rem",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-xl": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-xl": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Ambient shadow for depth layer 1 */
+        .shadow-layer-1 {
+            box-shadow: 0 4px 10px rgba(0, 53, 95, 0.05); /* Primary tinted shadow */
+        }
+    </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased h-screen overflow-hidden flex">
+<!-- NavigationDrawer (Admin Desktop) -->
+<nav class="bg-surface-container-low dark:bg-surface-container-lowest text-primary dark:text-primary-fixed-dim font-label-md text-label-md fixed left-0 top-0 h-full w-[280px] border-r border-outline-variant flat no shadows transition-all duration-200 ease-in-out flex flex-col h-screen py-stack-lg z-40 hidden md:flex">
+<div class="px-gutter mb-stack-lg">
+<h1 class="font-headline-lg text-headline-lg font-black text-primary">FARS</h1>
+</div>
+<div class="flex items-center gap-4 px-gutter mb-stack-lg">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="A professional headshot of an administrator in a corporate setting. Clean lighting, modern office background slightly blurred. Corporate/Modern style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDV8sC0TCfJ2ddJFdTq4GAkIJgIq-oBHsqhN0XDdGMC91ifO6kFUCB3QR1eqBLMDayxcQDdiTnQfOOEF_snEblqTgSEE9qm33IP1PxcWVlrScokncg8rT7l0D7ojgFryShqW6OX8OCEzKhCtmL7igAdxvkKGq9wS0RPYkwGrR44Ye9Pwmwgd0d12ZoJlUSEY-wUy46kMcMpwo1JfOO4wBNk08bebEm0XTwFe663bZwwSTwAjyI9JQ5BIA"/>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Admin Panel</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">FARS Registrar</p>
+</div>
+</div>
+<ul class="flex-1 overflow-y-auto pr-4">
+<!-- Active Tab: Overview -->
+<li class="mb-1">
+<a class="bg-secondary-container text-on-secondary-container rounded-r-full font-bold px-4 py-3 flex items-center gap-3" href="#">
+<span class="material-symbols-outlined fill" data-icon="dashboard">dashboard</span>
+                    Overview
+                </a>
+</li>
+<li class="mb-1">
+<a class="text-on-surface-variant hover:bg-surface-variant rounded-r-full px-4 py-3 flex items-center gap-3 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+                    Students
+                </a>
+</li>
+<li class="mb-1">
+<a class="text-on-surface-variant hover:bg-surface-variant rounded-r-full px-4 py-3 flex items-center gap-3 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+                    Payments
+                </a>
+</li>
+<li class="mb-1">
+<a class="text-on-surface-variant hover:bg-surface-variant rounded-r-full px-4 py-3 flex items-center gap-3 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="library_books">library_books</span>
+                    Courses
+                </a>
+</li>
+<li class="mb-1">
+<a class="text-on-surface-variant hover:bg-surface-variant rounded-r-full px-4 py-3 flex items-center gap-3 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+                    Reports
+                </a>
+</li>
+</ul>
+<div class="px-gutter mt-auto pt-stack-md border-t border-outline-variant">
+<p class="font-body-sm text-body-sm text-on-surface-variant">v1.0.4</p>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-[280px] h-screen overflow-y-auto bg-surface-bright p-margin-mobile md:p-margin-desktop flex flex-col gap-stack-lg">
+<header class="flex justify-between items-end mb-stack-sm">
+<div>
+<h2 class="font-headline-xl text-headline-xl text-on-surface">Overview</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Today's snapshot of system metrics.</p>
+</div>
+<div class="hidden md:flex gap-2">
+<button class="bg-surface text-primary border border-outline px-4 py-2 rounded font-label-md text-label-md hover:bg-surface-variant transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">download</span> Export Report
+                </button>
+</div>
+</header>
+<!-- KPI Bento Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Card 1 -->
+<div class="bg-surface border border-outline-variant rounded-xl p-6 shadow-layer-1 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<p class="font-label-md text-label-md text-on-surface-variant">Total Leads</p>
+<div class="bg-primary-container/20 p-2 rounded-lg text-primary">
+<span class="material-symbols-outlined">campaign</span>
+</div>
+</div>
+<div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface">4,209</h3>
+<p class="font-body-sm text-body-sm text-tertiary-container flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[16px]">trending_up</span> +12% this week
+                    </p>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface border border-outline-variant rounded-xl p-6 shadow-layer-1 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<p class="font-label-md text-label-md text-on-surface-variant">Pending Payments</p>
+<div class="bg-secondary-container/20 p-2 rounded-lg text-secondary">
+<span class="material-symbols-outlined">pending_actions</span>
+</div>
+</div>
+<div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface">342</h3>
+<p class="font-body-sm text-body-sm text-error flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[16px]">priority_high</span> Action required
+                    </p>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface border border-outline-variant rounded-xl p-6 shadow-layer-1 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<p class="font-label-md text-label-md text-on-surface-variant">Admitted Students</p>
+<div class="bg-tertiary-container/20 p-2 rounded-lg text-tertiary">
+<span class="material-symbols-outlined">how_to_reg</span>
+</div>
+</div>
+<div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface">1,890</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Target: 2,000</p>
+<div class="w-full bg-surface-variant rounded-full h-1.5 mt-2 overflow-hidden">
+<div class="bg-tertiary h-1.5 rounded-full" style="width: 94%"></div>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-primary text-on-primary rounded-xl p-6 shadow-layer-1 flex flex-col justify-between relative overflow-hidden">
+<!-- Abstract decorative element -->
+<div class="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+<div class="flex justify-between items-start mb-4 relative z-10">
+<p class="font-label-md text-label-md text-on-primary/80">Revenue This Month</p>
+<div class="bg-white/20 p-2 rounded-lg text-white">
+<span class="material-symbols-outlined">account_balance</span>
+</div>
+</div>
+<div class="relative z-10">
+<h3 class="font-headline-lg text-headline-lg text-white">$452.8k</h3>
+<p class="font-body-sm text-body-sm text-secondary-fixed flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[16px]">trending_up</span> +8.4% vs last month
+                    </p>
+</div>
+</div>
+</div>
+<!-- Main Content Area: Charts & Feed -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter h-full pb-stack-lg">
+<!-- Left Column: Charts (takes 8 cols) -->
+<div class="lg:col-span-8 flex flex-col gap-gutter">
+<!-- Chart Row 1: Admission Funnel -->
+<div class="bg-surface border border-outline-variant rounded-xl p-6 shadow-layer-1 flex-1 min-h-[300px]">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-4">Admission Funnel</h3>
+<div class="w-full h-[250px] relative">
+<canvas id="funnelChart"></canvas>
+</div>
+</div>
+<!-- Chart Row 2: Grid for Pie & Line -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter flex-1">
+<!-- Revenue Line -->
+<div class="bg-surface border border-outline-variant rounded-xl p-6 shadow-layer-1 min-h-[300px]">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-4">Revenue Trend</h3>
+<div class="w-full h-[200px] relative">
+<canvas id="revenueChart"></canvas>
+</div>
+</div>
+<!-- Course Pie -->
+<div class="bg-surface border border-outline-variant rounded-xl p-6 shadow-layer-1 min-h-[300px]">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-4">Course Breakdown</h3>
+<div class="w-full h-[200px] relative flex justify-center">
+<canvas id="courseChart"></canvas>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Activity Feed (takes 4 cols) -->
+<div class="lg:col-span-4 bg-surface border border-outline-variant rounded-xl p-6 shadow-layer-1 flex flex-col h-full max-h-[800px]">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md text-on-surface">Recent Activity</h3>
+<button class="text-primary hover:text-primary-container font-label-sm text-label-sm">View All</button>
+</div>
+<div class="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+<ul class="relative border-l border-outline-variant ml-3 space-y-6">
+<!-- Activity Item 1 -->
+<li class="pl-6 relative">
+<span class="absolute -left-2.5 top-1 w-5 h-5 rounded-full bg-surface border-2 border-secondary flex items-center justify-center">
+<span class="w-2 h-2 bg-secondary rounded-full"></span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">10 mins ago</span>
+<p class="font-body-md text-body-md text-on-surface mt-1">Payment of <span class="font-bold">$1,200</span> received from <strong>Jane Doe</strong>.</p>
+<span class="inline-flex mt-2 items-center bg-secondary-container text-on-secondary-container text-[10px] font-bold px-2 py-0.5 rounded-sm w-fit">PAYMENT</span>
+</div>
+</li>
+<!-- Activity Item 2 -->
+<li class="pl-6 relative">
+<span class="absolute -left-2.5 top-1 w-5 h-5 rounded-full bg-surface border-2 border-tertiary flex items-center justify-center">
+<span class="w-2 h-2 bg-tertiary rounded-full"></span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">45 mins ago</span>
+<p class="font-body-md text-body-md text-on-surface mt-1">New application submitted for <strong>BSc Computer Science</strong>.</p>
+<div class="mt-2 flex items-center gap-2">
+<img class="w-6 h-6 rounded-full object-cover" data-alt="Small avatar of a young male student applicant. Corporate/Modern style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOrW7eLpQTyHav4IVMqa3m763rlei8UtI6N2Aj-xKbHu4aGQMduTeDXUJ7Nc_-xtHRkWGUwD5sWnbHNPufEEKTbKui8Y_nbz7LIo3Yqwa3jvahFW7PE-YKVxDI6lKGRtg8DR6kaw-LmRVVwckZosMuDtLXw2EH2mQZRtpWfCImamrCKAwfY-5znuTnYb1Ym77agct7tmXXyCgYACiRGIBSz6yqp0RfV2e2g2T0EQBGBE3KPJzQnJu04w"/>
+<span class="font-label-sm text-label-sm text-on-surface">Mark Smith</span>
+</div>
+</div>
+</li>
+<!-- Activity Item 3 -->
+<li class="pl-6 relative">
+<span class="absolute -left-2.5 top-1 w-5 h-5 rounded-full bg-surface border-2 border-error flex items-center justify-center">
+<span class="w-2 h-2 bg-error rounded-full"></span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">2 hours ago</span>
+<p class="font-body-md text-body-md text-on-surface mt-1">Payment failed for invoice #INV-4920.</p>
+<button class="mt-2 text-primary font-label-sm text-label-sm text-left hover:underline">Review details</button>
+</div>
+</li>
+<!-- Activity Item 4 -->
+<li class="pl-6 relative">
+<span class="absolute -left-2.5 top-1 w-5 h-5 rounded-full bg-surface border-2 border-primary flex items-center justify-center">
+<span class="w-2 h-2 bg-primary rounded-full"></span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Yesterday, 4:30 PM</span>
+<p class="font-body-md text-body-md text-on-surface mt-1">Batch enrollment processed for <strong>Fall 2024</strong> semester.</p>
+<span class="text-on-surface-variant font-body-sm text-body-sm mt-1">245 students processed.</span>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Admin Mobile Fallback - though usually admins use desktop, keeping for responsive spec) -->
+<nav class="bg-surface dark:bg-surface-dim text-primary dark:text-inverse-primary font-label-sm text-label-sm fixed bottom-0 w-full z-50 border-t border-outline-variant bg-surface shadow-lg fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-2 md:hidden">
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl p-2 w-16" href="#">
+<span class="material-symbols-outlined fill" data-icon="dashboard">dashboard</span>
+<span class="mt-1">Overview</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 w-16 hover:bg-surface-variant rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="mt-1">Students</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 w-16 hover:bg-surface-variant rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="mt-1">Payments</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 w-16 hover:bg-surface-variant rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+<span class="mt-1">More</span>
+</a>
+</nav>
+<!-- Chart.js Initialization -->
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Colors from config
+            const primaryColor = '#00355f';
+            const secondaryColor = '#855300';
+            const tertiaryColor = '#003b35';
+            const surfaceVariant = '#d3e4fe';
+            
+            Chart.defaults.font.family = 'Inter';
+            Chart.defaults.color = '#42474f'; // on-surface-variant
+
+            // Funnel Chart (using Bar chart sideways)
+            const ctxFunnel = document.getElementById('funnelChart').getContext('2d');
+            new Chart(ctxFunnel, {
+                type: 'bar',
+                data: {
+                    labels: ['Leads', 'Applied', 'Interviewed', 'Offered', 'Admitted'],
+                    datasets: [{
+                        label: 'Applicants',
+                        data: [4209, 3100, 2400, 2100, 1890],
+                        backgroundColor: [
+                            'rgba(0, 53, 95, 0.2)', // Lightest
+                            'rgba(0, 53, 95, 0.4)',
+                            'rgba(0, 53, 95, 0.6)',
+                            'rgba(0, 53, 95, 0.8)',
+                            primaryColor // Darkest
+                        ],
+                        borderRadius: 4,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, border: {display: false} },
+                        y: { grid: { display: false }, border: {display: false} }
+                    }
+                }
+            });
+
+            // Revenue Trend Chart
+            const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+            new Chart(ctxRevenue, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Revenue ($)',
+                        data: [250000, 320000, 310000, 390000, 410000, 452800],
+                        borderColor: tertiaryColor,
+                        backgroundColor: 'rgba(0, 59, 53, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, border: {display: false} },
+                        y: { grid: { color: '#e5eeff' }, border: {display: false}, ticks: { callback: function(value) { return '$' + value/1000 + 'k'; } } }
+                    },
+                    interaction: { mode: 'index', intersect: false }
+                }
+            });
+
+            // Course Breakdown Chart
+            const ctxCourse = document.getElementById('courseChart').getContext('2d');
+            new Chart(ctxCourse, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Comp Sci', 'Business', 'Engineering', 'Arts'],
+                    datasets: [{
+                        data: [45, 25, 20, 10],
+                        backgroundColor: [
+                            primaryColor,
+                            secondaryColor,
+                            tertiaryColor,
+                            surfaceVariant
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { position: 'right', labels: { boxWidth: 12, usePointStyle: true } }
+                    }
+                }
+            });
+        });
+    </script>
+</body></html>
