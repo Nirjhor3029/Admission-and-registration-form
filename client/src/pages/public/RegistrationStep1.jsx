@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 import api from '../../services/api';
 
 const schema = z.object({
@@ -100,6 +101,7 @@ export default function RegistrationStep1() {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       const student = res.data.data?.student || res.data.student || res.data.data;
+      toast.success('Registration created! Proceed to payment.');
       navigate('/register/step2', { state: { studentId: student?.id || student?._id, ...data } });
     } catch (err) {
       setServerError(err.response?.data?.message || 'Registration failed. Please try again.');

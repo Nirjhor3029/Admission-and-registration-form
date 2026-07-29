@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -21,6 +22,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <Toaster position="bottom-center" toastOptions={{ duration: 4000, style: { background: '#1e293b', color: '#f1f5f9', borderRadius: '12px', fontSize: '14px' }, error: { style: { background: '#3b0a0a', color: '#fecaca' } }, success: { style: { background: '#0a3b1a', color: '#bbf7d0' } } }} />
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/register/step1" element={<RegistrationStep1 />} />

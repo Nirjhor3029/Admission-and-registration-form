@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import toast from 'react-hot-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../../services/api';
 
@@ -65,9 +66,11 @@ export default function RegistrationStep2() {
       await api.post(`/registrations/${studentData.studentId}/payment`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
+      toast.success('Payment submitted! Your application is under review.');
       navigate('/register/confirmed', { state: studentData });
     } catch (err) {
       const msg = err.response?.data?.message || err.response?.data?.error || 'Payment submission failed. Please try again.';
+      toast.error(msg);
       setError(msg);
     } finally {
       setSubmitting(false);
