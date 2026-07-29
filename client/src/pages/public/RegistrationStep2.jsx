@@ -62,7 +62,7 @@ export default function RegistrationStep2() {
       formData.append('payment_date', data.payment_date);
       if (screenshotFile) formData.append('screenshot', screenshotFile);
 
-      await api.post(`/registration/${studentData.studentId}/payment`, formData, {
+      await api.post(`/registrations/${studentData.studentId}/payment`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       navigate('/register/confirmed', { state: studentData });
