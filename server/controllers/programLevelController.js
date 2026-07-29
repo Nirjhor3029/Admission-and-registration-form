@@ -3,8 +3,7 @@ const AppError = require('../utils/AppError');
 
 const listLevels = async (req, res, next) => {
   try {
-    const { courseId } = req.params;
-    const levels = await ProgramLevel.find({ course_id: courseId, status: 'active' }).sort('name');
+    const levels = await ProgramLevel.find({ status: 'active' }).sort('name');
     res.json({ success: true, data: levels });
   } catch (err) {
     next(err);
@@ -13,12 +12,11 @@ const listLevels = async (req, res, next) => {
 
 const createLevel = async (req, res, next) => {
   try {
-    const { courseId } = req.params;
     const { name, duration, fee, time_slots } = req.body;
     if (!name || !duration || fee === undefined) {
       return next(new AppError('Name, duration, and fee are required.', 400));
     }
-    const level = await ProgramLevel.create({ course_id: courseId, name, duration, fee, time_slots: time_slots || [] });
+    const level = await ProgramLevel.create({ name, duration, fee, time_slots: time_slots || [] });
     res.status(201).json({ success: true, data: level });
   } catch (err) {
     next(err);

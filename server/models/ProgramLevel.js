@@ -2,11 +2,6 @@ const mongoose = require('mongoose');
 
 const programLevelSchema = new mongoose.Schema(
   {
-    course_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Course',
-      required: [true, 'Course is required'],
-    },
     name: {
       type: String,
       required: [true, 'Level name is required'],

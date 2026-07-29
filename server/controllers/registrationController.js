@@ -48,7 +48,8 @@ const createRegistration = async (req, res, next) => {
 
     const student = await Student.create({
       student_name, mobile, email, whatsapp, gender, qualification,
-      student_photo_url, address, course_id, level_id, batch_id,
+      student_photo_url, address, course_id, level_id,
+      ...(batch_id ? { batch_id } : {}),
       referral_source: referral_source || 'other',
       status: 'pending',
     });
