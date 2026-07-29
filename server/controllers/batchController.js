@@ -4,9 +4,10 @@ const AppError = require('../utils/AppError');
 
 const listBatches = async (req, res, next) => {
   try {
-    const { course_id } = req.query;
+    const { course_id, level_id } = req.query;
     const filter = {};
     if (course_id) filter.course_id = course_id;
+    if (level_id) filter.level_id = level_id;
     const batches = await Batch.find(filter).populate('course_id', 'name code').sort('start_date');
     res.json({ success: true, data: { batches } });
   } catch (err) {
@@ -16,12 +17,12 @@ const listBatches = async (req, res, next) => {
 
 const createBatch = async (req, res, next) => {
   try {
-    const { course_id, batch_name, start_date, capacity, class_schedule } = req.body;
+    const { course_id, level_id, batch_name, start_date, capacity, class_schedule } = req.body;
     if (!course_id || !batch_name || !start_date || !capacity) {
       return next(new AppError('Course, batch name, start date, and capacity are required.', 400));
     }
     const batch = await Batch.create({
-      course_id, batch_name, start_date, capacity, class_schedule,
+      course_id, level_id, batch_name, start_date, capacity, class_schedule,
     });
     res.status(201).json({ success: true, data: { batch } });
   } catch (err) {

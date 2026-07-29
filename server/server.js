@@ -32,6 +32,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/registrations', require('./routes/registration'));
 app.use('/api/students', require('./routes/student'));
 app.use('/api/courses', require('./routes/course'));
+app.use('/api/courses/:courseId/levels', require('./routes/programLevel'));
 app.use('/api/batches', require('./routes/batch'));
 app.use('/api/reports', require('./routes/report'));
 app.use('/api/admin', require('./routes/admin'));

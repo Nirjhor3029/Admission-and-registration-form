@@ -2,6 +2,7 @@ require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') }
 const mongoose = require('mongoose');
 const Admin = require('../models/Admin');
 const Course = require('../models/Course');
+const ProgramLevel = require('../models/ProgramLevel');
 const Batch = require('../models/Batch');
 
 const seed = async () => {
@@ -11,6 +12,7 @@ const seed = async () => {
 
     await Admin.deleteMany({});
     await Course.deleteMany({});
+    await ProgramLevel.deleteMany({});
     await Batch.deleteMany({});
 
     const admin = await Admin.create({
@@ -30,13 +32,26 @@ const seed = async () => {
     ]);
     console.log(`${courses.length} courses created`);
 
+    const levelData = [
+      'Workshop', 'Bootcamp', 'Fundamentals', 'Intermediate', 'Advanced', 'Expert',
+    ].map((name, i) => ({
+      course_id: courses[i % courses.length]._id,
+      name,
+      duration: ['1 Day (3 Hours)', '3 Days (9 Hours)', '1 Month (36 Hours)', '3 Months', '3 Months', '3 Months'][i],
+      fee: [199, 500, 2000, 8000, 8000, 8000][i],
+      time_slots: ['07:30 - 10:30 PM', '07:30 - 10:30 PM', '09:00 AM - 12:00 PM', '02:00 PM - 05:00 PM', '05:00 PM - 08:00 PM', '07:30 - 10:30 PM'],
+    }));
+
+    const levels = await ProgramLevel.insertMany(levelData);
+    console.log(`${levels.length} program levels created`);
+
     const batchData = [
-      { course_id: courses[0]._id, batch_name: 'Fall 2024 - A', start_date: new Date('2024-09-01'), capacity: 50, seats_filled: 45, status: 'started' },
-      { course_id: courses[0]._id, batch_name: 'Spring 2025 - B', start_date: new Date('2025-01-15'), capacity: 50, seats_filled: 12, status: 'open' },
-      { course_id: courses[1]._id, batch_name: 'Fall 2024', start_date: new Date('2024-09-01'), capacity: 40, seats_filled: 38, status: 'started' },
-      { course_id: courses[2]._id, batch_name: 'Weekend Morning', start_date: new Date('2025-02-01'), capacity: 30, seats_filled: 30, status: 'full' },
-      { course_id: courses[4]._id, batch_name: 'Weekend Morning', start_date: new Date('2025-01-10'), capacity: 30, seats_filled: 30, status: 'full' },
-      { course_id: courses[4]._id, batch_name: 'Weekday Evening', start_date: new Date('2025-02-15'), capacity: 25, seats_filled: 20, status: 'open' },
+      { course_id: courses[0]._id, level_id: levels[2]._id, batch_name: 'Fall 2024 - A', start_date: new Date('2024-09-01'), capacity: 50, seats_filled: 45, status: 'started' },
+      { course_id: courses[0]._id, level_id: levels[2]._id, batch_name: 'Spring 2025 - B', start_date: new Date('2025-01-15'), capacity: 50, seats_filled: 12, status: 'open' },
+      { course_id: courses[1]._id, level_id: levels[3]._id, batch_name: 'Fall 2024', start_date: new Date('2024-09-01'), capacity: 40, seats_filled: 38, status: 'started' },
+      { course_id: courses[2]._id, level_id: levels[4]._id, batch_name: 'Weekend Morning', start_date: new Date('2025-02-01'), capacity: 30, seats_filled: 30, status: 'full' },
+      { course_id: courses[4]._id, level_id: levels[1]._id, batch_name: 'Weekend Morning', start_date: new Date('2025-01-10'), capacity: 30, seats_filled: 30, status: 'full' },
+      { course_id: courses[4]._id, level_id: levels[1]._id, batch_name: 'Weekday Evening', start_date: new Date('2025-02-15'), capacity: 25, seats_filled: 20, status: 'open' },
     ];
 
     const batches = await Batch.insertMany(batchData);

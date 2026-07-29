@@ -1,6 +1,7 @@
 const Student = require('../models/Student');
 const Payment = require('../models/Payment');
 const Batch = require('../models/Batch');
+const ProgramLevel = require('../models/ProgramLevel');
 const AppError = require('../utils/AppError');
 
 const BD_MOBILE_REGEX = /^01[3-9]\d{8}$/;
@@ -9,7 +10,7 @@ const createRegistration = async (req, res, next) => {
   try {
     const {
       student_name, mobile, email, whatsapp, gender, qualification,
-      address, course_id, batch_id, referral_source,
+      address, course_id, level_id, batch_id, referral_source,
     } = req.body;
 
     if (!student_name || !mobile) {
@@ -23,6 +24,11 @@ const createRegistration = async (req, res, next) => {
     const existing = await Student.findOne({ mobile });
     if (existing) {
       return next(new AppError('A student with this mobile number already exists.', 409));
+    }
+
+    if (level_id) {
+      const level = await ProgramLevel.findById(level_id);
+      if (!level) return next(new AppError('Selected program level not found.', 404));
     }
 
     if (batch_id) {
@@ -42,7 +48,7 @@ const createRegistration = async (req, res, next) => {
 
     const student = await Student.create({
       student_name, mobile, email, whatsapp, gender, qualification,
-      student_photo_url, address, course_id, batch_id,
+      student_photo_url, address, course_id, level_id, batch_id,
       referral_source: referral_source || 'other',
       status: 'pending',
     });

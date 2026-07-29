@@ -1,5 +1,6 @@
 const Course = require('../models/Course');
 const Batch = require('../models/Batch');
+const ProgramLevel = require('../models/ProgramLevel');
 const Student = require('../models/Student');
 const AppError = require('../utils/AppError');
 
@@ -19,8 +20,9 @@ const getCourse = async (req, res, next) => {
   try {
     const course = await Course.findById(req.params.id);
     if (!course) return next(new AppError('Course not found.', 404));
-    const batches = await Batch.find({ course_id: course._id }).sort('start_date');
-    res.json({ success: true, data: { course, batches } });
+    const levels = await ProgramLevel.find({ course_id: course._id, status: 'active' }).sort('name');
+    const batches = await Batch.find({ course_id: course._id }).sort('start_date').populate('level_id');
+    res.json({ success: true, data: { course, levels, batches } });
   } catch (err) {
     next(err);
   }
@@ -61,6 +63,7 @@ const deleteCourse = async (req, res, next) => {
     const course = await Course.findByIdAndDelete(req.params.id);
     if (!course) return next(new AppError('Course not found.', 404));
     await Batch.deleteMany({ course_id: course._id });
+    await ProgramLevel.deleteMany({ course_id: course._id });
     res.json({ success: true, message: 'Course deleted.' });
   } catch (err) {
     next(err);

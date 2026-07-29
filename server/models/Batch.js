@@ -7,6 +7,10 @@ const batchSchema = new mongoose.Schema(
       ref: 'Course',
       required: [true, 'Course is required'],
     },
+    level_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'ProgramLevel',
+    },
     batch_name: {
       type: String,
       required: [true, 'Batch name is required'],

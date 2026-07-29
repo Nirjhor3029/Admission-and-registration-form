@@ -15,6 +15,7 @@ const schema = z.object({
   address: z.string().optional().or(z.literal('')),
   qualification: z.string().min(1, 'Qualification is required'),
   course_id: z.string().min(1, 'Course is required'),
+  level_id: z.string().min(1, 'Program level is required'),
   batch_id: z.string().min(1, 'Batch is required'),
   referral_source: z.string().optional().or(z.literal('')),
 });
@@ -25,10 +26,11 @@ export default function RegistrationStep1() {
   const [photoPreview, setPhotoPreview] = useState(null);
   const [sameAsMobile, setSameAsMobile] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState('');
+  const [selectedLevel, setSelectedLevel] = useState('');
 
   const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { gender: '', qualification: '', course_id: '', batch_id: '', referral_source: '' },
+    defaultValues: { gender: '', qualification: '', course_id: '', level_id: '', batch_id: '', referral_source: '' },
   });
 
   const mobileValue = watch('mobile');
@@ -39,10 +41,17 @@ export default function RegistrationStep1() {
   });
   const courses = Array.isArray(coursesData) ? coursesData : [];
 
-  const { data: batchesData } = useQuery({
-    queryKey: ['batches', selectedCourse],
-    queryFn: () => api.get(`/batches?course_id=${selectedCourse}`).then(r => r.data.data || r.data.batches || []),
+  const { data: levelsData } = useQuery({
+    queryKey: ['levels', selectedCourse],
+    queryFn: () => api.get(`/courses/${selectedCourse}/levels`).then(r => r.data.data || []),
     enabled: !!selectedCourse,
+  });
+  const levels = Array.isArray(levelsData) ? levelsData : [];
+
+  const { data: batchesData } = useQuery({
+    queryKey: ['batches', selectedCourse, selectedLevel],
+    queryFn: () => api.get(`/batches?course_id=${selectedCourse}&level_id=${selectedLevel}`).then(r => r.data.data || r.data.batches || []),
+    enabled: !!selectedCourse && !!selectedLevel,
   });
   const batches = Array.isArray(batchesData) ? batchesData : [];
 
@@ -57,7 +66,16 @@ export default function RegistrationStep1() {
   const handleCourseChange = (e) => {
     const val = e.target.value;
     setSelectedCourse(val);
+    setSelectedLevel('');
     setValue('course_id', val);
+    setValue('level_id', '');
+    setValue('batch_id', '');
+  };
+
+  const handleLevelChange = (e) => {
+    const val = e.target.value;
+    setSelectedLevel(val);
+    setValue('level_id', val);
     setValue('batch_id', '');
   };
 
@@ -71,12 +89,13 @@ export default function RegistrationStep1() {
     formData.append('address', data.address || '');
     formData.append('qualification', data.qualification);
     formData.append('course_id', data.course_id);
+    formData.append('level_id', data.level_id);
     formData.append('batch_id', data.batch_id);
     formData.append('referral_source', data.referral_source || '');
     if (photoFile) formData.append('student_photo', photoFile);
 
     try {
-      const res = await api.post('/registration', formData, {
+      const res = await api.post('/registrations', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       const student = res.data.data || res.data.student;
@@ -248,12 +267,26 @@ export default function RegistrationStep1() {
               </div>
 
               <div className="flex flex-col gap-1.5">
+                <label className="text-label-sm text-on-surface-variant" htmlFor="level_id">Program Level <span className="text-error">*</span></label>
+                <div className="relative">
+                  <select id="level_id" className={`w-full h-12 pl-3 pr-10 border ${errors.level_id ? 'border-error' : 'border-outline-variant'} rounded-md bg-surface-container-lowest text-body-md text-on-surface appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm ${!selectedCourse ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={!selectedCourse} value={selectedLevel} onChange={handleLevelChange}>
+                    <option value="">{selectedCourse ? 'Select Level' : 'Select a course first'}</option>
+                    {levels.map((l) => (
+                      <option key={l._id} value={l._id}>{l.name} — ${l.fee} ({l.duration})</option>
+                    ))}
+                  </select>
+                  <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+                </div>
+                {errors.level_id && <span className="text-body-sm text-error">{errors.level_id.message}</span>}
+              </div>
+
+              <div className="flex flex-col gap-1.5">
                 <label className="text-label-sm text-on-surface-variant" htmlFor="batch_id">Preferred Batch <span className="text-error">*</span></label>
                 <div className="relative">
-                  <select id="batch_id" className={`w-full h-12 pl-3 pr-10 border ${errors.batch_id ? 'border-error' : 'border-outline-variant'} rounded-md bg-surface-container-lowest text-body-md text-on-surface appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm ${!selectedCourse ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={!selectedCourse} {...register('batch_id')}>
-                    <option value="">{selectedCourse ? 'Select Batch' : 'Select a course first'}</option>
+                  <select id="batch_id" className={`w-full h-12 pl-3 pr-10 border ${errors.batch_id ? 'border-error' : 'border-outline-variant'} rounded-md bg-surface-container-lowest text-body-md text-on-surface appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm ${!selectedLevel ? 'opacity-50 cursor-not-allowed' : ''}`} disabled={!selectedLevel} {...register('batch_id')}>
+                    <option value="">{selectedLevel ? 'Select Batch' : 'Select a level first'}</option>
                     {batches.map((b) => (
-                      <option key={b._id} value={b._id}>{b.name || b.code || b.title}</option>
+                      <option key={b._id} value={b._id}>{b.batch_name} — {b.class_schedule || ''}</option>
                     ))}
                   </select>
                   <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>

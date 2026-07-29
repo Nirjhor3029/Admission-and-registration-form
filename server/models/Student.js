@@ -44,6 +44,10 @@ const studentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Course',
     },
+    level_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'ProgramLevel',
+    },
     batch_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Batch',
