@@ -45,8 +45,10 @@ app.use((req, res) => {
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`FARS server running on port ${PORT}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`FARS server running on port ${PORT}`);
+  });
+}
 
 module.exports = app;
