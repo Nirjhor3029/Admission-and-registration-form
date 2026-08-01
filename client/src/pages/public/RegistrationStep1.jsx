@@ -189,14 +189,7 @@ export default function RegistrationStep1() {
                 {errors.mobile && <span className="text-body-sm text-error">{errors.mobile.message}</span>}
               </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-label-sm text-on-surface-variant" htmlFor="email">Email Address</label>
-                <div className="relative">
-                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">mail</span>
-                  <input id="email" placeholder="jane@example.com" type="email" className="w-full h-12 pl-10 pr-3 border border-outline-variant rounded-md bg-surface-container-lowest text-body-md text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" {...register('email')} />
-                </div>
-                {errors.email && <span className="text-body-sm text-error">{errors.email.message}</span>}
-              </div>
+              
 
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center justify-between">
@@ -222,14 +215,23 @@ export default function RegistrationStep1() {
               </div>
 
               <div className="flex flex-col gap-1.5">
+                <label className="text-label-sm text-on-surface-variant" htmlFor="email">Email Address</label>
+                <div className="relative">
+                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">mail</span>
+                  <input id="email" placeholder="jane@example.com" type="email" className="w-full h-12 pl-10 pr-3 border border-outline-variant rounded-md bg-surface-container-lowest text-body-md text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" {...register('email')} />
+                </div>
+                {errors.email && <span className="text-body-sm text-error">{errors.email.message}</span>}
+              </div>
+
+              <div className="flex flex-col gap-1.5">
                 <label className="text-label-sm text-on-surface-variant" htmlFor="gender">Gender <span className="text-error">*</span></label>
                 <div className="relative">
                   <select id="gender" className={`w-full h-12 pl-3 pr-10 border ${errors.gender ? 'border-error' : 'border-outline-variant'} rounded-md bg-surface-container-lowest text-body-md text-on-surface appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm`} {...register('gender')}>
                     <option value="">Select Gender</option>
-                    <option value="female">Female</option>
                     <option value="male">Male</option>
+                    <option value="female">Female</option>
                     <option value="other">Other</option>
-                    <option value="prefer_not_to_say">Prefer not to say</option>
+                    {/* <option value="prefer_not_to_say">Prefer not to say</option> */}
                   </select>
                   <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
                 </div>
