@@ -60,6 +60,7 @@ const studentSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: [
+        'draft',
         'pending',
         'payment_under_review',
         'payment_verified',
@@ -68,6 +69,11 @@ const studentSchema = new mongoose.Schema(
         'cancelled',
       ],
       default: 'pending',
+    },
+    draft_code: {
+      type: String,
+      unique: true,
+      sparse: true,
     },
     student_id_number: {
       type: String,

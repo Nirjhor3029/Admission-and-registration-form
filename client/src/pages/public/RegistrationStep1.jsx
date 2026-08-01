@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -9,7 +9,7 @@ import api from '../../services/api';
 
 const schema = z.object({
   fullName: z.string().min(1, 'Full name is required'),
-  mobile: z.string().min(1, 'Mobile number is required'),
+  mobile: z.string().min(1, 'Mobile number is required').regex(/^01[3-9]\d{8}$/, 'Enter a valid 11-digit mobile number'),
   email: z.string().email('Invalid email').optional().or(z.literal('')),
   whatsapp: z.string().optional().or(z.literal('')),
   gender: z.string().min(1, 'Gender is required'),
@@ -29,8 +29,14 @@ export default function RegistrationStep1() {
   const [selectedCourse, setSelectedCourse] = useState('');
   const [selectedLevel, setSelectedLevel] = useState('');
   const [serverError, setServerError] = useState('');
+  const [draftInfo, setDraftInfo] = useState(null);
+  const [savingDraft, setSavingDraft] = useState(false);
+  const [resumeOpen, setResumeOpen] = useState(false);
+  const [resumeQuery, setResumeQuery] = useState('');
+  const [resumeError, setResumeError] = useState('');
+  const [resuming, setResuming] = useState(false);
 
-  const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = useForm({
+  const { register, handleSubmit, watch, setValue, getValues, trigger, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
     defaultValues: { gender: '', qualification: '', course_id: '', level_id: '', batch_id: '', referral_source: '' },
   });
@@ -64,6 +70,115 @@ export default function RegistrationStep1() {
     }
   };
 
+  const DRAFT_KEY = 'fars_draft';
+  const didLoadDraft = useRef(false);
+
+  useEffect(() => {
+    if (didLoadDraft.current) return;
+    didLoadDraft.current = true;
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (raw) setDraftInfo(JSON.parse(raw));
+    } catch {
+      // ignore corrupt localStorage draft
+    }
+  }, []);
+
+  const persistDraft = (info) => {
+    setDraftInfo(info);
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(info));
+  };
+
+  const prefillDraft = (draft) => {
+    setValue('fullName', draft.student_name || '');
+    setValue('mobile', draft.mobile || '');
+    setValue('email', draft.email || '');
+    setValue('whatsapp', draft.whatsapp || '');
+    setValue('gender', draft.gender || '');
+    setValue('address', draft.address || '');
+    setValue('qualification', draft.qualification || '');
+    setValue('course_id', draft.course_id?._id || draft.course_id || '');
+    setValue('level_id', draft.level_id?._id || draft.level_id || '');
+    setValue('batch_id', draft.batch_id?._id || draft.batch_id || '');
+    setValue('referral_source', draft.referral_source || '');
+    setSelectedCourse(draft.course_id?._id || draft.course_id || '');
+    setSelectedLevel(draft.level_id?._id || draft.level_id || '');
+    setSameAsMobile(!!draft.whatsapp && draft.whatsapp === draft.mobile);
+    setPhotoFile(null);
+    setPhotoPreview(draft.student_photo_url || null);
+    persistDraft({ id: draft._id, code: draft.draft_code, mobile: draft.mobile, name: draft.student_name });
+    toast.success(`Draft ${draft.draft_code || ''} restored!`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSaveDraft = async () => {
+    const valid = await trigger(['fullName', 'mobile']);
+    if (!valid) {
+      toast.error('Name and a valid mobile number are required to save a draft.');
+      return;
+    }
+    const data = getValues();
+    setSavingDraft(true);
+    setServerError('');
+    try {
+      const formData = new FormData();
+      formData.append('student_name', data.fullName);
+      formData.append('mobile', data.mobile);
+      formData.append('email', data.email || '');
+      formData.append('whatsapp', data.whatsapp || '');
+      formData.append('gender', data.gender || '');
+      formData.append('address', data.address || '');
+      formData.append('qualification', data.qualification || '');
+      formData.append('course_id', data.course_id || '');
+      formData.append('level_id', data.level_id || '');
+      formData.append('batch_id', data.batch_id || '');
+      formData.append('referral_source', data.referral_source || '');
+      if (draftInfo?.id) formData.append('draft_id', draftInfo.id);
+      if (photoFile) formData.append('student_photo', photoFile);
+
+      const res = await api.post('/registrations/draft', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      const student = res.data.data?.student || res.data.data;
+      persistDraft({ id: student.id || student._id, code: student.draft_code, mobile: data.mobile, name: data.fullName });
+      navigate('/register/draft-saved');
+    } catch (err) {
+      setServerError(err.response?.data?.message || 'Could not save draft. Please try again.');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } finally {
+      setSavingDraft(false);
+    }
+  };
+
+  const handleResume = async (e) => {
+    e?.preventDefault();
+    const q = resumeQuery.trim();
+    if (!q) {
+      setResumeError('Enter your mobile number or draft code.');
+      return;
+    }
+    setResuming(true);
+    setResumeError('');
+    try {
+      const res = await api.get(`/registrations/draft?q=${encodeURIComponent(q)}`);
+      const draft = res.data.data?.draft;
+      if (draft) prefillDraft(draft);
+      setResumeOpen(false);
+      setResumeQuery('');
+    } catch (err) {
+      setResumeError(err.response?.data?.message || 'Draft not found.');
+    } finally {
+      setResuming(false);
+    }
+  };
+
+  const handleDiscard = () => {
+    localStorage.removeItem(DRAFT_KEY);
+    setDraftInfo(null);
+    setResumeQuery('');
+    toast('Draft discarded. You can start fresh.');
+  };
+
   const handleCourseChange = (e) => {
     const val = e.target.value;
     setSelectedCourse(val);
@@ -93,6 +208,7 @@ export default function RegistrationStep1() {
     formData.append('level_id', data.level_id);
     formData.append('batch_id', data.batch_id);
     formData.append('referral_source', data.referral_source || '');
+    if (draftInfo?.id) formData.append('draft_id', draftInfo.id);
     if (photoFile) formData.append('student_photo', photoFile);
 
     try {
@@ -101,8 +217,13 @@ export default function RegistrationStep1() {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       const student = res.data.data?.student || res.data.student || res.data.data;
+      localStorage.removeItem(DRAFT_KEY);
+      setDraftInfo(null);
+      const selectedLevel = levels.find((l) => l._id === data.level_id);
       toast.success('Registration created! Proceed to payment.');
-      navigate('/register/step2', { state: { studentId: student?.id || student?._id, ...data } });
+      navigate('/register/step2', {
+        state: { studentId: student?.id || student?._id, levelFee: selectedLevel?.fee || '', ...data },
+      });
     } catch (err) {
       setServerError(err.response?.data?.message || 'Registration failed. Please try again.');
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -135,6 +256,48 @@ export default function RegistrationStep1() {
           <div className="w-full bg-surface-variant h-2 rounded-full overflow-hidden">
             <div className="bg-primary h-full rounded-full w-1/2" />
           </div>
+        </div>
+
+        {draftInfo && (
+          <div className="mb-4 flex items-center justify-between gap-3 p-4 bg-primary-container/30 text-on-primary-container rounded-lg border border-primary/20">
+            <div className="flex items-center gap-3">
+              <span className="material-symbols-outlined text-primary">draft</span>
+              <div>
+                <p className="text-body-sm font-medium">
+                  Draft saved: <span className="font-bold">{draftInfo.code || draftInfo.id}</span>
+                </p>
+                <p className="text-body-sm text-on-surface-variant">Click "Next: Payment" to submit, or "Save Draft" to update.</p>
+              </div>
+            </div>
+            <button type="button" onClick={handleDiscard} className="shrink-0 text-label-sm text-error hover:underline">Discard</button>
+          </div>
+        )}
+
+        <div className="mb-4">
+          <button
+            type="button"
+            onClick={() => setResumeOpen((v) => !v)}
+            className="flex items-center gap-2 text-label-md text-primary hover:underline"
+          >
+            <span className="material-symbols-outlined text-[18px]">history</span>
+            Resume a saved draft?
+          </button>
+          {resumeOpen && (
+            <form onSubmit={handleResume} className="mt-3 p-4 bg-surface-container-lowest border border-outline-variant rounded-lg">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  value={resumeQuery}
+                  onChange={(e) => setResumeQuery(e.target.value)}
+                  placeholder="Enter mobile number or draft code (e.g. DRF-XXXXXX)"
+                  className="flex-1 h-11 px-3 border border-outline-variant rounded-md bg-surface-container-lowest text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                />
+                <button type="submit" disabled={resuming} className="h-11 px-6 rounded-md bg-primary text-on-primary text-label-md disabled:opacity-50">
+                  {resuming ? 'Searching...' : 'Resume'}
+                </button>
+              </div>
+              {resumeError && <p className="mt-2 text-body-sm text-error">{resumeError}</p>}
+            </form>
+          )}
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="bg-surface-container-lowest rounded-xl shadow-[0_10px_25px_-5px_rgba(0,53,95,0.05)] border border-outline-variant/30 p-4 md:p-8">
@@ -314,10 +477,11 @@ export default function RegistrationStep1() {
                 <div className="relative">
                   <select id="referral_source" className="w-full h-12 pl-3 pr-10 border border-outline-variant rounded-md bg-surface-container-lowest text-body-md text-on-surface appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" {...register('referral_source')}>
                     <option value="">Select Source</option>
-                    <option value="social">Social Media (FB/IG/LinkedIn)</option>
+                    <option value="facebook_ad">Facebook Ad</option>
+                    <option value="facebook_page">Facebook Page</option>
+                    <option value="website">Website</option>
                     <option value="friend">Friend / Colleague</option>
-                    <option value="search">Search Engine (Google)</option>
-                    <option value="advertisement">Online Advertisement</option>
+                    <option value="youtube">YouTube</option>
                     <option value="other">Other</option>
                   </select>
                   <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
@@ -327,8 +491,9 @@ export default function RegistrationStep1() {
           </div>
 
           <div className="pt-4 border-t border-surface-variant mt-4 flex flex-col-reverse md:flex-row items-center justify-end gap-4">
-            <button type="button" className="w-full md:w-auto h-12 px-6 rounded-lg text-label-md text-primary bg-transparent hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2">
-              Save Draft
+            <button type="button" onClick={handleSaveDraft} disabled={savingDraft} className="w-full md:w-auto h-12 px-6 rounded-lg text-label-md text-primary bg-transparent hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
+              {savingDraft ? 'Saving...' : 'Save Draft'}
+              {!savingDraft && <span className="material-symbols-outlined text-lg">save</span>}
             </button>
             <button type="submit" disabled={isSubmitting} className="w-full md:w-auto h-12 px-8 rounded-lg text-label-md text-on-primary bg-primary hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-md flex items-center justify-center gap-2 active:scale-95 group disabled:opacity-50 disabled:cursor-not-allowed">
               {isSubmitting ? 'Saving...' : 'Next: Payment'}

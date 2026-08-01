@@ -6,6 +6,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Landing from './pages/public/Landing';
 import RegistrationStep1 from './pages/public/RegistrationStep1';
 import RegistrationStep2 from './pages/public/RegistrationStep2';
+import DraftSaved from './pages/public/DraftSaved';
 import Confirmation from './pages/public/Confirmation';
 
 import AdminLogin from './pages/admin/Login';
@@ -15,6 +16,7 @@ import StudentManagement from './pages/admin/StudentManagement';
 import PaymentVerification from './pages/admin/PaymentVerification';
 import CourseManagement from './pages/admin/CourseManagement';
 import Reports from './pages/admin/Reports';
+import Settings from './pages/admin/Settings';
 
 import StudentDashboard from './pages/student/Dashboard';
 
@@ -27,6 +29,7 @@ export default function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/register/step1" element={<RegistrationStep1 />} />
           <Route path="/register/step2" element={<RegistrationStep2 />} />
+          <Route path="/register/draft-saved" element={<DraftSaved />} />
           <Route path="/register/confirmed" element={<Confirmation />} />
 
           <Route path="/admin/login" element={<AdminLogin />} />
@@ -44,6 +47,7 @@ export default function App() {
             <Route path="payments" element={<PaymentVerification />} />
             <Route path="courses" element={<CourseManagement />} />
             <Route path="reports" element={<Reports />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
 
           <Route

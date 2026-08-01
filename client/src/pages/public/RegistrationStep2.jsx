@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../../services/api';
@@ -22,10 +23,17 @@ export default function RegistrationStep2() {
   const [screenshotPreview, setScreenshotPreview] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const levelFee = studentData?.levelFee;
 
   const { register, handleSubmit, setValue, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { method: 'bkash', trxid: '' },
+    defaultValues: { method: 'bkash', trxid: '', amount: levelFee ? String(levelFee) : '' },
+  });
+
+  const { data: configData } = useQuery({
+    queryKey: ['payment-config'],
+    queryFn: () => api.get('/payment-config').then(r => r.data.data?.config || r.data.data || {}),
+    staleTime: 60 * 1000,
   });
 
   if (!studentData?.studentId) {
@@ -77,9 +85,12 @@ export default function RegistrationStep2() {
     }
   };
 
-  const merchantNumber = '017XX-XXXXXX';
+  const config = configData || {};
+  const merchantNumber = paymentMethod === 'bkash' ? (config.bkash_number || '') : (config.nagad_number || '');
   const copyMerchantNumber = () => {
+    if (!merchantNumber) return;
     navigator.clipboard.writeText(merchantNumber);
+    toast.success('Merchant number copied');
   };
 
   return (
@@ -110,13 +121,17 @@ export default function RegistrationStep2() {
           <section className="bg-surface-container-low border border-primary-fixed-dim rounded-xl p-5 flex items-center justify-between shadow-sm relative overflow-hidden">
             <div className="absolute -right-4 -top-4 w-24 h-24 bg-primary-fixed opacity-50 rounded-full blur-2xl pointer-events-none" />
             <div className="relative z-10">
-              <p className="text-label-sm text-primary mb-1">Official University Merchant Number</p>
-              <p className="text-headline-md text-on-background font-bold tracking-tight">{merchantNumber}</p>
+              <p className="text-label-sm text-primary mb-1 capitalize">Official {paymentMethod} Merchant Number</p>
+              <p className="text-headline-md text-on-background font-bold tracking-tight">{merchantNumber || '—'}</p>
+              {!merchantNumber && (
+                <p className="text-body-sm text-on-surface-variant mt-1">Merchant number not configured yet. Please contact the admin.</p>
+              )}
             </div>
             <button
               type="button"
               onClick={copyMerchantNumber}
-              className="relative z-10 w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-primary hover:bg-primary-fixed transition-colors"
+              disabled={!merchantNumber}
+              className="relative z-10 w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-primary hover:bg-primary-fixed transition-colors disabled:opacity-50"
             >
               <span className="material-symbols-outlined">content_copy</span>
             </button>
@@ -179,9 +194,11 @@ export default function RegistrationStep2() {
               <label className="text-label-sm text-on-surface-variant" htmlFor="amount">Amount Paid</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-label-md text-on-surface-variant select-none">BDT</span>
-                <input id="amount" type="number" placeholder="e.g. 15000" className={`w-full h-12 pl-12 pr-3 rounded-lg border ${errors.amount ? 'border-error' : 'border-outline-variant'} bg-surface-container-lowest text-body-md text-on-background focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-outline-variant/60`} {...register('amount')} />
+                <input id="amount" type="number" readOnly placeholder="e.g. 15000" className={`w-full h-12 pl-12 pr-10 rounded-lg border ${errors.amount ? 'border-error' : 'border-outline-variant'} bg-surface text-body-md text-on-background readOnly:bg-surface readOnly:cursor-not-allowed readOnly:text-on-surface-variant readOnly:border-outline-variant/50 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-outline-variant/60`} {...register('amount')} />
+                <svg className="absolute right-3 top-1/2 -translate-y-1/2 text-outline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
               </div>
               {errors.amount && <span className="text-body-sm text-error">{errors.amount.message}</span>}
+              <p className="text-body-sm text-on-surface-variant">Amount is fixed based on your selected program level.</p>
             </div>
 
             <div className="flex flex-col gap-1.5">

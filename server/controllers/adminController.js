@@ -4,6 +4,7 @@ const AuditLog = require('../models/AuditLog');
 const AppError = require('../utils/AppError');
 
 const VALID_TRANSITIONS = {
+  draft: ['pending', 'cancelled'],
   pending: ['payment_under_review', 'rejected', 'cancelled'],
   payment_under_review: ['payment_verified', 'rejected', 'cancelled'],
   payment_verified: ['admitted', 'cancelled'],

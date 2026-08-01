@@ -7,6 +7,7 @@ const navItems = [
   { path: '/admin/payments', icon: 'payments', label: 'Payments' },
   { path: '/admin/courses', icon: 'library_books', label: 'Courses' },
   { path: '/admin/reports', icon: 'analytics', label: 'Reports' },
+  { path: '/admin/settings', icon: 'settings', label: 'Settings' },
 ];
 
 export default function AdminLayout() {

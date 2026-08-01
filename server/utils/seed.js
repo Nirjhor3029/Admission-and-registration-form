@@ -4,6 +4,7 @@ const Admin = require('../models/Admin');
 const Course = require('../models/Course');
 const ProgramLevel = require('../models/ProgramLevel');
 const Batch = require('../models/Batch');
+const PaymentConfig = require('../models/PaymentConfig');
 
 const seed = async () => {
   try {
@@ -14,6 +15,7 @@ const seed = async () => {
     await Course.deleteMany({});
     await ProgramLevel.deleteMany({});
     await Batch.deleteMany({});
+    await PaymentConfig.deleteMany({});
 
     const admin = await Admin.create({
       name: 'Super Admin',
@@ -53,6 +55,12 @@ const seed = async () => {
 
     const batches = await Batch.insertMany(batchData);
     console.log(`${batches.length} batches created`);
+
+    await PaymentConfig.create({
+      bkash_number: '017XX-XXXXXX',
+      nagad_number: '017XX-XXXXXX',
+    });
+    console.log('Payment config created');
 
     console.log('\nSeed completed successfully!');
     console.log('Admin login: admin@fars.com / admin123');

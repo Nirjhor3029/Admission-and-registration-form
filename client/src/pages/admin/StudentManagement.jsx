@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../services/api';
 
 const statusColors = {
+  draft: 'bg-surface-variant text-on-surface-variant border-outline-variant',
   pending: 'bg-secondary-container/50 text-on-secondary-container border-secondary-container/50',
   payment_under_review: 'bg-secondary-container/50 text-on-secondary-container border-secondary-container/50',
   payment_verified: 'bg-surface-variant text-on-surface border-outline-variant',
@@ -11,6 +12,7 @@ const statusColors = {
 };
 
 const statusLabels = {
+  draft: 'Draft',
   pending: 'Pending',
   payment_under_review: 'Under Review',
   payment_verified: 'Payment Verified',
@@ -78,7 +80,7 @@ export default function StudentManagement() {
 
       <div className="flex flex-wrap gap-2 items-center pb-2 border-b border-outline-variant/50">
         <span className="text-label-sm text-on-surface-variant mr-2 uppercase tracking-wider">Status Filter:</span>
-        {['', 'pending', 'payment_under_review', 'admitted', 'rejected'].map((s) => (
+        {['', 'draft', 'pending', 'payment_under_review', 'admitted', 'rejected'].map((s) => (
           <button
             key={s}
             onClick={() => handleStatusChange(s)}
@@ -191,6 +193,22 @@ export default function StudentManagement() {
                 </span>
               </div>
             </div>
+
+            {student.status === 'draft' && (
+              <>
+                <div className="p-3 rounded-lg bg-surface-container-low border border-outline-variant text-body-sm text-on-surface-variant">
+                  This is an incomplete draft. The student has not submitted payment yet.
+                </div>
+                <div className="flex gap-3 pt-2 border-t border-outline-variant/30">
+                  <button onClick={() => statusMutation.mutate({ id: selectedId, status: 'cancelled' })} disabled={statusMutation.isPending} className="flex-1 h-10 rounded-lg border-2 border-error text-error text-label-md hover:bg-error-container/20 transition-colors disabled:opacity-50">
+                    Cancel
+                  </button>
+                  <button onClick={() => statusMutation.mutate({ id: selectedId, status: 'pending' })} disabled={statusMutation.isPending} className="flex-1 h-10 rounded-lg bg-primary text-on-primary text-label-md hover:bg-primary-container transition-colors disabled:opacity-50">
+                    Activate
+                  </button>
+                </div>
+              </>
+            )}
 
             {student.status === 'pending' && (
               <div className="flex gap-3 pt-2 border-t border-outline-variant/30">

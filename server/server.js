@@ -35,6 +35,7 @@ app.use('/api/courses', require('./routes/course'));
 app.use('/api/program-levels', require('./routes/programLevel'));
 app.use('/api/batches', require('./routes/batch'));
 app.use('/api/reports', require('./routes/report'));
+app.use('/api/payment-config', require('./routes/paymentConfig'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/student', require('./routes/studentDashboard'));
 app.use('/api/leads', require('./routes/lead'));
