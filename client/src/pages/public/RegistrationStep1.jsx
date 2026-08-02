@@ -35,6 +35,8 @@ export default function RegistrationStep1() {
   const [resumeQuery, setResumeQuery] = useState('');
   const [resumeError, setResumeError] = useState('');
   const [resuming, setResuming] = useState(false);
+  const [personNotice, setPersonNotice] = useState(null);
+  const lastPersonMobile = useRef('');
 
   const { register, handleSubmit, watch, setValue, getValues, trigger, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
@@ -42,6 +44,39 @@ export default function RegistrationStep1() {
   });
 
   const mobileValue = watch('mobile');
+
+  useEffect(() => {
+    const m = (mobileValue || '').trim();
+    if (!/^01[3-9]\d{8}$/.test(m) || m === lastPersonMobile.current) return;
+    let cancelled = false;
+    const t = setTimeout(async () => {
+      try {
+        const res = await api.get('/registrations/person', { params: { mobile: m } });
+        const d = res.data.data;
+        if (cancelled || !d?.found || !d.student) return;
+        lastPersonMobile.current = m;
+        const s = d.student;
+        setValue('fullName', s.name || '');
+        setValue('email', s.email || '');
+        setValue('whatsapp', s.whatsapp || '');
+        setValue('gender', s.gender || '');
+        setValue('address', s.address || '');
+        setValue('qualification', s.qualification || '');
+        setValue('referral_source', s.referral_source || '');
+        setSameAsMobile(!!s.whatsapp && s.whatsapp === m);
+        if (s.photo) {
+          setPhotoPreview(s.photo);
+          setPhotoFile(null);
+        }
+        setPersonNotice({ name: s.name || '', mobile: m });
+        toast.success(`Welcome back${s.name ? `, ${s.name}` : ''}! Your details were auto-filled.`);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch {
+        // ignore lookup errors; the form still works without prefill
+      }
+    }, 600);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [mobileValue, setValue]);
 
   const { data: coursesData } = useQuery({
     queryKey: ['courses'],
@@ -115,6 +150,7 @@ export default function RegistrationStep1() {
   };
 
   const prefillDraft = (draft) => {
+    lastPersonMobile.current = draft.mobile || '';
     setValue('fullName', draft.student_name || '');
     setValue('mobile', draft.mobile || '');
     setValue('email', draft.email || '');
@@ -333,6 +369,18 @@ export default function RegistrationStep1() {
               <span className="material-symbols-outlined shrink-0 mt-0.5">error</span>
               <p className="text-body-sm md:text-body-md flex-1">{serverError}</p>
               <button type="button" onClick={() => setServerError('')} className="shrink-0 text-on-error-container/60 hover:text-on-error-container">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+          )}
+          {personNotice && (
+            <div className="flex items-start gap-3 p-4 mb-6 bg-tertiary-container/15 text-on-surface rounded-lg border border-tertiary/30">
+              <span className="material-symbols-outlined shrink-0 mt-0.5 text-tertiary">person_pin</span>
+              <p className="text-body-sm md:text-body-md flex-1">
+                We found your existing profile{personNotice.name ? ` (${personNotice.name})` : ''} on this mobile number.
+                Your personal details have been auto-filled. You can update them below if needed.
+              </p>
+              <button type="button" onClick={() => setPersonNotice(null)} className="shrink-0 text-on-surface-variant/60 hover:text-on-surface">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>

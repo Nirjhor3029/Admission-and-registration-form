@@ -210,6 +210,42 @@ const findDraft = async (req, res, next) => {
   }
 };
 
+const getPersonByMobile = async (req, res, next) => {
+  try {
+    const { mobile } = req.query;
+    const m = String(mobile || '').trim();
+    if (!BD_MOBILE_REGEX.test(m)) {
+      return res.json({ success: true, data: { found: false, student: null } });
+    }
+
+    const person = await Student.findOne({ mobile: m });
+    if (!person) {
+      return res.json({ success: true, data: { found: false, student: null } });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        found: true,
+        student: {
+          id: person._id,
+          name: person.student_name,
+          mobile: person.mobile,
+          email: person.email,
+          whatsapp: person.whatsapp,
+          gender: person.gender,
+          address: person.address,
+          qualification: person.qualification,
+          referral_source: person.referral_source,
+          photo: person.student_photo_url,
+        },
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 const createRegistration = async (req, res, next) => {
   try {
     const fields = sanitizeStudentFields(pickStudentFields(req.body));
@@ -399,4 +435,4 @@ const submitPayment = async (req, res, next) => {
   }
 };
 
-module.exports = { createRegistration, submitPayment, saveDraft, findDraft };
+module.exports = { createRegistration, submitPayment, saveDraft, findDraft, getPersonByMobile };
