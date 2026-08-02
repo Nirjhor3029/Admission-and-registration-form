@@ -17,7 +17,7 @@ const listStudents = async (req, res, next) => {
   try {
     const {
       page = 1, limit = 20, search, status,
-      course_id, batch_id, referral_source,
+      course_id, level_id, batch_id, referral_source,
       start_date, end_date, sort = '-createdAt',
     } = req.query;
 
@@ -32,9 +32,12 @@ const listStudents = async (req, res, next) => {
         { draft_code: { $regex: search, $options: 'i' } },
         { student_id_number: { $regex: search, $options: 'i' } },
       ];
+      const payIds = await Payment.distinct('student_id', { trxid: { $regex: search, $options: 'i' } });
+      if (payIds.length) filter.$or.push({ _id: { $in: payIds } });
     }
     if (status) filter.status = status;
     if (course_id) filter.course_id = course_id;
+    if (level_id) filter.level_id = level_id;
     if (batch_id) filter.batch_id = batch_id;
     if (referral_source) filter.referral_source = referral_source;
     if (start_date || end_date) {
@@ -46,6 +49,7 @@ const listStudents = async (req, res, next) => {
     const total = await Student.countDocuments(filter);
     const students = await Student.find(filter)
       .populate('course_id', 'name code')
+      .populate('level_id', 'name')
       .populate('batch_id', 'batch_name')
       .sort(sort)
       .skip((page - 1) * limit)
@@ -57,7 +61,7 @@ const listStudents = async (req, res, next) => {
 
     const latestPayments = await Payment.find({ student_id: { $in: ids } })
       .sort('-createdAt')
-      .select('student_id amount trxid status');
+      .select('student_id amount trxid status method payment_date');
     const latestByStudent = {};
     latestPayments.forEach((p) => {
       const key = String(p.student_id);
@@ -71,6 +75,8 @@ const listStudents = async (req, res, next) => {
       doc.payment_amount = pay ? pay.amount : null;
       doc.payment_trxid = pay ? pay.trxid : '';
       doc.payment_status = pay ? pay.status : '';
+      doc.payment_method = pay ? pay.method : '';
+      doc.payment_date = pay ? pay.payment_date : null;
       return doc;
     });
 
@@ -279,7 +285,7 @@ const deleteStudent = async (req, res, next) => {
 const deleteStudentsBulk = async (req, res, next) => {
   try {
     const {
-      search, status, course_id, batch_id, referral_source,
+      search, status, course_id, level_id, batch_id, referral_source,
       start_date, end_date,
     } = req.query;
 
@@ -293,9 +299,12 @@ const deleteStudentsBulk = async (req, res, next) => {
         { draft_code: { $regex: search, $options: 'i' } },
         { student_id_number: { $regex: search, $options: 'i' } },
       ];
+      const payIds = await Payment.distinct('student_id', { trxid: { $regex: search, $options: 'i' } });
+      if (payIds.length) filter.$or.push({ _id: { $in: payIds } });
     }
     if (status) filter.status = status;
     if (course_id) filter.course_id = course_id;
+    if (level_id) filter.level_id = level_id;
     if (batch_id) filter.batch_id = batch_id;
     if (referral_source) filter.referral_source = referral_source;
     if (start_date || end_date) {
