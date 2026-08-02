@@ -537,11 +537,13 @@ export default function RegistrationStep1() {
 
           <div className="pt-4 border-t border-surface-variant mt-4 flex flex-col-reverse md:flex-row items-center justify-end gap-4">
             <button type="button" onClick={handleSaveDraft} disabled={savingDraft} className="w-full md:w-auto h-12 px-6 rounded-lg text-label-md text-primary bg-transparent hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
+              {savingDraft && <span className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />}
               {savingDraft ? 'Saving...' : 'Save Draft'}
               {!savingDraft && <span className="material-symbols-outlined text-lg">save</span>}
             </button>
             <button type="submit" disabled={isSubmitting} className="w-full md:w-auto h-12 px-8 rounded-lg text-label-md text-on-primary bg-primary hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-md flex items-center justify-center gap-2 active:scale-95 group disabled:opacity-50 disabled:cursor-not-allowed">
-              {isSubmitting ? 'Saving...' : 'Next: Payment'}
+              {isSubmitting && <span className="w-4 h-4 border-2 border-on-primary border-t-transparent rounded-full animate-spin" />}
+              {isSubmitting ? 'Submitting...' : 'Next: Payment'}
               {!isSubmitting && <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>}
             </button>
           </div>
