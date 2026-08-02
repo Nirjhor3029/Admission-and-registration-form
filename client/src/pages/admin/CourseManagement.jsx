@@ -27,7 +27,7 @@ export default function CourseManagement() {
   const [editBatch, setEditBatch] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const courseForm = useState({ name: '', code: '', fee: '', duration: '', sort_order: '', description: '' });
+  const courseForm = useState({ name: '', sort_order: '', description: '' });
   const levelForm = useState({ name: '', duration: '', fee: '', sort_order: '', time_slots: '' });
   const batchForm = useState({ course_id: '', level_id: '', batch_name: '', start_date: '', capacity: '', sort_order: '', class_schedule: '' });
 
@@ -98,7 +98,7 @@ export default function CourseManagement() {
 
   const openEditCourse = (course) => {
     setEditCourse(course);
-    courseForm[1]({ name: course.name, code: course.code || '', fee: course.fee?.toString() || '', duration: course.duration || '', sort_order: course.sort_order?.toString() || '', description: course.description || '' });
+    courseForm[1]({ name: course.name, sort_order: course.sort_order?.toString() || '', description: course.description || '' });
     setShowCourseForm(true);
   };
 
@@ -132,7 +132,7 @@ export default function CourseManagement() {
         </div>
         <div className="flex gap-3">
           {activeTab === 'courses' && (
-            <button onClick={() => { setEditCourse(null); courseForm[1]({ name: '', code: '', fee: '', duration: '', description: '' }); setShowCourseForm(true); }} className="h-10 px-4 bg-surface border border-outline-variant text-on-surface rounded-lg text-label-md hover:bg-surface-variant transition-colors flex items-center gap-2">
+            <button onClick={() => { setEditCourse(null); courseForm[1]({ name: '', sort_order: '', description: '' }); setShowCourseForm(true); }} className="h-10 px-4 bg-surface border border-outline-variant text-on-surface rounded-lg text-label-md hover:bg-surface-variant transition-colors flex items-center gap-2">
               <span className="material-symbols-outlined text-[18px]">add</span> Add Course
             </button>
           )}
@@ -183,8 +183,6 @@ export default function CourseManagement() {
                 </button>
               </div>
               <div className="flex flex-wrap gap-x-4 gap-y-1 mb-4 text-body-sm">
-                <span className="text-on-surface-variant">Fee: <strong className="text-on-surface">৳{course.fee}</strong></span>
-                <span className="text-on-surface-variant">Duration: <strong className="text-on-surface">{course.duration}</strong></span>
                 {course.sort_order ? <span className="text-on-surface-variant">Order: <strong className="text-on-surface">{course.sort_order}</strong></span> : null}
               </div>
               {courseBatches.length > 0 && (
@@ -269,16 +267,9 @@ export default function CourseManagement() {
 
       {showCourseForm && (
         <Modal title={editCourse ? 'Edit Course' : 'Add Course'} onClose={() => { setShowCourseForm(false); setEditCourse(null); }}>
-          <form onSubmit={(e) => { e.preventDefault(); const f = courseForm[0]; createCourseMutation.mutate({ name: f.name, code: f.code, fee: Number(f.fee), duration: f.duration, sort_order: f.sort_order ? Number(f.sort_order) : 0, description: f.description }); }} className="flex flex-col gap-4">
+          <form onSubmit={(e) => { e.preventDefault(); const f = courseForm[0]; createCourseMutation.mutate({ name: f.name, sort_order: f.sort_order ? Number(f.sort_order) : 0, description: f.description }); }} className="flex flex-col gap-4">
             <input placeholder="Course Name" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].name} onChange={(e) => courseForm[1](p => ({ ...p, name: e.target.value }))} required />
-            <div className="grid grid-cols-2 gap-4">
-              <input placeholder="Code (optional)" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].code} onChange={(e) => courseForm[1](p => ({ ...p, code: e.target.value }))} />
-              <input placeholder="Fee" type="number" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].fee} onChange={(e) => courseForm[1](p => ({ ...p, fee: e.target.value }))} required />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <input placeholder="Duration (e.g. 4 years)" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].duration} onChange={(e) => courseForm[1](p => ({ ...p, duration: e.target.value }))} required />
-              <input placeholder="Sort Order" type="number" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].sort_order} onChange={(e) => courseForm[1](p => ({ ...p, sort_order: e.target.value }))} />
-            </div>
+            <input placeholder="Sort Order" type="number" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].sort_order} onChange={(e) => courseForm[1](p => ({ ...p, sort_order: e.target.value }))} />
             <textarea placeholder="Description (optional)" rows={3} className="p-3 border border-outline-variant rounded-lg text-body-md resize-none focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].description} onChange={(e) => courseForm[1](p => ({ ...p, description: e.target.value }))} />
             <button type="submit" disabled={createCourseMutation.isPending} className="h-12 bg-primary text-on-primary rounded-lg text-label-md hover:bg-primary-container transition-colors disabled:opacity-50">{editCourse ? 'Update Course' : 'Create Course'}</button>
           </form>

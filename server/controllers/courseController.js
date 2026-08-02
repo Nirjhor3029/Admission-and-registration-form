@@ -31,8 +31,8 @@ const getCourse = async (req, res, next) => {
 const createCourse = async (req, res, next) => {
   try {
     const { name, code, fee, duration, description } = req.body;
-    if (!name || !fee || !duration) {
-      return next(new AppError('Name, fee, and duration are required.', 400));
+    if (!name) {
+      return next(new AppError('Course name is required.', 400));
     }
     const course = await Course.create({ name, code, fee, duration, description });
     res.status(201).json({ success: true, data: { course } });

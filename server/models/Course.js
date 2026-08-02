@@ -10,16 +10,16 @@ const courseSchema = new mongoose.Schema(
     code: {
       type: String,
       unique: true,
+      sparse: true,
       trim: true,
     },
     fee: {
       type: Number,
-      required: [true, 'Course fee is required'],
       min: 0,
     },
     duration: {
       type: String,
-      required: [true, 'Duration is required'],
+      trim: true,
     },
     sort_order: {
       type: Number,
