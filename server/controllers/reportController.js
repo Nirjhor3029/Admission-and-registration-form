@@ -1,4 +1,5 @@
 const Student = require('../models/Student');
+const Application = require('../models/Application');
 const Payment = require('../models/Payment');
 const AppError = require('../utils/AppError');
 
@@ -10,7 +11,7 @@ const getAdmissionReport = async (req, res, next) => {
       ? { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }
       : { $dateToString: { format: '%Y-%m', date: '$createdAt' } };
 
-    const report = await Student.aggregate([
+    const report = await Application.aggregate([
       {
         $group: {
           _id: groupFormat,
@@ -25,7 +26,7 @@ const getAdmissionReport = async (req, res, next) => {
       { $sort: { _id: -1 } },
     ]);
 
-    const courseWise = await Student.aggregate([
+    const courseWise = await Application.aggregate([
       {
         $group: {
           _id: '$course_id',
@@ -91,14 +92,35 @@ const exportReport = async (req, res, next) => {
 
     let data;
     if (reportType === 'admissions') {
-      data = await Student.find()
-        .populate('course_id', 'name')
+      data = await Application.find()
+        .populate('student_id', 'student_name mobile email')
+        .populate('course_id', 'name code')
         .populate('batch_id', 'batch_name')
         .lean();
+      data = data.map((a) => ({
+        student_name: a.student_id?.student_name || '',
+        mobile: a.student_id?.mobile || '',
+        email: a.student_id?.email || '',
+        course: a.course_id?.name || '',
+        course_code: a.course_id?.code || '',
+        batch: a.batch_id?.batch_name || '',
+        application_code: a.application_code || '',
+        status: a.status,
+        created_at: a.createdAt,
+      }));
     } else {
       data = await Payment.find()
         .populate('student_id', 'student_name mobile')
         .lean();
+      data = data.map((p) => ({
+        student_name: p.student_id?.student_name || '',
+        mobile: p.student_id?.mobile || '',
+        method: p.method,
+        amount: p.amount,
+        trxid: p.trxid,
+        status: p.status,
+        payment_date: p.payment_date,
+      }));
     }
 
     if (type === 'excel') {

@@ -1,5 +1,5 @@
 const Batch = require('../models/Batch');
-const Student = require('../models/Student');
+const Application = require('../models/Application');
 const AppError = require('../utils/AppError');
 
 const listBatches = async (req, res, next) => {
@@ -50,9 +50,9 @@ const deleteBatch = async (req, res, next) => {
   try {
     const batch = await Batch.findById(req.params.id);
     if (!batch) return next(new AppError('Batch not found.', 404));
-    const enrolled = await Student.exists({ batch_id: batch._id });
+    const enrolled = await Application.exists({ batch_id: batch._id });
     if (enrolled) {
-      return next(new AppError('Cannot delete a batch that has enrolled students.', 400));
+      return next(new AppError('Cannot delete a batch that has enrolled applications.', 400));
     }
     await Batch.findByIdAndDelete(batch._id);
     res.json({ success: true, message: 'Batch deleted.' });

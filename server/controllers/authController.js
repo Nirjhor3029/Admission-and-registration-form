@@ -1,5 +1,6 @@
 const Admin = require('../models/Admin');
 const Student = require('../models/Student');
+const Application = require('../models/Application');
 const { generateToken, generateRefreshToken } = require('../services/authService');
 const AppError = require('../utils/AppError');
 
@@ -52,11 +53,19 @@ const studentLogin = async (req, res, next) => {
       return next(new AppError('Mobile number or Student ID is required.', 400));
     }
 
-    const query = student_id ? { student_id_number: student_id } : { mobile };
-    const student = await Student.findOne(query);
-    if (!student) {
-      return next(new AppError('Student not found.', 404));
+    let student = null;
+    if (student_id) {
+      const application = await Application.findOne({ student_id_number: student_id });
+      if (application) student = await Student.findById(application.student_id);
+    } else {
+      student = await Student.findOne({ mobile });
     }
+
+    if (!student) {
+      return next(new AppError('No application found with this number.', 404));
+    }
+
+    const latestApplication = await Application.findOne({ student_id: student._id }).sort('-updatedAt');
 
     const token = generateToken({
       id: student._id,
@@ -72,7 +81,8 @@ const studentLogin = async (req, res, next) => {
         student: {
           id: student._id,
           name: student.student_name,
-          status: student.status,
+          mobile: student.mobile,
+          status: latestApplication?.status || '',
         },
       },
     });

@@ -8,6 +8,7 @@ import RegistrationStep1 from './pages/public/RegistrationStep1';
 import RegistrationStep2 from './pages/public/RegistrationStep2';
 import DraftSaved from './pages/public/DraftSaved';
 import Confirmation from './pages/public/Confirmation';
+import StudentLogin from './pages/public/StudentLogin';
 
 import AdminLogin from './pages/admin/Login';
 import AdminLayout from './layouts/AdminLayout';
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="/register/confirmed" element={<Confirmation />} />
 
           <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/student/login" element={<StudentLogin />} />
           <Route
             path="/admin"
             element={
@@ -53,7 +55,7 @@ export default function App() {
           <Route
             path="/student/dashboard"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute loginPath="/student/login">
                 <StudentDashboard />
               </ProtectedRoute>
             }

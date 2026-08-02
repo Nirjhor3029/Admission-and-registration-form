@@ -30,7 +30,7 @@ app.get('/health', (req, res) => {
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/registrations', require('./routes/registration'));
-app.use('/api/students', require('./routes/student'));
+app.use('/api/applications', require('./routes/application'));
 app.use('/api/courses', require('./routes/course'));
 app.use('/api/course-categories', require('./routes/courseCategory'));
 app.use('/api/program-levels', require('./routes/programLevel'));

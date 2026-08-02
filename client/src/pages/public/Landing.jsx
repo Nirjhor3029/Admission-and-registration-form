@@ -14,7 +14,7 @@ export default function Landing() {
           </div>
           <nav className="hidden md:flex items-center gap-6">
             <a className="text-primary font-bold hover:bg-surface-variant transition-colors px-3 py-2 rounded-lg" href="/">Home</a>
-            <a className="text-on-surface-variant hover:bg-surface-variant transition-colors px-3 py-2 rounded-lg" href="#">Status</a>
+            <a className="text-on-surface-variant hover:bg-surface-variant transition-colors px-3 py-2 rounded-lg" href="/student/login">Status</a>
             <div className="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center ml-4 cursor-pointer hover:bg-surface-variant transition-colors">
               <span className="text-label-sm">US</span>
             </div>
@@ -55,6 +55,13 @@ export default function Landing() {
                 Explore Courses
               </button>
             </div>
+            <button
+              onClick={() => navigate('/student/login')}
+              className="mt-4 inline-flex items-center gap-2 w-fit bg-primary/5 hover:bg-primary/10 border border-primary/20 text-primary text-label-md px-5 py-3 rounded-lg transition-all active:scale-95"
+            >
+              <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>fact_check</span>
+              Already Applied? Check Course Status
+            </button>
             <div className="flex items-center gap-6 mt-8 pt-8 border-t border-outline-variant/30">
               <div className="flex flex-col">
                 <span className="text-headline-md text-primary font-bold">10k+</span>
@@ -99,7 +106,7 @@ export default function Landing() {
           <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>home</span>
           <span className="text-[10px] mt-1 font-medium">Home</span>
         </div>
-        <div className="flex flex-col items-center justify-center text-on-surface-variant p-2 min-w-[64px] hover:bg-surface-variant active:scale-90 transition-all rounded-xl cursor-pointer">
+        <div className="flex flex-col items-center justify-center text-on-surface-variant p-2 min-w-[64px] hover:bg-surface-variant active:scale-90 transition-all rounded-xl cursor-pointer" onClick={() => navigate('/student/login')}>
           <span className="material-symbols-outlined">assignment_turned_in</span>
           <span className="text-[10px] mt-1">Status</span>
         </div>

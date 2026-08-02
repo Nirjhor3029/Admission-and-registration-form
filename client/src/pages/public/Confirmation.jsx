@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { useAuth } from '../../context/AuthContext';
 
 const STORAGE_KEY = 'fars_confirmation';
 
@@ -20,6 +21,8 @@ const formatDate = (d) => {
 export default function Confirmation() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { studentLogin } = useAuth();
+  const [goingToDashboard, setGoingToDashboard] = useState(false);
 
   const [data, setData] = useState(() => {
     if (location.state) return location.state;
@@ -47,6 +50,21 @@ export default function Confirmation() {
   const amount = payment.amount ?? data?.levelFee;
 
   const [copiedKey, setCopiedKey] = useState('');
+
+  const goToDashboard = async () => {
+    const mobile = data?.mobile;
+    if (!mobile) {
+      navigate('/student/login');
+      return;
+    }
+    setGoingToDashboard(true);
+    try {
+      await studentLogin({ mobile });
+      navigate('/student/dashboard');
+    } catch {
+      navigate('/student/login');
+    }
+  };
 
   const copyText = async (text, label, key) => {
     if (!text || text === '—') return;
@@ -242,11 +260,21 @@ export default function Confirmation() {
                 Print / Download Receipt
               </button>
               <button
-                onClick={() => navigate('/')}
-                className="w-full bg-surface-container-lowest border border-outline-variant text-on-surface h-12 rounded-lg text-label-md flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors"
+                onClick={goToDashboard}
+                disabled={goingToDashboard}
+                className="w-full bg-surface-container-lowest border border-outline-variant text-on-surface h-12 rounded-lg text-label-md flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors disabled:opacity-60"
               >
-                <span className="material-symbols-outlined">home</span>
-                Back to Home
+                {goingToDashboard ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    Taking you to your dashboard...
+                  </>
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined">home</span>
+                    Back to Home
+                  </>
+                )}
               </button>
             </div>
           </>
@@ -260,7 +288,7 @@ export default function Confirmation() {
               </p>
             </div>
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/student/login')}
               className="animate-fade-in-up delay-300 w-full bg-primary text-on-primary h-12 rounded-lg text-label-md flex items-center justify-center gap-2 shadow-sm active:scale-95 transition-transform hover:bg-primary-container"
             >
               <span className="material-symbols-outlined">home</span>

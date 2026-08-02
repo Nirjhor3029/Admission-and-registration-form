@@ -7,6 +7,10 @@ const paymentSchema = new mongoose.Schema(
       ref: 'Student',
       required: [true, 'Student is required'],
     },
+    application_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Application',
+    },
     method: {
       type: String,
       enum: ['bkash', 'nagad'],
@@ -52,6 +56,7 @@ const paymentSchema = new mongoose.Schema(
 );
 
 paymentSchema.index({ student_id: 1 });
+paymentSchema.index({ application_id: 1 });
 paymentSchema.index({ status: 1 });
 
 module.exports = mongoose.model('Payment', paymentSchema);

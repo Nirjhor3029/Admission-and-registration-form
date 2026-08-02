@@ -39,11 +39,12 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
+    const isStudent = localStorage.getItem('user')?.includes('"type":"student"');
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setToken(null);
     setUser(null);
-    window.location.href = '/admin/login';
+    window.location.href = isStudent ? '/student/login' : '/admin/login';
   };
 
   return (

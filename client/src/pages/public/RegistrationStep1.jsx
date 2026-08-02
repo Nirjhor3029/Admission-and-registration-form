@@ -164,8 +164,10 @@ export default function RegistrationStep1() {
       const res = await api.post('/registrations/draft', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      const student = res.data.data?.student || res.data.data;
-      persistDraft({ id: student.id || student._id, code: student.draft_code, mobile: data.mobile, name: data.fullName });
+      const d = res.data.data || res.data;
+      const app = d.application || {};
+      const person = d.student || {};
+      persistDraft({ id: app.id || person.id || draftInfo?.id, code: app.draft_code || draftInfo?.code, mobile: data.mobile, name: data.fullName });
       navigate('/register/draft-saved');
     } catch (err) {
       setServerError(err.response?.data?.message || 'Could not save draft. Please try again.');
@@ -241,11 +243,13 @@ export default function RegistrationStep1() {
       const res = await api.post('/registrations', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      const student = res.data.data?.student || res.data.student || res.data.data;
+      const d = res.data.data || res.data;
+      const app = d.application || {};
+      const person = d.student || d;
       const selectedLevel = levels.find((l) => l._id === data.level_id);
       toast.success('Registration created! Proceed to payment.');
       navigate('/register/step2', {
-        state: { studentId: student?.id || student?._id, levelFee: selectedLevel?.fee || '', ...data },
+        state: { applicationId: app.id || person.id || person._id, levelFee: selectedLevel?.fee || '', ...data },
       });
     } catch (err) {
       setServerError(err.response?.data?.message || 'Registration failed. Please try again.');

@@ -64,8 +64,8 @@ export default function PaymentVerification() {
   }, [search, status, courseId, levelId]);
 
   const { data } = useQuery({
-    queryKey: ['students', 'payments', status, search, courseId, levelId],
-    queryFn: () => api.get('/students', {
+    queryKey: ['applications', 'payments', status, search, courseId, levelId],
+    queryFn: () => api.get('/applications', {
       params: {
         status: status || undefined,
         search: search || undefined,
@@ -107,25 +107,25 @@ export default function PaymentVerification() {
 
   const { data: detail } = useQuery({
     queryKey: ['student-payment', selectedId],
-    queryFn: () => api.get(`/students/${selectedId}`).then(r => r.data.data || r.data),
+    queryFn: () => api.get(`/applications/${selectedId}`).then(r => r.data.data || r.data),
     enabled: !!selectedId,
   });
 
   const verifyMutation = useMutation({
-    mutationFn: () => api.patch(`/students/${selectedId}/payment/verify`),
+    mutationFn: () => api.patch(`/applications/${selectedId}/payment/verify`),
     onSuccess: () => {
       toast.success('Payment approved');
-      queryClient.invalidateQueries({ queryKey: ['students'] });
+      queryClient.invalidateQueries({ queryKey: ['applications'] });
       queryClient.invalidateQueries({ queryKey: ['student-payment'] });
       setSelectedId(null);
     },
   });
 
   const rejectMutation = useMutation({
-    mutationFn: () => api.patch(`/students/${selectedId}/payment/reject`, { reason }),
+    mutationFn: () => api.patch(`/applications/${selectedId}/payment/reject`, { reason }),
     onSuccess: () => {
       toast.success('Payment rejected');
-      queryClient.invalidateQueries({ queryKey: ['students'] });
+      queryClient.invalidateQueries({ queryKey: ['applications'] });
       queryClient.invalidateQueries({ queryKey: ['student-payment'] });
       setReason('');
       setSelectedId(null);

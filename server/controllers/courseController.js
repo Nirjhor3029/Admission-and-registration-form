@@ -1,7 +1,7 @@
 const Course = require('../models/Course');
 const Batch = require('../models/Batch');
 const ProgramLevel = require('../models/ProgramLevel');
-const Student = require('../models/Student');
+const Application = require('../models/Application');
 const AppError = require('../utils/AppError');
 
 const listCourses = async (req, res, next) => {
@@ -89,9 +89,9 @@ const updateCourse = async (req, res, next) => {
 
 const deleteCourse = async (req, res, next) => {
   try {
-    const studentCount = await Student.countDocuments({ course_id: req.params.id });
-    if (studentCount > 0) {
-      return next(new AppError('Cannot delete course with enrolled students.', 400));
+    const applicationCount = await Application.countDocuments({ course_id: req.params.id });
+    if (applicationCount > 0) {
+      return next(new AppError('Cannot delete course with enrolled applications.', 400));
     }
     const course = await Course.findByIdAndDelete(req.params.id);
     if (!course) return next(new AppError('Course not found.', 404));

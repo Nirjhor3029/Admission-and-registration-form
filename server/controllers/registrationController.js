@@ -1,4 +1,5 @@
 const Student = require('../models/Student');
+const Application = require('../models/Application');
 const Payment = require('../models/Payment');
 const Batch = require('../models/Batch');
 const ProgramLevel = require('../models/ProgramLevel');
@@ -62,6 +63,36 @@ const sanitizeStudentFields = (fields) => {
   return clean;
 };
 
+const getOrCreatePerson = async (fields, photoUrl) => {
+  let person = await Student.findOne({ mobile: fields.mobile });
+
+  const personFields = {};
+  ['student_name', 'email', 'whatsapp', 'gender', 'qualification', 'address', 'referral_source'].forEach((key) => {
+    if (fields[key] !== undefined && fields[key] !== '') personFields[key] = fields[key];
+  });
+  if (photoUrl) personFields.student_photo_url = photoUrl;
+
+  if (person) {
+    Object.keys(personFields).forEach((key) => {
+      if (personFields[key] !== undefined) person[key] = personFields[key];
+    });
+    await person.save();
+  } else {
+    person = await Student.create({
+      student_name: fields.student_name,
+      mobile: fields.mobile,
+      email: fields.email || '',
+      whatsapp: fields.whatsapp || '',
+      gender: fields.gender || 'prefer_not_to_say',
+      qualification: fields.qualification || '',
+      address: fields.address || '',
+      referral_source: fields.referral_source || 'other',
+      ...(photoUrl ? { student_photo_url: photoUrl } : {}),
+    });
+  }
+  return person;
+};
+
 const saveDraft = async (req, res, next) => {
   try {
     const fields = sanitizeStudentFields(pickStudentFields(req.body));
@@ -75,29 +106,31 @@ const saveDraft = async (req, res, next) => {
       return next(new AppError('Invalid Bangladeshi mobile number format.', 400));
     }
 
+    const photoUrl = req.file ? req.file.path : undefined;
+    const person = await getOrCreatePerson(fields, photoUrl);
+
     let draft = null;
     if (draft_id) {
-      draft = await Student.findById(draft_id);
+      draft = await Application.findById(draft_id);
       if (!draft || draft.status !== 'draft') {
         return next(new AppError('Draft not found.', 404));
       }
-    } else {
-      const existing = await Student.findOne({ mobile: fields.mobile, status: 'draft' });
-      if (existing) draft = existing;
+      if (String(draft.student_id) !== String(person._id)) {
+        return next(new AppError('This draft belongs to a different mobile number.', 400));
+      }
     }
 
-    const photoUrl = req.file ? req.file.path : undefined;
-
     if (draft) {
-      Object.keys(fields).forEach((key) => {
-        if (fields[key] !== undefined) draft[key] = fields[key];
-      });
-      if (photoUrl) draft.student_photo_url = photoUrl;
+      if (fields.course_id !== undefined) draft.course_id = fields.course_id;
+      if (fields.level_id !== undefined) draft.level_id = fields.level_id;
+      if (fields.batch_id !== undefined) draft.batch_id = fields.batch_id;
       await draft.save();
     } else {
-      draft = await Student.create({
-        ...fields,
-        ...(photoUrl ? { student_photo_url: photoUrl } : {}),
+      draft = await Application.create({
+        student_id: person._id,
+        course_id: fields.course_id || null,
+        level_id: fields.level_id || null,
+        batch_id: fields.batch_id || null,
         status: 'draft',
         draft_code: generateDraftCode(),
       });
@@ -107,10 +140,13 @@ const saveDraft = async (req, res, next) => {
       success: true,
       data: {
         student: {
+          id: person._id,
+          name: person.student_name,
+          mobile: person.mobile,
+        },
+        application: {
           id: draft._id,
           draft_code: draft.draft_code,
-          name: draft.student_name,
-          mobile: draft.mobile,
           status: draft.status,
         },
       },
@@ -128,23 +164,45 @@ const findDraft = async (req, res, next) => {
       return next(new AppError('Mobile number or draft code is required.', 400));
     }
 
-    const filter = { status: 'draft' };
     const query = String(q).trim();
+    let application = null;
+
     if (/^DRF-/i.test(query)) {
-      filter.draft_code = query.toUpperCase();
+      application = await Application.findOne({ draft_code: query.toUpperCase(), status: 'draft' });
     } else {
-      filter.mobile = query;
+      const person = await Student.findOne({ mobile: query });
+      if (person) {
+        application = await Application.findOne({ student_id: person._id, status: 'draft' }).sort('-updatedAt');
+      }
     }
 
-    const draft = await Student.findOne(filter)
-      .populate('course_id', 'name code fee duration')
-      .populate('level_id', 'name fee duration')
-      .populate('batch_id', 'batch_name start_date class_schedule')
-      .sort('-updatedAt');
-
-    if (!draft) {
+    if (!application) {
       return next(new AppError('Draft not found. Please check your mobile number or draft code.', 404));
     }
+
+    const populated = await Application.findById(application._id)
+      .populate('course_id', 'name code fee duration')
+      .populate('level_id', 'name fee duration')
+      .populate('batch_id', 'batch_name start_date class_schedule');
+
+    const person = await Student.findById(application.student_id);
+
+    const draft = {
+      _id: application._id,
+      draft_code: application.draft_code,
+      course_id: populated.course_id,
+      level_id: populated.level_id,
+      batch_id: populated.batch_id,
+      student_name: person.student_name,
+      mobile: person.mobile,
+      email: person.email,
+      whatsapp: person.whatsapp,
+      gender: person.gender,
+      address: person.address,
+      qualification: person.qualification,
+      student_photo_url: person.student_photo_url,
+      referral_source: person.referral_source,
+    };
 
     res.json({ success: true, data: { draft } });
   } catch (err) {
@@ -156,8 +214,7 @@ const createRegistration = async (req, res, next) => {
   try {
     const fields = sanitizeStudentFields(pickStudentFields(req.body));
     const {
-      student_name, mobile, email, whatsapp, gender, qualification,
-      address, course_id, level_id, batch_id, referral_source,
+      student_name, mobile, course_id, level_id, batch_id, referral_source,
     } = fields;
     const { draft_id } = req.body;
 
@@ -167,21 +224,6 @@ const createRegistration = async (req, res, next) => {
 
     if (!BD_MOBILE_REGEX.test(mobile)) {
       return next(new AppError('Invalid Bangladeshi mobile number format.', 400));
-    }
-
-    let student = null;
-    if (draft_id) {
-      student = await Student.findById(draft_id);
-      if (!student || student.status !== 'draft') {
-        return next(new AppError('Draft not found.', 404));
-      }
-    } else {
-      const existing = await Student.findOne({ mobile });
-      if (existing && existing.status === 'draft') {
-        student = existing;
-      } else if (existing) {
-        return next(new AppError('A student with this mobile number already exists.', 409));
-      }
     }
 
     if (level_id) {
@@ -200,24 +242,40 @@ const createRegistration = async (req, res, next) => {
     }
 
     const photoUrl = req.file ? req.file.path : '';
+    const person = await getOrCreatePerson(fields, photoUrl);
 
-    if (student) {
-      Object.keys(fields).forEach((key) => {
-        if (fields[key] !== undefined) student[key] = fields[key];
-      });
-      if (photoUrl) student.student_photo_url = photoUrl;
-      student.referral_source = referral_source || student.referral_source || 'other';
-      student.application_code = student.application_code || generateApplicationCode();
-      student.status = 'draft';
-      await student.save();
+    let application = null;
+    if (draft_id) {
+      application = await Application.findById(draft_id);
+      if (!application || application.status !== 'draft') {
+        return next(new AppError('Draft not found.', 404));
+      }
+      if (String(application.student_id) !== String(person._id)) {
+        return next(new AppError('This draft belongs to a different mobile number.', 400));
+      }
+      application.course_id = course_id;
+      application.level_id = level_id;
+      application.batch_id = batch_id || null;
+      application.referral_source = referral_source || application.referral_source || 'other';
+      application.application_code = application.application_code || generateApplicationCode();
+      await application.save();
     } else {
-      student = await Student.create({
-        student_name, mobile, email, whatsapp, gender, qualification,
-        student_photo_url: photoUrl, address, course_id, level_id,
-        ...(batch_id ? { batch_id } : {}),
-        referral_source: referral_source || 'other',
-        application_code: generateApplicationCode(),
+      const existing = await Application.findOne({
+        student_id: person._id,
+        course_id,
+        level_id,
+        status: { $in: ['pending', 'payment_under_review', 'payment_verified', 'admitted'] },
+      });
+      if (existing) {
+        return next(new AppError('You already applied for this course. Check your application status.', 409));
+      }
+      application = await Application.create({
+        student_id: person._id,
+        course_id,
+        level_id,
+        batch_id: batch_id || null,
         status: 'draft',
+        application_code: generateApplicationCode(),
       });
     }
 
@@ -225,11 +283,14 @@ const createRegistration = async (req, res, next) => {
       success: true,
       data: {
         student: {
-          id: student._id,
-          name: student.student_name,
-          mobile: student.mobile,
-          application_code: student.application_code,
-          status: student.status,
+          id: person._id,
+          name: person.student_name,
+          mobile: person.mobile,
+        },
+        application: {
+          id: application._id,
+          application_code: application.application_code,
+          status: application.status,
         },
       },
       message: 'Registration created successfully. Please proceed to payment.',
@@ -244,25 +305,25 @@ const submitPayment = async (req, res, next) => {
     const { id } = req.params;
     const { method, amount, trxid, payment_date } = req.body;
 
-    const student = await Student.findById(id);
-    if (!student) {
-      return next(new AppError('Student not found.', 404));
+    const application = await Application.findById(id);
+    if (!application) {
+      return next(new AppError('Application not found.', 404));
     }
 
-    if (!['draft', 'pending', 'payment_under_review'].includes(student.status)) {
-      return next(new AppError('Payment already submitted for this registration.', 400));
+    if (!['draft', 'pending', 'payment_under_review'].includes(application.status)) {
+      return next(new AppError('Payment already submitted for this application.', 400));
+    }
+
+    if (!application.application_code) {
+      application.application_code = generateApplicationCode();
     }
 
     let level = null;
-    if (student.level_id) {
-      level = await ProgramLevel.findById(student.level_id);
+    if (application.level_id) {
+      level = await ProgramLevel.findById(application.level_id);
       if (level && typeof level.fee === 'number' && Number(amount) !== level.fee) {
         return next(new AppError('Payment amount must match the program level fee.', 400));
       }
-    }
-
-    if (!student.application_code) {
-      student.application_code = generateApplicationCode();
     }
 
     if (!method || !amount || !trxid || !payment_date) {
@@ -274,9 +335,9 @@ const submitPayment = async (req, res, next) => {
       return next(new AppError('This transaction ID has already been used.', 409));
     }
 
-    if (student.batch_id) {
+    if (application.batch_id) {
       const batch = await Batch.findOneAndUpdate(
-        { _id: student.batch_id, $expr: { $lt: ['$seats_filled', '$capacity'] } },
+        { _id: application.batch_id, $expr: { $lt: ['$seats_filled', '$capacity'] } },
         { $inc: { seats_filled: 1 } },
         { new: true }
       );
@@ -291,7 +352,8 @@ const submitPayment = async (req, res, next) => {
     }
 
     const payment = await Payment.create({
-      student_id: student._id,
+      student_id: application.student_id,
+      application_id: application._id,
       method,
       amount: Number(amount),
       trxid: trxid.toUpperCase(),
@@ -300,20 +362,21 @@ const submitPayment = async (req, res, next) => {
       status: 'pending',
     });
 
-    student.status = 'payment_under_review';
-    await student.save();
+    application.status = 'payment_under_review';
+    await application.save();
 
-    const course = student.course_id ? await Course.findById(student.course_id).select('name') : null;
+    const person = await Student.findById(application.student_id);
+    const course = application.course_id ? await Course.findById(application.course_id).select('name') : null;
 
     res.status(201).json({
       success: true,
       data: {
         student: {
-          id: student._id,
-          name: student.student_name,
-          mobile: student.mobile,
-          application_code: student.application_code,
-          status: student.status,
+          id: person._id,
+          name: person.student_name,
+          mobile: person.mobile,
+          application_code: application.application_code,
+          status: application.status,
         },
         payment: {
           id: payment._id,

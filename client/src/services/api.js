@@ -17,9 +17,10 @@ api.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
+      const isStudent = localStorage.getItem('user')?.includes('"type":"student"');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      window.location.href = '/admin/login';
+      window.location.href = isStudent ? '/student/login' : '/admin/login';
     }
     return Promise.reject(err);
   }

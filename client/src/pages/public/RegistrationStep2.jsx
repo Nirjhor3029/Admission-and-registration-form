@@ -41,7 +41,7 @@ export default function RegistrationStep2() {
     staleTime: 60 * 1000,
   });
 
-  if (!studentData?.studentId) {
+  if (!studentData?.applicationId) {
     navigate('/register/step1', { replace: true });
     return null;
   }
@@ -76,7 +76,7 @@ export default function RegistrationStep2() {
       formData.append('payment_date', data.payment_date);
       if (screenshotFile) formData.append('screenshot', screenshotFile);
 
-      const res = await api.post(`/registrations/${studentData.studentId}/payment`, formData, {
+      const res = await api.post(`/registrations/${studentData.applicationId}/payment`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       localStorage.removeItem('fars_draft');

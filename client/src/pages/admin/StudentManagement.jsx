@@ -38,8 +38,8 @@ export default function StudentManagement() {
   const [confirmStudent, setConfirmStudent] = useState(null);
 
   const { data } = useQuery({
-    queryKey: ['students', page, search, statusFilter, courseFilter, levelFilter],
-    queryFn: () => api.get('/students', {
+    queryKey: ['applications', page, search, statusFilter, courseFilter, levelFilter],
+    queryFn: () => api.get('/applications', {
       params: {
         page, limit: 20, search,
         status: statusFilter || undefined,
@@ -69,27 +69,27 @@ export default function StudentManagement() {
   const pagination = data?.pagination || { page: 1, pages: 1, total: 0 };
 
   const { data: detail } = useQuery({
-    queryKey: ['student', selectedId],
-    queryFn: () => api.get(`/students/${selectedId}`).then(r => r.data.data || r.data),
+    queryKey: ['application', selectedId],
+    queryFn: () => api.get(`/applications/${selectedId}`).then(r => r.data.data || r.data),
     enabled: !!selectedId,
   });
 
   const statusMutation = useMutation({
-    mutationFn: ({ id, status }) => api.patch(`/students/${id}/status`, { status }),
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['students'] }); queryClient.invalidateQueries({ queryKey: ['student'] }); },
+    mutationFn: ({ id, status }) => api.patch(`/applications/${id}/status`, { status }),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['applications'] }); queryClient.invalidateQueries({ queryKey: ['application'] }); },
   });
 
   const deleteStudentMutation = useMutation({
-    mutationFn: (id) => api.delete(`/students/${id}`),
+    mutationFn: (id) => api.delete(`/applications/${id}`),
     onSuccess: () => {
       setSelectedId(null);
-      queryClient.invalidateQueries({ queryKey: ['students'] });
-      queryClient.invalidateQueries({ queryKey: ['student'] });
+      queryClient.invalidateQueries({ queryKey: ['applications'] });
+      queryClient.invalidateQueries({ queryKey: ['application'] });
     },
   });
 
   const deleteAllMutation = useMutation({
-    mutationFn: () => api.delete('/students', {
+    mutationFn: () => api.delete('/applications', {
       params: {
         search,
         status: statusFilter || undefined,
@@ -98,13 +98,13 @@ export default function StudentManagement() {
       },
     }),
     onSuccess: (res) => {
-      toast.success(res.data?.message || 'Students deleted.');
+      toast.success(res.data?.message || 'Applications deleted.');
       setShowDeleteAll(false);
-      queryClient.invalidateQueries({ queryKey: ['students'] });
-      queryClient.invalidateQueries({ queryKey: ['student'] });
+      queryClient.invalidateQueries({ queryKey: ['applications'] });
+      queryClient.invalidateQueries({ queryKey: ['application'] });
     },
     onError: (err) => {
-      toast.error(err.response?.data?.message || 'Could not delete students.');
+      toast.error(err.response?.data?.message || 'Could not delete applications.');
     },
   });
 
