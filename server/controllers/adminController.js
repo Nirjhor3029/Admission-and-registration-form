@@ -48,10 +48,19 @@ const listStudents = async (req, res, next) => {
       .skip((page - 1) * limit)
       .limit(Number(limit));
 
+    const ids = students.map((s) => s._id);
+    const paidIds = await Payment.distinct('student_id', { student_id: { $in: ids } });
+    const paidSet = new Set(paidIds.map((id) => String(id)));
+    const rows = students.map((s) => {
+      const doc = s.toObject();
+      doc.has_payment = paidSet.has(String(s._id));
+      return doc;
+    });
+
     res.json({
       success: true,
       data: {
-        students,
+        students: rows,
         pagination: {
           page: Number(page),
           limit: Number(limit),

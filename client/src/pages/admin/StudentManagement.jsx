@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
 
 const statusColors = {
@@ -24,6 +25,8 @@ const statusLabels = {
 
 export default function StudentManagement() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role === 'super_admin';
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage] = useState(1);
@@ -102,10 +105,12 @@ export default function StudentManagement() {
             placeholder="Search by name, ID, or mobile..."
           />
         </form>
-        <button onClick={() => setShowDeleteAll(true)} className="h-10 px-4 bg-error text-on-error rounded-lg text-label-md hover:bg-error-container transition-colors flex items-center gap-2 shrink-0">
-          <span className="material-symbols-outlined text-[18px]">delete_sweep</span>
-          Delete All
-        </button>
+        {isSuperAdmin && (
+          <button onClick={() => setShowDeleteAll(true)} className="h-10 px-4 bg-error text-on-error rounded-lg text-label-md hover:bg-error-container transition-colors flex items-center gap-2 shrink-0">
+            <span className="material-symbols-outlined text-[18px]">delete_sweep</span>
+            Delete All
+          </button>
+        )}
       </header>
 
       <div className="flex flex-wrap gap-2 items-center pb-2 border-b border-outline-variant/50">
@@ -137,6 +142,7 @@ export default function StudentManagement() {
                   <th className="px-4 py-4 text-label-md text-on-surface-variant font-semibold">Amount</th>
                   <th className="px-4 py-4 text-label-md text-on-surface-variant font-semibold">Date</th>
                   <th className="px-4 py-4 text-label-md text-on-surface-variant font-semibold">Status</th>
+                  {isSuperAdmin && <th className="px-4 py-4 text-label-md text-on-surface-variant font-semibold"></th>}
                 </tr>
               </thead>
               <tbody>
@@ -165,6 +171,19 @@ export default function StudentManagement() {
                         {statusLabels[s.status] || s.status}
                       </span>
                     </td>
+                    {isSuperAdmin && (
+                      <td className="px-4 py-3 text-right">
+                        {s.status !== 'admitted' && !s.has_payment && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setConfirmStudent(s); }}
+                            className="text-on-surface-variant hover:text-error transition-colors"
+                            title="Delete student"
+                          >
+                            <span className="material-symbols-outlined text-[20px]">delete</span>
+                          </button>
+                        )}
+                      </td>
+                    )}
                   </tr>
                 ))}
                 {students.length === 0 && (
@@ -251,7 +270,7 @@ export default function StudentManagement() {
               </div>
             )}
 
-            {student.status !== 'admitted' && (!detail?.payments || detail.payments.length === 0) && (
+            {isSuperAdmin && student.status !== 'admitted' && (!detail?.payments || detail.payments.length === 0) && (
               <div className="flex flex-col gap-2 pt-2 border-t border-outline-variant/30">
                 <button onClick={() => setConfirmStudent(student)} disabled={deleteStudentMutation.isPending} className="w-full h-10 rounded-lg bg-error/10 text-error text-label-md hover:bg-error/20 transition-colors disabled:opacity-50">
                   {deleteStudentMutation.isPending ? 'Deleting...' : 'Delete Student'}
