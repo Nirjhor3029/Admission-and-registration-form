@@ -2,6 +2,8 @@
 
 **Updated:** 2026-08-02 · Read this file first — no need to re-read other notes daily.
 
+> **WORKFLOW RULE (user requirement):** NEVER auto-commit. Always ask/confirm before committing. User reviews/fixes changes first, then commits manually. And Also don't delete database confirm from user every single time when you will work on database.
+
 > This file consolidates: project overview, architecture, server & client state, API shapes,
 > known bugs, next steps, and dev commands. Generated from full code analysis + all notes in `only-for-dev/`.
 

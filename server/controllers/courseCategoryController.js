@@ -1,4 +1,5 @@
 const CourseCategory = require('../models/CourseCategory');
+const Course = require('../models/Course');
 const AppError = require('../utils/AppError');
 
 const listCategories = async (req, res, next) => {
@@ -46,4 +47,20 @@ const deleteCategory = async (req, res, next) => {
   }
 };
 
-module.exports = { listCategories, createCategory, updateCategory, deleteCategory };
+const assignCoursesToCategory = async (req, res, next) => {
+  try {
+    const { course_ids } = req.body;
+    const category = await CourseCategory.findById(req.params.id);
+    if (!category) return next(new AppError('Category not found.', 404));
+    const ids = Array.isArray(course_ids) ? course_ids.filter(Boolean) : [];
+    const result = await Course.updateMany(
+      { _id: { $in: ids } },
+      { $set: { category_id: category._id } }
+    );
+    res.json({ success: true, data: { matched: result.matchedCount, modified: result.modifiedCount } });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { listCategories, createCategory, updateCategory, deleteCategory, assignCoursesToCategory };

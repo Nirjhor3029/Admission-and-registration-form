@@ -52,9 +52,9 @@ const seed = async () => {
       { name: 'Workshop', duration: '1 Day (3 Hours)', fee: 199, sort_order: 1, time_slots: ['07:30 - 10:30 PM'] },
       { name: 'Bootcamp', duration: '3 Days (9 Hours)', fee: 500, sort_order: 2, time_slots: ['07:30 - 10:30 PM'] },
       { name: 'Fundamentals', duration: '1 Month (36 Hours)', fee: 2000, sort_order: 3, time_slots: ['09:00 AM - 12:00 PM'] },
-      { name: 'Intermediate', duration: '3 Months', fee: 8000, sort_order: 4, time_slots: ['02:00 PM - 05:00 PM'] },
-      { name: 'Advanced', duration: '3 Months', fee: 8000, sort_order: 5, time_slots: ['05:00 PM - 08:00 PM'] },
-      { name: 'Expert', duration: '3 Months', fee: 8000, sort_order: 6, time_slots: ['07:30 - 10:30 PM'] },
+      { name: 'Intermediate', duration: '3 Months (108 Hourse)', fee: 8000, sort_order: 4, time_slots: ['02:00 PM - 05:00 PM'] },
+      { name: 'Advanced', duration: '3 Months (108 Hourse)', fee: 8000, sort_order: 5, time_slots: ['05:00 PM - 08:00 PM'] },
+      { name: 'Expert', duration: '3 Months (108 Hourse)', fee: 8000, sort_order: 6, time_slots: ['07:30 - 10:30 PM'] },
     ]);
     console.log(`${levels.length} program levels created`);
 

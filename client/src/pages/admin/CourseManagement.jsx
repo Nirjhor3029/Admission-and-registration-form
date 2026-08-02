@@ -44,6 +44,8 @@ export default function CourseManagement() {
   const [editCategory, setEditCategory] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
+  const [assignTarget, setAssignTarget] = useState(null);
+  const [assignChecked, setAssignChecked] = useState({});
   const codeEdited = useRef(false);
 
   const courseForm = useState({ name: '', code: '', category_id: '', sort_order: '', description: '' });
@@ -110,6 +112,21 @@ export default function CourseManagement() {
     mutationFn: (id) => api.delete(`/course-categories/${id}`),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['course-categories'] }); queryClient.invalidateQueries({ queryKey: ['courses'] }); },
   });
+
+  const assignCoursesMutation = useMutation({
+    mutationFn: (body) => api.put(`/course-categories/${assignTarget._id}/courses`, body),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['course-categories'] }); queryClient.invalidateQueries({ queryKey: ['courses'] }); setAssignTarget(null); setAssignChecked({}); },
+  });
+
+  const openAssignCourses = (category) => {
+    const checked = {};
+    courses.forEach(c => {
+      const cid = typeof c.category_id === 'object' ? c.category_id._id : c.category_id;
+      if (cid === category._id) checked[c._id] = true;
+    });
+    setAssignChecked(checked);
+    setAssignTarget(category);
+  };
 
   const openAddBatch = () => {
     setEditBatch(null);
@@ -377,6 +394,9 @@ export default function CourseManagement() {
                     <h3 className="text-headline-md text-on-surface">{category.name}</h3>
                   </div>
                   <div className="flex gap-1">
+                    <button onClick={() => openAssignCourses(category)} className="h-9 px-3 bg-surface border border-outline-variant text-on-surface rounded-lg text-label-sm hover:bg-surface-variant transition-colors flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-[18px]">add</span> Add Courses
+                    </button>
                     <button onClick={() => openEditCategory(category)} className="text-on-surface-variant hover:text-primary">
                       <span className="material-symbols-outlined">edit</span>
                     </button>
@@ -438,6 +458,40 @@ export default function CourseManagement() {
             <input placeholder="Sort Order" type="number" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={categoryForm[0].sort_order} onChange={(e) => categoryForm[1](p => ({ ...p, sort_order: e.target.value }))} />
             <button type="submit" disabled={createCategoryMutation.isPending} className="h-12 bg-primary text-on-primary rounded-lg text-label-md hover:bg-primary-container transition-colors disabled:opacity-50">{editCategory ? 'Update Category' : 'Create Category'}</button>
           </form>
+        </Modal>
+      )}
+
+      {assignTarget && (
+        <Modal title={`Assign Courses — ${assignTarget.name}`} onClose={() => { setAssignTarget(null); setAssignChecked({}); }}>
+          <div className="flex flex-col gap-4">
+            <p className="text-body-sm text-on-surface-variant">Select all courses that belong to this category. Uncheck to remove them. Save to apply.</p>
+            <div className="flex items-center justify-between border-b border-outline-variant pb-3">
+              <label className="flex items-center gap-2 text-body-sm text-on-surface font-medium cursor-pointer">
+                <input type="checkbox" className="w-4 h-4 accent-primary" checked={courses.length > 0 && Object.values(assignChecked).every(Boolean) && Object.keys(assignChecked).length === courses.length} onChange={(e) => {
+                  const next = {};
+                  if (e.target.checked) courses.forEach(c => { next[c._id] = true; });
+                  setAssignChecked(next);
+                }} />
+                Select all courses
+              </label>
+              <span className="text-body-sm text-on-surface-variant">{Object.values(assignChecked).filter(Boolean).length} selected</span>
+            </div>
+            <div className="max-h-[50vh] overflow-y-auto flex flex-col gap-1">
+              {courses.map((c) => (
+                <label key={c._id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-variant/50 cursor-pointer">
+                  <input type="checkbox" className="w-4 h-4 accent-primary" checked={!!assignChecked[c._id]} onChange={(e) => setAssignChecked(p => ({ ...p, [c._id]: e.target.checked }))} />
+                  <div className="flex-1">
+                    <p className="text-body-sm text-on-surface">{c.name}</p>
+                    {c.code && <p className="text-body-sm text-on-surface-variant">{c.code}</p>}
+                  </div>
+                </label>
+              ))}
+            </div>
+            <div className="flex gap-3 justify-end border-t border-outline-variant pt-4">
+              <button onClick={() => { setAssignTarget(null); setAssignChecked({}); }} className="h-10 px-4 bg-surface border border-outline-variant text-on-surface rounded-lg text-label-md hover:bg-surface-variant transition-colors">Cancel</button>
+              <button onClick={() => assignCoursesMutation.mutate({ course_ids: Object.keys(assignChecked).filter(k => assignChecked[k]) })} disabled={assignCoursesMutation.isPending} className="h-10 px-4 bg-primary text-on-primary rounded-lg text-label-md hover:bg-primary-container transition-colors disabled:opacity-50">{assignCoursesMutation.isPending ? 'Saving...' : 'Save Assignment'}</button>
+            </div>
+          </div>
         </Modal>
       )}
 
