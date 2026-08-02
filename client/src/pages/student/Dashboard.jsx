@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
-import api from '../../services/api';
+import api, { downloadFile } from '../../services/api';
 
 const STATUS_META = {
   draft: { label: 'Draft', color: 'bg-surface-variant text-on-surface border-outline-variant', icon: 'edit_note', dot: 'bg-on-surface-variant' },
@@ -110,6 +110,7 @@ function ApplicationCard({ app }) {
   const batch = app.batch_id || {};
   const payment = app.payment;
   const [copiedKey, setCopiedKey] = useState('');
+  const [downloading, setDownloading] = useState('');
   const isRejected = app.status === 'rejected' || payment?.status === 'rejected';
 
   const copyText = async (text, label, key) => {
@@ -137,6 +138,23 @@ function ApplicationCard({ app }) {
       setTimeout(() => setCopiedKey(''), 1600);
     } else {
       toast.error('Could not copy. Please copy manually.');
+    }
+  };
+
+  const handleDownload = async (type) => {
+    setDownloading(type);
+    try {
+      const params = { application_id: app._id };
+      if (type === 'invoice') {
+        await downloadFile('/student/invoice', params, `invoice-${app._id}.pdf`);
+      } else {
+        await downloadFile('/student/admission-letter', params, `admission-letter-${app._id}.pdf`);
+      }
+      toast.success(type === 'invoice' ? 'Invoice downloaded' : 'Admission letter downloaded');
+    } catch (err) {
+      toast.error(err.message || 'Download failed. Please try again.');
+    } finally {
+      setDownloading('');
     }
   };
 
@@ -247,22 +265,26 @@ function ApplicationCard({ app }) {
       {(app.hasInvoice || app.hasAdmissionLetter) && (
         <div className="flex gap-2.5 px-5 pb-5">
           {app.hasInvoice && (
-            <a
-              href={`/api/student/invoice?application_id=${app._id}`}
-              className="flex-1 h-10 rounded-xl bg-surface-container-lowest border border-outline-variant text-on-surface text-label-md flex items-center justify-center gap-1.5 hover:bg-surface-container-low transition-colors"
+            <button
+              type="button"
+              onClick={() => handleDownload('invoice')}
+              disabled={downloading !== ''}
+              className="flex-1 h-10 rounded-xl bg-surface-container-lowest border border-outline-variant text-on-surface text-label-md flex items-center justify-center gap-1.5 hover:bg-surface-container-low transition-colors disabled:opacity-50"
             >
-              <span className="material-symbols-outlined text-[18px]">receipt_long</span>
-              Invoice
-            </a>
+              <span className="material-symbols-outlined text-[18px]">{downloading === 'invoice' ? 'downloading' : 'receipt_long'}</span>
+              {downloading === 'invoice' ? 'Downloading...' : 'Invoice'}
+            </button>
           )}
           {app.hasAdmissionLetter && (
-            <a
-              href={`/api/student/admission-letter?application_id=${app._id}`}
-              className="flex-1 h-10 rounded-xl bg-tertiary-container/40 text-tertiary border border-tertiary-container text-label-md flex items-center justify-center gap-1.5 hover:bg-tertiary-container/60 transition-colors"
+            <button
+              type="button"
+              onClick={() => handleDownload('admission-letter')}
+              disabled={downloading !== ''}
+              className="flex-1 h-10 rounded-xl bg-tertiary-container/40 text-tertiary border border-tertiary-container text-label-md flex items-center justify-center gap-1.5 hover:bg-tertiary-container/60 transition-colors disabled:opacity-50"
             >
-              <span className="material-symbols-outlined text-[18px]">description</span>
-              Admission Letter
-            </a>
+              <span className="material-symbols-outlined text-[18px]">{downloading === 'admission-letter' ? 'downloading' : 'description'}</span>
+              {downloading === 'admission-letter' ? 'Downloading...' : 'Admission Letter'}
+            </button>
           )}
         </div>
       )}

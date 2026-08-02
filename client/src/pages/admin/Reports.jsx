@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
-import api from '../../services/api';
+import toast from 'react-hot-toast';
+import api, { downloadFile } from '../../services/api';
 
 const tabs = [
   { key: 'admissions', label: 'Admission' },
@@ -11,6 +12,7 @@ const tabs = [
 export default function Reports() {
   const [activeTab, setActiveTab] = useState('admissions');
   const [range, setRange] = useState('monthly');
+  const [exporting, setExporting] = useState('');
 
   const { data: admissions } = useQuery({
     queryKey: ['reports-admissions', range],
@@ -29,8 +31,16 @@ export default function Reports() {
   const paymentReport = payments?.report || [];
   const methodWise = payments?.methodWise || [];
 
-  const handleExport = (type) => {
-    window.open(`/api/reports/export?type=${type}&report=${activeTab}`, '_blank');
+  const handleExport = async (type) => {
+    setExporting(type);
+    try {
+      await downloadFile('/reports/export', { type, report: activeTab }, `${activeTab}-report.${type === 'excel' ? 'xlsx' : 'pdf'}`);
+      toast.success('Report exported');
+    } catch (err) {
+      toast.error(err.message || 'Export failed. Please try again.');
+    } finally {
+      setExporting('');
+    }
   };
 
   return (
@@ -45,11 +55,11 @@ export default function Reports() {
             <option value="daily">Daily</option>
             <option value="monthly">Monthly</option>
           </select>
-          <button onClick={() => handleExport('pdf')} className="h-10 px-4 bg-surface border border-outline-variant text-on-surface rounded-lg text-label-md hover:bg-surface-variant transition-colors flex items-center gap-2">
-            <span className="material-symbols-outlined text-[18px]">picture_as_pdf</span> PDF
+          <button onClick={() => handleExport('pdf')} disabled={exporting !== ''} className="h-10 px-4 bg-surface border border-outline-variant text-on-surface rounded-lg text-label-md hover:bg-surface-variant transition-colors flex items-center gap-2 disabled:opacity-50">
+            <span className="material-symbols-outlined text-[18px]">{exporting === 'pdf' ? 'downloading' : 'picture_as_pdf'}</span> {exporting === 'pdf' ? 'Exporting...' : 'PDF'}
           </button>
-          <button onClick={() => handleExport('excel')} className="h-10 px-4 bg-primary text-on-primary rounded-lg text-label-md hover:bg-primary-container transition-colors flex items-center gap-2">
-            <span className="material-symbols-outlined text-[18px]">table_chart</span> Excel
+          <button onClick={() => handleExport('excel')} disabled={exporting !== ''} className="h-10 px-4 bg-primary text-on-primary rounded-lg text-label-md hover:bg-primary-container transition-colors flex items-center gap-2 disabled:opacity-50">
+            <span className="material-symbols-outlined text-[18px]">{exporting === 'excel' ? 'downloading' : 'table_chart'}</span> {exporting === 'excel' ? 'Exporting...' : 'Excel'}
           </button>
         </div>
       </header>
