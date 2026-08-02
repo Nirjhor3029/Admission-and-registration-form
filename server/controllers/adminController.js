@@ -54,9 +54,23 @@ const listStudents = async (req, res, next) => {
     const ids = students.map((s) => s._id);
     const paidIds = await Payment.distinct('student_id', { student_id: { $in: ids } });
     const paidSet = new Set(paidIds.map((id) => String(id)));
+
+    const latestPayments = await Payment.find({ student_id: { $in: ids } })
+      .sort('-createdAt')
+      .select('student_id amount trxid status');
+    const latestByStudent = {};
+    latestPayments.forEach((p) => {
+      const key = String(p.student_id);
+      if (!latestByStudent[key]) latestByStudent[key] = p;
+    });
+
     const rows = students.map((s) => {
       const doc = s.toObject();
+      const pay = latestByStudent[String(s._id)];
       doc.has_payment = paidSet.has(String(s._id));
+      doc.payment_amount = pay ? pay.amount : null;
+      doc.payment_trxid = pay ? pay.trxid : '';
+      doc.payment_status = pay ? pay.status : '';
       return doc;
     });
 
@@ -89,9 +103,16 @@ const getStudent = async (req, res, next) => {
 
     const payments = await Payment.find({ student_id: student._id }).sort('-createdAt');
 
+    const latest = payments[0] || null;
+    const studentDoc = student.toObject();
+    studentDoc.has_payment = payments.length > 0;
+    studentDoc.payment_amount = latest ? latest.amount : null;
+    studentDoc.payment_trxid = latest ? latest.trxid : '';
+    studentDoc.payment_status = latest ? latest.status : '';
+
     res.json({
       success: true,
-      data: { student, payments },
+      data: { student: studentDoc, payments },
     });
   } catch (err) {
     next(err);

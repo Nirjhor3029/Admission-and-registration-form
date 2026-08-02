@@ -88,6 +88,7 @@ export default function StudentManagement() {
   };
 
   const student = detail?.student || detail;
+  const payment = detail?.payments?.[0];
 
   return (
     <div className="flex flex-col gap-6">
@@ -156,8 +157,19 @@ export default function StudentManagement() {
                   >
                     <td className="px-4 py-3 relative">
                       {s._id === selectedId && <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r-full" />}
-                      <div className="font-medium text-on-surface">{s.student_name || s.name}</div>
-                      <div className="text-xs text-on-surface-variant mt-0.5">ID: {s.student_id_number || s._id?.slice(-6)}</div>
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-label-md shrink-0 overflow-hidden">
+                          {s.student_photo_url ? (
+                            <img src={s.student_photo_url} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            (s.student_name || s.name || '?')[0]
+                          )}
+                        </div>
+                        <div>
+                          <div className="font-medium text-on-surface">{s.student_name || s.name}</div>
+                          <div className="text-xs text-on-surface-variant mt-0.5">ID: {s.student_id_number || s._id?.slice(-6)}</div>
+                        </div>
+                      </div>
                     </td>
                     <td className="px-4 py-3 text-on-surface-variant">{s.mobile}</td>
                     <td className="px-4 py-3">
@@ -213,8 +225,12 @@ export default function StudentManagement() {
             </div>
 
             <div className="flex flex-col items-center text-center gap-3">
-              <div className="w-20 h-20 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-headline-xl font-bold">
-                {(student.student_name || student.name || '?')[0]}
+              <div className="w-20 h-20 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-headline-xl font-bold overflow-hidden">
+                {student.student_photo_url ? (
+                  <img src={student.student_photo_url} alt={student.student_name || student.name} className="w-full h-full object-cover" />
+                ) : (
+                  (student.student_name || student.name || '?')[0]
+                )}
               </div>
               <div>
                 <h4 className="text-headline-md text-on-surface">{student.student_name || student.name}</h4>
@@ -236,7 +252,10 @@ export default function StudentManagement() {
               </div>
               <div className="border-t border-outline-variant/30 pt-4">
                 <p className="text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Payment</p>
-                <p className="text-body-md text-on-surface">৳{student.payment_amount || student.amount || '—'}</p>
+                <p className="text-body-md text-on-surface">৳{payment?.amount ?? student.payment_amount ?? student.amount ?? '—'}</p>
+                {payment?.trxid && (
+                  <p className="text-body-sm text-on-surface-variant">TrxID: {payment.trxid} · <span className="capitalize">{payment.method === 'bkash' ? 'bKash' : payment.method === 'nagad' ? 'Nagad' : payment.method}</span></p>
+                )}
                 <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-label-sm border mt-1 ${statusColors[student.status] || 'bg-surface-variant'}`}>
                   {statusLabels[student.status] || student.status}
                 </span>

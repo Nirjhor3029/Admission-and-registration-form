@@ -69,8 +69,12 @@ export default function PaymentVerification() {
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold">
-                      {(s.student_name || s.name || '?')[0]}
+                    <div className="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold overflow-hidden shrink-0">
+                      {s.student_photo_url ? (
+                        <img src={s.student_photo_url} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        (s.student_name || s.name || '?')[0]
+                      )}
                     </div>
                     <div>
                       <p className="text-body-md text-on-surface font-medium">{s.student_name || s.name}</p>
@@ -90,6 +94,19 @@ export default function PaymentVerification() {
             <>
               <div className="bg-surface border border-outline-variant rounded-xl p-6 shadow-sm">
                 <h3 className="text-headline-md text-on-surface mb-4">Student Information</h3>
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-16 h-16 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-headline-md overflow-hidden shrink-0">
+                    {student.student_photo_url ? (
+                      <img src={student.student_photo_url} alt={student.student_name || student.name} className="w-full h-full object-cover" />
+                    ) : (
+                      (student.student_name || student.name || '?')[0]
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-body-md text-on-surface font-medium">{student.student_name || student.name}</p>
+                    <p className="text-body-sm text-on-surface-variant">{student.mobile}</p>
+                  </div>
+                </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-label-sm text-on-surface-variant uppercase tracking-wider mb-1">Name</p>
