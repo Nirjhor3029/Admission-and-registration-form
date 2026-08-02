@@ -1,6 +1,21 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../services/api';
+
+const generateCodeFromName = (name, existingCodes) => {
+  const words = String(name || '').trim().split(/\s+/).filter(Boolean);
+  if (!words.length) return '';
+  let base = words.map(w => w[0]).join('').toUpperCase().slice(0, 4);
+  if (base.length < 2) base = words[0].toUpperCase().slice(0, 3);
+  const existing = new Set((existingCodes || []).map(c => String(c || '').toUpperCase()));
+  let candidate = base;
+  let i = 1;
+  while (existing.has(candidate)) {
+    candidate = `${base}${i}`;
+    i += 1;
+  }
+  return candidate;
+};
 
 function Modal({ title, children, onClose }) {
   return (
@@ -26,8 +41,9 @@ export default function CourseManagement() {
   const [editLevel, setEditLevel] = useState(null);
   const [editBatch, setEditBatch] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const codeEdited = useRef(false);
 
-  const courseForm = useState({ name: '', sort_order: '', description: '' });
+  const courseForm = useState({ name: '', code: '', sort_order: '', description: '' });
   const levelForm = useState({ name: '', duration: '', fee: '', sort_order: '', time_slots: '' });
   const batchForm = useState({ course_id: '', level_id: '', batch_name: '', start_date: '', capacity: '', sort_order: '', class_schedule: '' });
 
@@ -96,10 +112,28 @@ export default function CourseManagement() {
     setShowBatchForm(true);
   };
 
+  const openAddCourse = () => {
+    setEditCourse(null);
+    codeEdited.current = false;
+    const nextOrder = courses.reduce((max, c) => Math.max(max, Number(c.sort_order) || 0), 0) + 1;
+    courseForm[1]({ name: '', code: '', sort_order: String(nextOrder), description: '' });
+    setShowCourseForm(true);
+  };
+
   const openEditCourse = (course) => {
     setEditCourse(course);
-    courseForm[1]({ name: course.name, sort_order: course.sort_order?.toString() || '', description: course.description || '' });
+    codeEdited.current = true;
+    courseForm[1]({ name: course.name, code: course.code || '', sort_order: course.sort_order?.toString() || '', description: course.description || '' });
     setShowCourseForm(true);
+  };
+
+  const handleCourseNameChange = (e) => {
+    const name = e.target.value;
+    courseForm[1](p => ({
+      ...p,
+      name,
+      code: !codeEdited.current ? generateCodeFromName(name, courses.map(c => c.code)) : p.code,
+    }));
   };
 
   const openAddLevel = () => {
@@ -132,7 +166,7 @@ export default function CourseManagement() {
         </div>
         <div className="flex gap-3">
           {activeTab === 'courses' && (
-            <button onClick={() => { setEditCourse(null); courseForm[1]({ name: '', sort_order: '', description: '' }); setShowCourseForm(true); }} className="h-10 px-4 bg-surface border border-outline-variant text-on-surface rounded-lg text-label-md hover:bg-surface-variant transition-colors flex items-center gap-2">
+            <button onClick={openAddCourse} className="h-10 px-4 bg-surface border border-outline-variant text-on-surface rounded-lg text-label-md hover:bg-surface-variant transition-colors flex items-center gap-2">
               <span className="material-symbols-outlined text-[18px]">add</span> Add Course
             </button>
           )}
@@ -266,10 +300,16 @@ export default function CourseManagement() {
       )}
 
       {showCourseForm && (
-        <Modal title={editCourse ? 'Edit Course' : 'Add Course'} onClose={() => { setShowCourseForm(false); setEditCourse(null); }}>
-          <form onSubmit={(e) => { e.preventDefault(); const f = courseForm[0]; createCourseMutation.mutate({ name: f.name, sort_order: f.sort_order ? Number(f.sort_order) : 0, description: f.description }); }} className="flex flex-col gap-4">
-            <input placeholder="Course Name" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].name} onChange={(e) => courseForm[1](p => ({ ...p, name: e.target.value }))} required />
-            <input placeholder="Sort Order" type="number" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].sort_order} onChange={(e) => courseForm[1](p => ({ ...p, sort_order: e.target.value }))} />
+        <Modal title={editCourse ? 'Edit Course' : 'Add Course'} onClose={() => { setShowCourseForm(false); setEditCourse(null); codeEdited.current = false; }}>
+          <form onSubmit={(e) => { e.preventDefault(); const f = courseForm[0]; createCourseMutation.mutate({ name: f.name, code: f.code || generateCodeFromName(f.name, courses.map(c => c.code)), sort_order: f.sort_order ? Number(f.sort_order) : 0, description: f.description }); }} className="flex flex-col gap-4">
+            <input placeholder="Course Name" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].name} onChange={handleCourseNameChange} required />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1">
+                <input placeholder="Course Code" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].code} onChange={(e) => { codeEdited.current = true; courseForm[1](p => ({ ...p, code: e.target.value.toUpperCase() })); }} />
+                <span className="text-body-sm text-on-surface-variant">Auto-generated from name, editable</span>
+              </div>
+              <input placeholder="Sort Order" type="number" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].sort_order} onChange={(e) => courseForm[1](p => ({ ...p, sort_order: e.target.value }))} />
+            </div>
             <textarea placeholder="Description (optional)" rows={3} className="p-3 border border-outline-variant rounded-lg text-body-md resize-none focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].description} onChange={(e) => courseForm[1](p => ({ ...p, description: e.target.value }))} />
             <button type="submit" disabled={createCourseMutation.isPending} className="h-12 bg-primary text-on-primary rounded-lg text-label-md hover:bg-primary-container transition-colors disabled:opacity-50">{editCourse ? 'Update Course' : 'Create Course'}</button>
           </form>
