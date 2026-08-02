@@ -13,6 +13,10 @@ const courseSchema = new mongoose.Schema(
       sparse: true,
       trim: true,
     },
+    category_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'CourseCategory',
+    },
     fee: {
       type: Number,
       min: 0,

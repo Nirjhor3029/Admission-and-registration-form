@@ -31,9 +31,10 @@ project/
 ## 2. Architecture / Data Hierarchy
 
 ```
-Course (independent)
+Course (independent, has optional category_id)
   └── ProgramLevel (STANDALONE — deliberately NO course_id)
        └── Batch (has course_id + optional level_id)
+CourseCategory (parent of Course; groups courses in admin + public dropdown)
 ```
 
 **Registration flow:** Landing → Step 1 (Course + ProgramLevel + optional Batch) → Step 2 (Payment) → Confirmation. Drafts can be saved/resumed anytime (`DRF-XXXXXX` code or mobile lookup).
@@ -54,13 +55,14 @@ admitted → cancelled
 
 ## 3. Server — What Exists
 
-**Structure:** `models/` (8), `routes/` (11), `controllers/` (9), `services/` (6), `middlewares/` (2), `config/`, `utils/`.
+**Structure:** `models/` (9), `routes/` (12), `controllers/` (10), `services/` (6), `middlewares/` (2), `config/`, `utils/`.
 
 ### Models (`server/models/`)
 | Model | Key points |
 |---|---|
 | `Admin` | name, email (unique, lowercase), password_hash (bcrypt cost 12, pre-save), role enum `[super_admin, admission_officer, accountant, instructor]` (instructor used nowhere) |
-| `Course` | name, code (unique), fee, duration, sort_order, description, status |
+| `CourseCategory` | name (required, trim), sort_order, status `[active,inactive]` |
+| `Course` | name, code (unique), category_id (ref CourseCategory, opt), fee, duration, sort_order, description, status |
 | `ProgramLevel` | name, duration, fee, time_slots[], sort_order, status — **no course_id** |
 | `Batch` | course_id (ref, req), level_id (ref, opt), batch_name, start_date, capacity (min 1), seats_filled, sort_order, class_schedule, status `[upcoming,open,full,started,completed]`, `isFull()` method |
 | `Student` | student_name, mobile (unique), email, whatsapp, gender `[male,female,other,prefer_not_to_say]`, qualification, student_photo_url, address, course_id/level_id/batch_id (all optional), referral_source, status, draft_code (unique sparse), student_id_number (unique sparse), certificate_generated (default false) |
@@ -74,7 +76,8 @@ admitted → cancelled
 | `/api/auth` | POST `/admin/login`, POST `/student/login` | Public |
 | `/api/registrations` | POST `/draft`, GET `/draft?q=`, POST `/`, POST `/:id/payment` | Public (multipart) |
 | `/api/students` | GET `/`, GET `/:id`, PATCH `/:id/status`, PATCH `/:id/payment/verify`, PATCH `/:id/payment/reject` | Admin (super_admin, admission_officer, accountant) |
-| `/api/courses` | GET `/`, GET `/:id` public; POST, PATCH admin; DELETE **super_admin only** | Mixed |
+| `/api/courses` | GET `/`, GET `/:id` public (GET `/` supports `?category_id=` filter, populates category); POST, PATCH admin; DELETE **super_admin only** | Mixed |
+| `/api/course-categories` | GET public (active only); POST + **PUT** `/:id` admin (super_admin, admission_officer); DELETE super_admin only | Mixed |
 | `/api/program-levels` | GET public; POST, **PUT** `/:id`, DELETE (super_admin only) — **PUT not PATCH!** | Mixed |
 | `/api/batches` | GET public; POST, PATCH admin | Mixed |
 | `/api/payment-config` | GET public; **PUT** `/` admin | Mixed |
@@ -143,7 +146,7 @@ admitted → cancelled
 | Admin | `Overview` | KPI cards + Recharts (funnel, revenue, course pie) + recent activity (**static mock**) |
 | Admin | `StudentManagement` | Table + search/filter + detail drawer + status change |
 | Admin | `PaymentVerification` | Split view (student info + receipt image), verify/reject with reason |
-| Admin | `CourseManagement` | Tabs: Courses | Program Levels, CRUD modals, batch capacity bars, sort_order fields |
+| Admin | `CourseManagement` | Tabs: Courses | Program Levels | Categories, CRUD modals, batch capacity bars, sort_order fields, category filter on courses + category dropdown in course form |
 | Admin | `Reports` | Admission/Payment tabs, daily/monthly, PDF/Excel export |
 | Admin | `Settings` | Payment-config: bKash + Nagad merchant numbers |
 | Student | `Dashboard` | Mobile-first, status banner, docs lock/unlock, payment history, progression |
@@ -152,6 +155,7 @@ admitted → cancelled
 | Endpoint | Axios extraction |
 |---|---|
 | GET `/courses` | `r.data.data.courses \|\| []` |
+| GET `/course-categories` | `r.data.data \|\| []` (bare array) |
 | GET `/program-levels` | `r.data.data \|\| []` (bare array) |
 | GET `/batches` | `r.data.data.batches \|\| []` |
 | POST `/registrations` | `r.data.data?.student` |
@@ -188,9 +192,9 @@ Client env: `VITE_API_URL` (defaults `http://localhost:5000/api`).
 
 ## 7. Progress Status
 
-- **Server tracker:** 34/38 (Phase 9 Meta = future; step 8.3 deploy = manual).
-- **Client tracker:** 23/29 (Phase 7 deploy = 0/3; Phase 8 Meta = future; Phase 1.2 student login = deferred).
-- **Fully working:** registration flow (draft → Step1 → Step2 → confirmation), admin (login, overview, students, payment verify, course/level/batch CRUD, reports, settings), student dashboard, BDT currency, sort_order ordering, GIF upload, error handling + toasts.
+- **Server tracker:** 35/39 (Phase 9 Meta = future; step 8.3 deploy = manual; course-category CRUD added).
+- **Client tracker:** 24/30 (Phase 7 deploy = 0/3; Phase 8 Meta = future; Phase 1.2 student login = deferred).
+- **Fully working:** registration flow (draft → Step1 → Step2 → confirmation), admin (login, overview, students, payment verify, course/level/batch/category CRUD, reports, settings), student dashboard, BDT currency, sort_order ordering, course category filter + grouped public dropdown, GIF upload, error handling + toasts.
 - **Not done:** deployment to Vercel, student login/track page, notifications wiring, Meta/Facebook webhook, bKash/Nagad auto-verify.
 
 ---
@@ -214,7 +218,7 @@ Client env: `VITE_API_URL` (defaults `http://localhost:5000/api`).
 # Server (port 5000)
 cd server
 node server.js          # start
-npm run seed            # re-seed DB (admin@fars.com / admin123, 5 courses, 6 levels, 6 batches)
+npm run seed            # re-seed DB (admin@fars.com / admin123, 8 categories, 5 courses, 6 levels, 6 batches)
 
 # Client (port 3000)
 cd client

@@ -37,15 +37,25 @@ export default function CourseManagement() {
   const [showCourseForm, setShowCourseForm] = useState(false);
   const [showLevelForm, setShowLevelForm] = useState(false);
   const [showBatchForm, setShowBatchForm] = useState(false);
+  const [showCategoryForm, setShowCategoryForm] = useState(false);
   const [editCourse, setEditCourse] = useState(null);
   const [editLevel, setEditLevel] = useState(null);
   const [editBatch, setEditBatch] = useState(null);
+  const [editCategory, setEditCategory] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
   const codeEdited = useRef(false);
 
-  const courseForm = useState({ name: '', code: '', sort_order: '', description: '' });
+  const courseForm = useState({ name: '', code: '', category_id: '', sort_order: '', description: '' });
   const levelForm = useState({ name: '', duration: '', fee: '', sort_order: '', time_slots: '' });
   const batchForm = useState({ course_id: '', level_id: '', batch_name: '', start_date: '', capacity: '', sort_order: '', class_schedule: '' });
+  const categoryForm = useState({ name: '', sort_order: '' });
+
+  const { data: categoriesData } = useQuery({
+    queryKey: ['course-categories'],
+    queryFn: () => api.get('/course-categories').then(r => r.data.data || []),
+  });
+  const categories = Array.isArray(categoriesData) ? categoriesData : [];
 
   const { data: coursesData } = useQuery({
     queryKey: ['courses'],
@@ -91,6 +101,16 @@ export default function CourseManagement() {
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['batches'] }); queryClient.invalidateQueries({ queryKey: ['courses'] }); setShowBatchForm(false); setEditBatch(null); },
   });
 
+  const createCategoryMutation = useMutation({
+    mutationFn: (body) => editCategory ? api.put(`/course-categories/${editCategory._id}`, body) : api.post('/course-categories', body),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['course-categories'] }); queryClient.invalidateQueries({ queryKey: ['courses'] }); setShowCategoryForm(false); setEditCategory(null); },
+  });
+
+  const deleteCategoryMutation = useMutation({
+    mutationFn: (id) => api.delete(`/course-categories/${id}`),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['course-categories'] }); queryClient.invalidateQueries({ queryKey: ['courses'] }); },
+  });
+
   const openAddBatch = () => {
     setEditBatch(null);
     batchForm[1]({ course_id: '', level_id: '', batch_name: '', start_date: '', capacity: '', sort_order: '', class_schedule: '' });
@@ -116,14 +136,15 @@ export default function CourseManagement() {
     setEditCourse(null);
     codeEdited.current = false;
     const nextOrder = courses.reduce((max, c) => Math.max(max, Number(c.sort_order) || 0), 0) + 1;
-    courseForm[1]({ name: '', code: '', sort_order: String(nextOrder), description: '' });
+    courseForm[1]({ name: '', code: '', category_id: '', sort_order: String(nextOrder), description: '' });
     setShowCourseForm(true);
   };
 
   const openEditCourse = (course) => {
     setEditCourse(course);
     codeEdited.current = true;
-    courseForm[1]({ name: course.name, code: course.code || '', sort_order: course.sort_order?.toString() || '', description: course.description || '' });
+    const cid = typeof course.category_id === 'object' ? course.category_id._id : course.category_id;
+    courseForm[1]({ name: course.name, code: course.code || '', category_id: cid || '', sort_order: course.sort_order?.toString() || '', description: course.description || '' });
     setShowCourseForm(true);
   };
 
@@ -154,8 +175,27 @@ export default function CourseManagement() {
     setShowLevelForm(true);
   };
 
-  const filteredCourses = courses.filter(c => c.name?.toLowerCase().includes(searchTerm.toLowerCase()) || c.code?.toLowerCase().includes(searchTerm.toLowerCase()));
+  const openAddCategory = () => {
+    setEditCategory(null);
+    const nextOrder = categories.reduce((max, c) => Math.max(max, Number(c.sort_order) || 0), 0) + 1;
+    categoryForm[1]({ name: '', sort_order: String(nextOrder) });
+    setShowCategoryForm(true);
+  };
+
+  const openEditCategory = (category) => {
+    setEditCategory(category);
+    categoryForm[1]({ name: category.name, sort_order: category.sort_order?.toString() || '' });
+    setShowCategoryForm(true);
+  };
+
+  const filteredCourses = courses.filter(c => {
+    const matchesSearch = c.name?.toLowerCase().includes(searchTerm.toLowerCase()) || c.code?.toLowerCase().includes(searchTerm.toLowerCase());
+    const cid = typeof c.category_id === 'object' ? c.category_id._id : c.category_id;
+    const matchesCategory = !categoryFilter || cid === categoryFilter;
+    return matchesSearch && matchesCategory;
+  });
   const filteredLevels = levels.filter(l => l.name?.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredCategories = categories.filter(c => c.name?.toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
     <div className="flex flex-col gap-6">
@@ -175,6 +215,11 @@ export default function CourseManagement() {
               <span className="material-symbols-outlined text-[18px]">add</span> Add Level
             </button>
           )}
+          {activeTab === 'categories' && (
+            <button onClick={openAddCategory} className="h-10 px-4 bg-surface border border-outline-variant text-on-surface rounded-lg text-label-md hover:bg-surface-variant transition-colors flex items-center gap-2">
+              <span className="material-symbols-outlined text-[18px]">add</span> Add Category
+            </button>
+          )}
           <button onClick={openAddBatch} className="h-10 px-4 bg-primary text-on-primary rounded-lg text-label-md hover:bg-primary-container transition-colors flex items-center gap-2">
             <span className="material-symbols-outlined text-[18px]">add</span> Add Batch
           </button>
@@ -188,12 +233,25 @@ export default function CourseManagement() {
         <button onClick={() => setActiveTab('levels')} className={`px-6 py-3 text-label-md border-b-2 transition-colors ${activeTab === 'levels' ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-on-surface'}`}>
           Program Levels
         </button>
+        <button onClick={() => setActiveTab('categories')} className={`px-6 py-3 text-label-md border-b-2 transition-colors ${activeTab === 'categories' ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-on-surface'}`}>
+          Categories
+        </button>
       </div>
 
       <div className="relative w-full sm:w-72">
         <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
-        <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2.5 bg-surface border border-outline-variant rounded-lg text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none shadow-sm" placeholder={activeTab === 'courses' ? 'Search courses...' : 'Search levels...'} />
+        <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2.5 bg-surface border border-outline-variant rounded-lg text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none shadow-sm" placeholder={activeTab === 'courses' ? 'Search courses...' : activeTab === 'levels' ? 'Search levels...' : 'Search categories...'} />
       </div>
+
+      {activeTab === 'courses' && categories.length > 0 && (
+        <div className="flex items-center gap-2">
+          <span className="material-symbols-outlined text-on-surface-variant text-[20px]">filter_list</span>
+          <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="h-10 px-3 bg-surface border border-outline-variant rounded-lg text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none shadow-sm">
+            <option value="">All Categories</option>
+            {categories.map((c) => <option key={c._id} value={c._id}>{c.name}</option>)}
+          </select>
+        </div>
+      )}
 
       {activeTab === 'courses' && (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -210,7 +268,10 @@ export default function CourseManagement() {
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="text-headline-md text-on-surface">{course.name}</h3>
-                  {course.code && <p className="text-body-sm text-on-surface-variant">{course.code}</p>}
+                  <div className="flex items-center gap-2">
+                    {course.code && <p className="text-body-sm text-on-surface-variant">{course.code}</p>}
+                    {course.category_id && <span className="px-2 py-0.5 bg-surface-container-low text-on-surface-variant text-label-sm rounded-full">{(typeof course.category_id === 'object' ? course.category_id.name : categories.find(c => c._id === course.category_id)?.name) || ''}</span>}
+                  </div>
                 </div>
                 <button onClick={() => openEditCourse(course)} className="text-on-surface-variant hover:text-primary">
                   <span className="material-symbols-outlined">edit</span>
@@ -299,10 +360,49 @@ export default function CourseManagement() {
         </div>
       )}
 
+      {activeTab === 'categories' && (
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          {filteredCategories.length === 0 && (
+            <div className="col-span-full text-center py-12 text-on-surface-variant">
+              <span className="material-symbols-outlined text-4xl mb-4">category</span>
+              <p>No categories found. Add your first category to get started.</p>
+            </div>
+          )}
+          {filteredCategories.map((category) => {
+            const count = courses.filter(c => (typeof c.category_id === 'object' ? c.category_id._id : c.category_id) === category._id).length;
+            return (
+              <div key={category._id} className="bg-surface border border-outline-variant rounded-xl p-6 shadow-sm">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-headline-md text-on-surface">{category.name}</h3>
+                  </div>
+                  <div className="flex gap-1">
+                    <button onClick={() => openEditCategory(category)} className="text-on-surface-variant hover:text-primary">
+                      <span className="material-symbols-outlined">edit</span>
+                    </button>
+                    <button onClick={() => { if (confirm('Delete this category? Courses under it will become uncategorized.')) deleteCategoryMutation.mutate(category._id); }} className="text-on-surface-variant hover:text-error">
+                      <span className="material-symbols-outlined">delete</span>
+                    </button>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-x-4 gap-y-1 mb-4 text-body-sm">
+                  <span className="text-on-surface-variant">{count} course{count === 1 ? '' : 's'}</span>
+                  {category.sort_order ? <span className="text-on-surface-variant">Order: <strong className="text-on-surface">{category.sort_order}</strong></span> : null}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
       {showCourseForm && (
         <Modal title={editCourse ? 'Edit Course' : 'Add Course'} onClose={() => { setShowCourseForm(false); setEditCourse(null); codeEdited.current = false; }}>
-          <form onSubmit={(e) => { e.preventDefault(); const f = courseForm[0]; createCourseMutation.mutate({ name: f.name, code: f.code || generateCodeFromName(f.name, courses.map(c => c.code)), sort_order: f.sort_order ? Number(f.sort_order) : 0, description: f.description }); }} className="flex flex-col gap-4">
+          <form onSubmit={(e) => { e.preventDefault(); const f = courseForm[0]; createCourseMutation.mutate({ name: f.name, code: f.code || generateCodeFromName(f.name, courses.map(c => c.code)), category_id: f.category_id || undefined, sort_order: f.sort_order ? Number(f.sort_order) : 0, description: f.description }); }} className="flex flex-col gap-4">
             <input placeholder="Course Name" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].name} onChange={handleCourseNameChange} required />
+            <select className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].category_id} onChange={(e) => courseForm[1](p => ({ ...p, category_id: e.target.value }))}>
+              <option value="">Select Category (optional)</option>
+              {categories.map((c) => <option key={c._id} value={c._id}>{c.name}</option>)}
+            </select>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1">
                 <input placeholder="Course Code" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={courseForm[0].code} onChange={(e) => { codeEdited.current = true; courseForm[1](p => ({ ...p, code: e.target.value.toUpperCase() })); }} />
@@ -327,6 +427,16 @@ export default function CourseManagement() {
             </div>
             <input placeholder="Time slots (comma-separated, e.g. Mon-Wed 9AM, Tue-Thu 2PM)" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={levelForm[0].time_slots} onChange={(e) => levelForm[1](p => ({ ...p, time_slots: e.target.value }))} />
             <button type="submit" disabled={createLevelMutation.isPending} className="h-12 bg-primary text-on-primary rounded-lg text-label-md hover:bg-primary-container transition-colors disabled:opacity-50">{editLevel ? 'Update Level' : 'Create Level'}</button>
+          </form>
+        </Modal>
+      )}
+
+      {showCategoryForm && (
+        <Modal title={editCategory ? 'Edit Category' : 'Add Category'} onClose={() => { setShowCategoryForm(false); setEditCategory(null); }}>
+          <form onSubmit={(e) => { e.preventDefault(); const f = categoryForm[0]; createCategoryMutation.mutate({ name: f.name, sort_order: f.sort_order ? Number(f.sort_order) : 0 }); }} className="flex flex-col gap-4">
+            <input placeholder="Category Name (e.g. Artificial Intelligence)" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={categoryForm[0].name} onChange={(e) => categoryForm[1](p => ({ ...p, name: e.target.value }))} required />
+            <input placeholder="Sort Order" type="number" className="h-12 px-3 border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" value={categoryForm[0].sort_order} onChange={(e) => categoryForm[1](p => ({ ...p, sort_order: e.target.value }))} />
+            <button type="submit" disabled={createCategoryMutation.isPending} className="h-12 bg-primary text-on-primary rounded-lg text-label-md hover:bg-primary-container transition-colors disabled:opacity-50">{editCategory ? 'Update Category' : 'Create Category'}</button>
           </form>
         </Modal>
       )}

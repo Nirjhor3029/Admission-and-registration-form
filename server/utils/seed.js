@@ -2,6 +2,7 @@ require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') }
 const mongoose = require('mongoose');
 const Admin = require('../models/Admin');
 const Course = require('../models/Course');
+const CourseCategory = require('../models/CourseCategory');
 const ProgramLevel = require('../models/ProgramLevel');
 const Batch = require('../models/Batch');
 const PaymentConfig = require('../models/PaymentConfig');
@@ -13,6 +14,7 @@ const seed = async () => {
 
     await Admin.deleteMany({});
     await Course.deleteMany({});
+    await CourseCategory.deleteMany({});
     await ProgramLevel.deleteMany({});
     await Batch.deleteMany({});
     await PaymentConfig.deleteMany({});
@@ -24,6 +26,18 @@ const seed = async () => {
       role: 'super_admin',
     });
     console.log(`Admin created: ${admin.email}`);
+
+    const categories = await CourseCategory.insertMany([
+      { name: 'Artificial Intelligence', sort_order: 1 },
+      { name: 'Cyber Security', sort_order: 2 },
+      { name: 'Software Development', sort_order: 3 },
+      { name: 'Cloud & Enterprise', sort_order: 4 },
+      { name: 'Networking', sort_order: 5 },
+      { name: 'Emerging Technologies', sort_order: 6 },
+      { name: 'Professional Certifications', sort_order: 7 },
+      { name: 'Corporate Training', sort_order: 8 },
+    ]);
+    console.log(`${categories.length} categories created`);
 
     const courses = await Course.insertMany([
       { name: 'B.Sc. Computer Science', code: 'CS-101', fee: 45000, duration: '4 years', sort_order: 1, description: 'Bachelor program in Computer Science' },

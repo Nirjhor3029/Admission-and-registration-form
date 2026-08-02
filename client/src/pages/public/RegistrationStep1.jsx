@@ -49,6 +49,12 @@ export default function RegistrationStep1() {
   });
   const courses = Array.isArray(coursesData) ? coursesData : [];
 
+  const { data: categoriesData } = useQuery({
+    queryKey: ['course-categories'],
+    queryFn: () => api.get('/course-categories').then(r => r.data.data || []),
+  });
+  const categories = Array.isArray(categoriesData) ? categoriesData : [];
+
   const { data: levelsData } = useQuery({
     queryKey: ['program-levels'],
     queryFn: () => api.get('/program-levels').then(r => r.data.data || []),
@@ -435,9 +441,31 @@ export default function RegistrationStep1() {
                 <div className="relative">
                   <select id="course_id" className={`w-full h-12 pl-3 pr-10 border ${errors.course_id ? 'border-error' : 'border-outline-variant'} rounded-md bg-surface-container-lowest text-body-md text-on-surface appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm`} value={selectedCourse} onChange={handleCourseChange}>
                     <option value="">Select Course</option>
-                    {courses.map((c) => (
-                      <option key={c._id} value={c._id}>{c.name || c.title}</option>
-                    ))}
+                    {categories.map((cat) => {
+                      const catCourses = courses.filter(c => (typeof c.category_id === 'object' ? c.category_id._id : c.category_id) === cat._id);
+                      if (!catCourses.length) return null;
+                      return (
+                        <optgroup key={cat._id} label={cat.name}>
+                          {catCourses.map((c) => (
+                            <option key={c._id} value={c._id}>{c.name || c.title}</option>
+                          ))}
+                        </optgroup>
+                      );
+                    })}
+                    {(() => {
+                      const uncategorized = courses.filter(c => {
+                        const cid = typeof c.category_id === 'object' ? c.category_id._id : c.category_id;
+                        return !cid || !categories.some(cat => cat._id === cid);
+                      });
+                      if (!uncategorized.length) return null;
+                      return (
+                        <optgroup label="Other">
+                          {uncategorized.map((c) => (
+                            <option key={c._id} value={c._id}>{c.name || c.title}</option>
+                          ))}
+                        </optgroup>
+                      );
+                    })()}
                   </select>
                   <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
                 </div>

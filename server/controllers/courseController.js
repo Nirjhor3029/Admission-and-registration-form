@@ -6,10 +6,13 @@ const AppError = require('../utils/AppError');
 
 const listCourses = async (req, res, next) => {
   try {
-    const { status } = req.query;
+    const { status, category_id } = req.query;
     const filter = {};
     if (status) filter.status = status;
-    const courses = await Course.find(filter).sort({ sort_order: 1, name: 1 });
+    if (category_id) filter.category_id = category_id;
+    const courses = await Course.find(filter)
+      .populate('category_id', 'name sort_order')
+      .sort({ sort_order: 1, name: 1 });
     res.json({ success: true, data: { courses } });
   } catch (err) {
     next(err);
@@ -18,7 +21,7 @@ const listCourses = async (req, res, next) => {
 
 const getCourse = async (req, res, next) => {
   try {
-    const course = await Course.findById(req.params.id);
+    const course = await Course.findById(req.params.id).populate('category_id', 'name sort_order');
     if (!course) return next(new AppError('Course not found.', 404));
     const levels = await ProgramLevel.find({ course_id: course._id, status: 'active' }).sort('name');
     const batches = await Batch.find({ course_id: course._id }).sort('start_date').populate('level_id');
@@ -38,7 +41,7 @@ const generateCodeFromName = (name) => {
 
 const createCourse = async (req, res, next) => {
   try {
-    const { name, code, fee, duration, sort_order, description } = req.body;
+    const { name, code, fee, duration, sort_order, description, category_id } = req.body;
     if (!name) {
       return next(new AppError('Course name is required.', 400));
     }
@@ -64,7 +67,7 @@ const createCourse = async (req, res, next) => {
     }
     finalSortOrder = Number(finalSortOrder);
 
-    const course = await Course.create({ name, code: finalCode, fee, duration, sort_order: finalSortOrder, description });
+    const course = await Course.create({ name, code: finalCode, fee, duration, sort_order: finalSortOrder, description, category_id });
     res.status(201).json({ success: true, data: { course } });
   } catch (err) {
     if (err.code === 11000) return next(new AppError('Course code already exists.', 409));
