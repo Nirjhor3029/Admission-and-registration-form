@@ -436,7 +436,7 @@ export default function RegistrationStep1() {
                 {errors.qualification && <span className="text-body-sm text-error">{errors.qualification.message}</span>}
               </div>
 
-              <div className="flex flex-col gap-1.5">
+              <div className="col-span-1 md:col-span-2 flex flex-col gap-1.5">
                 <label className="text-label-sm text-on-surface-variant" htmlFor="course_id">Desired Course <span className="text-error">*</span></label>
                 <div className="relative">
                   <select id="course_id" className={`w-full h-12 pl-3 pr-10 border ${errors.course_id ? 'border-error' : 'border-outline-variant'} rounded-md bg-surface-container-lowest text-body-md text-on-surface appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm`} value={selectedCourse} onChange={handleCourseChange}>
@@ -472,7 +472,7 @@ export default function RegistrationStep1() {
                 {errors.course_id && <span className="text-body-sm text-error">{errors.course_id.message}</span>}
               </div>
 
-              <div className="flex flex-col gap-1.5">
+              <div className="col-span-1 md:col-span-2 flex flex-col gap-1.5">
                 <label className="text-label-sm text-on-surface-variant" htmlFor="level_id">Program Level <span className="text-error">*</span></label>
                 <div className="relative">
                   <select id="level_id" className={`w-full h-12 pl-3 pr-10 border ${errors.level_id ? 'border-error' : 'border-outline-variant'} rounded-md bg-surface-container-lowest text-body-md text-on-surface appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm`} value={selectedLevel} onChange={handleLevelChange}>
@@ -486,7 +486,7 @@ export default function RegistrationStep1() {
                 {errors.level_id && <span className="text-body-sm text-error">{errors.level_id.message}</span>}
               </div>
 
-              <div className="flex flex-col gap-1.5">
+              <div className="col-span-1 md:col-span-2 flex flex-col gap-1.5">
                 <label className="text-label-sm text-on-surface-variant" htmlFor="batch_id">Preferred Batch <span className="text-label-sm text-on-surface-variant">(Optional)</span></label>
                 <div className="relative">
                   <select id="batch_id" className={`w-full h-12 pl-3 pr-10 border ${errors.batch_id ? 'border-error' : 'border-outline-variant'} rounded-md bg-surface-container-lowest text-body-md text-on-surface appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm`} {...register('batch_id')}>
