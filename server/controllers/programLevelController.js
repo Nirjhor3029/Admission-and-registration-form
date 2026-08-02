@@ -1,4 +1,5 @@
 const ProgramLevel = require('../models/ProgramLevel');
+const Batch = require('../models/Batch');
 const AppError = require('../utils/AppError');
 
 const listLevels = async (req, res, next) => {
@@ -35,8 +36,13 @@ const updateLevel = async (req, res, next) => {
 
 const deleteLevel = async (req, res, next) => {
   try {
-    const level = await ProgramLevel.findByIdAndDelete(req.params.id);
+    const level = await ProgramLevel.findById(req.params.id);
     if (!level) return next(new AppError('Level not found.', 404));
+    const referenced = await Batch.exists({ level_id: level._id });
+    if (referenced) {
+      return next(new AppError('Cannot delete a program level that is referenced by batches.', 400));
+    }
+    await ProgramLevel.findByIdAndDelete(level._id);
     res.json({ success: true, message: 'Level deleted.' });
   } catch (err) {
     next(err);

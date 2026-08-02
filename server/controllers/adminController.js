@@ -219,6 +219,87 @@ const rejectPayment = async (req, res, next) => {
   }
 };
 
+const deleteStudent = async (req, res, next) => {
+  try {
+    const student = await Student.findById(req.params.id);
+    if (!student) {
+      return next(new AppError('Student not found.', 404));
+    }
+    if (student.status === 'admitted') {
+      return next(new AppError('Admitted students cannot be deleted to preserve admission history.', 400));
+    }
+    const hasPayment = await Payment.exists({ student_id: student._id });
+    if (hasPayment) {
+      return next(new AppError('Students with payment history cannot be deleted.', 400));
+    }
+
+    await Payment.deleteMany({ student_id: student._id });
+    await AuditLog.deleteMany({ target_type: 'student', target_id: student._id });
+    await Student.findByIdAndDelete(student._id);
+
+    res.json({ success: true, message: 'Student deleted.' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const deleteStudentsBulk = async (req, res, next) => {
+  try {
+    const {
+      search, status, course_id, batch_id, referral_source,
+      start_date, end_date,
+    } = req.query;
+
+    const filter = {};
+    if (search) {
+      filter.$or = [
+        { student_name: { $regex: search, $options: 'i' } },
+        { mobile: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+      ];
+    }
+    if (status) filter.status = status;
+    if (course_id) filter.course_id = course_id;
+    if (batch_id) filter.batch_id = batch_id;
+    if (referral_source) filter.referral_source = referral_source;
+    if (start_date || end_date) {
+      filter.createdAt = {};
+      if (start_date) filter.createdAt.$gte = new Date(start_date);
+      if (end_date) filter.createdAt.$lte = new Date(end_date);
+    }
+
+    const matches = await Student.find(filter).select('_id status');
+    const matchIds = matches.map(s => s._id);
+
+    const protectedIds = new Set();
+    matches.forEach((s) => {
+      if (s.status === 'admitted') protectedIds.add(String(s._id));
+    });
+    const paidStudents = await Payment.distinct('student_id', { student_id: { $in: matchIds } });
+    paidStudents.forEach((id) => protectedIds.add(String(id)));
+
+    const deleteIds = matchIds.filter((id) => !protectedIds.has(String(id)));
+
+    if (deleteIds.length > 0) {
+      await Payment.deleteMany({ student_id: { $in: deleteIds } });
+      await AuditLog.deleteMany({ target_type: 'student', target_id: { $in: deleteIds } });
+      await Student.deleteMany({ _id: { $in: deleteIds } });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        matched: matchIds.length,
+        deleted: deleteIds.length,
+        protected: protectedIds.size,
+      },
+      message: `Deleted ${deleteIds.length} student(s). ${protectedIds.size} protected (admitted or with payment history).`,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 const getDashboardStats = async (req, res, next) => {
   try {
     const totalLeads = await Student.countDocuments();
@@ -256,5 +337,7 @@ module.exports = {
   updateStatus,
   verifyPayment,
   rejectPayment,
+  deleteStudent,
+  deleteStudentsBulk,
   getDashboardStats,
 };

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 import api from '../../services/api';
+import ConfirmDialog from '../../components/ui/ConfirmDialog';
 
 const statusColors = {
   draft: 'bg-surface-variant text-on-surface-variant border-outline-variant',
@@ -27,6 +29,8 @@ export default function StudentManagement() {
   const [page, setPage] = useState(1);
   const [selectedId, setSelectedId] = useState(null);
   const [searchInput, setSearchInput] = useState('');
+  const [showDeleteAll, setShowDeleteAll] = useState(false);
+  const [confirmStudent, setConfirmStudent] = useState(null);
 
   const { data } = useQuery({
     queryKey: ['students', page, search, statusFilter],
@@ -45,6 +49,28 @@ export default function StudentManagement() {
   const statusMutation = useMutation({
     mutationFn: ({ id, status }) => api.patch(`/students/${id}/status`, { status }),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['students'] }); queryClient.invalidateQueries({ queryKey: ['student'] }); },
+  });
+
+  const deleteStudentMutation = useMutation({
+    mutationFn: (id) => api.delete(`/students/${id}`),
+    onSuccess: () => {
+      setSelectedId(null);
+      queryClient.invalidateQueries({ queryKey: ['students'] });
+      queryClient.invalidateQueries({ queryKey: ['student'] });
+    },
+  });
+
+  const deleteAllMutation = useMutation({
+    mutationFn: () => api.delete('/students', { params: { search, status: statusFilter || undefined } }),
+    onSuccess: (res) => {
+      toast.success(res.data?.message || 'Students deleted.');
+      setShowDeleteAll(false);
+      queryClient.invalidateQueries({ queryKey: ['students'] });
+      queryClient.invalidateQueries({ queryKey: ['student'] });
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || 'Could not delete students.');
+    },
   });
 
   const handleSearch = (e) => {
@@ -76,6 +102,10 @@ export default function StudentManagement() {
             placeholder="Search by name, ID, or mobile..."
           />
         </form>
+        <button onClick={() => setShowDeleteAll(true)} className="h-10 px-4 bg-error text-on-error rounded-lg text-label-md hover:bg-error-container transition-colors flex items-center gap-2 shrink-0">
+          <span className="material-symbols-outlined text-[18px]">delete_sweep</span>
+          Delete All
+        </button>
       </header>
 
       <div className="flex flex-wrap gap-2 items-center pb-2 border-b border-outline-variant/50">
@@ -220,9 +250,41 @@ export default function StudentManagement() {
                 </button>
               </div>
             )}
+
+            {student.status !== 'admitted' && (!detail?.payments || detail.payments.length === 0) && (
+              <div className="flex flex-col gap-2 pt-2 border-t border-outline-variant/30">
+                <button onClick={() => setConfirmStudent(student)} disabled={deleteStudentMutation.isPending} className="w-full h-10 rounded-lg bg-error/10 text-error text-label-md hover:bg-error/20 transition-colors disabled:opacity-50">
+                  {deleteStudentMutation.isPending ? 'Deleting...' : 'Delete Student'}
+                </button>
+                <p className="text-body-sm text-on-surface-variant">Students with payment history or admitted students cannot be deleted.</p>
+              </div>
+            )}
           </aside>
         )}
       </div>
+
+      <ConfirmDialog
+        open={showDeleteAll}
+        onClose={() => setShowDeleteAll(false)}
+        title="Delete All Students"
+        description={`This permanently deletes ${pagination.total} student(s) matching the current filter${statusFilter ? ` (status: ${statusLabels[statusFilter] || statusFilter})` : ''}. Students who are admitted or have payment history are automatically protected.`}
+        confirmText="DELETE"
+        confirmLabel="Delete All"
+        icon="delete_sweep"
+        loading={deleteAllMutation.isPending}
+        onConfirm={() => deleteAllMutation.mutate()}
+      />
+
+      <ConfirmDialog
+        open={!!confirmStudent}
+        onClose={() => setConfirmStudent(null)}
+        title="Delete Student"
+        description={`"${confirmStudent?.student_name || confirmStudent?.name || ''}" will be permanently deleted along with any draft data. This cannot be undone.`}
+        confirmLabel="Delete Student"
+        icon="person_remove"
+        loading={deleteStudentMutation.isPending}
+        onConfirm={() => { if (confirmStudent) deleteStudentMutation.mutate(confirmStudent._id); }}
+      />
     </div>
   );
 }

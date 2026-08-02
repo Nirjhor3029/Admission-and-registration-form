@@ -197,7 +197,7 @@ const createRegistration = async (req, res, next) => {
       });
       if (photoUrl) student.student_photo_url = photoUrl;
       student.referral_source = referral_source || student.referral_source || 'other';
-      student.status = 'pending';
+      student.status = 'draft';
       await student.save();
     } else {
       student = await Student.create({
@@ -205,12 +205,8 @@ const createRegistration = async (req, res, next) => {
         student_photo_url: photoUrl, address, course_id, level_id,
         ...(batch_id ? { batch_id } : {}),
         referral_source: referral_source || 'other',
-        status: 'pending',
+        status: 'draft',
       });
-    }
-
-    if (batch_id) {
-      await Batch.findByIdAndUpdate(batch_id, { $inc: { seats_filled: 1 } });
     }
 
     res.status(201).json({
@@ -240,7 +236,7 @@ const submitPayment = async (req, res, next) => {
       return next(new AppError('Student not found.', 404));
     }
 
-    if (!['pending', 'payment_under_review'].includes(student.status)) {
+    if (!['draft', 'pending', 'payment_under_review'].includes(student.status)) {
       return next(new AppError('Payment already submitted for this registration.', 400));
     }
 
@@ -258,6 +254,17 @@ const submitPayment = async (req, res, next) => {
     const existingPayment = await Payment.findOne({ trxid: trxid.toUpperCase() });
     if (existingPayment) {
       return next(new AppError('This transaction ID has already been used.', 409));
+    }
+
+    if (student.batch_id) {
+      const batch = await Batch.findOneAndUpdate(
+        { _id: student.batch_id, $expr: { $lt: ['$seats_filled', '$capacity'] } },
+        { $inc: { seats_filled: 1 } },
+        { new: true }
+      );
+      if (!batch) {
+        return next(new AppError('Selected batch is already full.', 400));
+      }
     }
 
     let screenshot_url = '';

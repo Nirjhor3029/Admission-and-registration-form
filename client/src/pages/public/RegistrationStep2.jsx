@@ -74,6 +74,7 @@ export default function RegistrationStep2() {
       await api.post(`/registrations/${studentData.studentId}/payment`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
+      localStorage.removeItem('fars_draft');
       toast.success('Payment submitted! Your application is under review.');
       navigate('/register/confirmed', { state: studentData });
     } catch (err) {

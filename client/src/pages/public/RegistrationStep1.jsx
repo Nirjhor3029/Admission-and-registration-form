@@ -90,6 +90,25 @@ export default function RegistrationStep1() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!draftInfo?.code) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const q = draftInfo.code || draftInfo.mobile;
+        const res = await api.get(`/registrations/draft?q=${encodeURIComponent(q)}`);
+        const draft = res.data.data?.draft;
+        if (!cancelled && draft) prefillDraft(draft);
+      } catch {
+        if (!cancelled) {
+          localStorage.removeItem(DRAFT_KEY);
+          setDraftInfo(null);
+        }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [draftInfo?.code]);
+
   const persistDraft = (info) => {
     setDraftInfo(info);
     localStorage.setItem(DRAFT_KEY, JSON.stringify(info));
@@ -223,8 +242,6 @@ export default function RegistrationStep1() {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       const student = res.data.data?.student || res.data.student || res.data.data;
-      localStorage.removeItem(DRAFT_KEY);
-      setDraftInfo(null);
       const selectedLevel = levels.find((l) => l._id === data.level_id);
       toast.success('Registration created! Proceed to payment.');
       navigate('/register/step2', {

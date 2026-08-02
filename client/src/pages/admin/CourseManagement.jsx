@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../services/api';
+import ConfirmDialog from '../../components/ui/ConfirmDialog';
 
 const generateCodeFromName = (name, existingCodes) => {
   const words = String(name || '').trim().split(/\s+/).filter(Boolean);
@@ -46,6 +47,7 @@ export default function CourseManagement() {
   const [categoryFilter, setCategoryFilter] = useState('');
   const [assignTarget, setAssignTarget] = useState(null);
   const [assignChecked, setAssignChecked] = useState({});
+  const [confirmDelete, setConfirmDelete] = useState(null);
   const codeEdited = useRef(false);
 
   const courseForm = useState({ name: '', code: '', category_id: '', sort_order: '', description: '' });
@@ -86,6 +88,16 @@ export default function CourseManagement() {
   const createCourseMutation = useMutation({
     mutationFn: (body) => editCourse ? api.patch(`/courses/${editCourse._id}`, body) : api.post('/courses', body),
     onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['courses'] }); setShowCourseForm(false); setEditCourse(null); },
+  });
+
+  const deleteCourseMutation = useMutation({
+    mutationFn: (id) => api.delete(`/courses/${id}`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['courses'] }),
+  });
+
+  const deleteBatchMutation = useMutation({
+    mutationFn: (id) => api.delete(`/batches/${id}`),
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['batches'] }); queryClient.invalidateQueries({ queryKey: ['courses'] }); },
   });
 
   const createLevelMutation = useMutation({
@@ -293,6 +305,9 @@ export default function CourseManagement() {
                 <button onClick={() => openEditCourse(course)} className="text-on-surface-variant hover:text-primary">
                   <span className="material-symbols-outlined">edit</span>
                 </button>
+                <button onClick={() => setConfirmDelete({ type: 'course', item: course })} className="text-on-surface-variant hover:text-error">
+                  <span className="material-symbols-outlined">delete</span>
+                </button>
               </div>
               <div className="flex flex-wrap gap-x-4 gap-y-1 mb-4 text-body-sm">
                 {course.sort_order ? <span className="text-on-surface-variant">Order: <strong className="text-on-surface">{course.sort_order}</strong></span> : null}
@@ -321,6 +336,9 @@ export default function CourseManagement() {
                           </div>
                           <button onClick={() => openEditBatch(batch)} className="text-on-surface-variant hover:text-primary">
                             <span className="material-symbols-outlined text-[18px]">edit</span>
+                          </button>
+                          <button onClick={() => setConfirmDelete({ type: 'batch', item: batch })} className="text-on-surface-variant hover:text-error">
+                            <span className="material-symbols-outlined text-[18px]">delete</span>
                           </button>
                         </div>
                       </div>
@@ -355,7 +373,7 @@ export default function CourseManagement() {
                   <button onClick={() => openEditLevel(level)} className="text-on-surface-variant hover:text-primary">
                     <span className="material-symbols-outlined">edit</span>
                   </button>
-                  <button onClick={() => { if (confirm('Delete this level?')) deleteLevelMutation.mutate(level._id); }} className="text-on-surface-variant hover:text-error">
+                  <button onClick={() => setConfirmDelete({ type: 'level', item: level })} className="text-on-surface-variant hover:text-error">
                     <span className="material-symbols-outlined">delete</span>
                   </button>
                 </div>
@@ -400,7 +418,7 @@ export default function CourseManagement() {
                     <button onClick={() => openEditCategory(category)} className="text-on-surface-variant hover:text-primary">
                       <span className="material-symbols-outlined">edit</span>
                     </button>
-                    <button onClick={() => { if (confirm('Delete this category? Courses under it will become uncategorized.')) deleteCategoryMutation.mutate(category._id); }} className="text-on-surface-variant hover:text-error">
+                    <button onClick={() => setConfirmDelete({ type: 'category', item: category })} className="text-on-surface-variant hover:text-error">
                       <span className="material-symbols-outlined">delete</span>
                     </button>
                   </div>
@@ -517,6 +535,29 @@ export default function CourseManagement() {
           </form>
         </Modal>
       )}
+
+      <ConfirmDialog
+        open={!!confirmDelete}
+        onClose={() => setConfirmDelete(null)}
+        title={confirmDelete ? `Delete ${confirmDelete.type === 'course' ? 'Course' : confirmDelete.type === 'batch' ? 'Batch' : confirmDelete.type === 'level' ? 'Program Level' : 'Category'}` : ''}
+        description={(() => {
+          if (!confirmDelete) return '';
+          const name = confirmDelete.item?.name || confirmDelete.item?.batch_name || '';
+          if (confirmDelete.type === 'category') return `"${name}" will be deleted. Courses under it will become uncategorized. This cannot be undone.`;
+          if (confirmDelete.type === 'batch') return `"${name || 'this batch'}" will be permanently deleted. This cannot be undone.`;
+          return `"${name}" will be permanently deleted. This cannot be undone.`;
+        })()}
+        loading={deleteCourseMutation.isPending || deleteBatchMutation.isPending || deleteLevelMutation.isPending || deleteCategoryMutation.isPending}
+        onConfirm={() => {
+          if (!confirmDelete) return;
+          const id = confirmDelete.item._id;
+          if (confirmDelete.type === 'course') deleteCourseMutation.mutate(id);
+          if (confirmDelete.type === 'batch') deleteBatchMutation.mutate(id);
+          if (confirmDelete.type === 'level') deleteLevelMutation.mutate(id);
+          if (confirmDelete.type === 'category') deleteCategoryMutation.mutate(id);
+          setConfirmDelete(null);
+        }}
+      />
     </div>
   );
 }
