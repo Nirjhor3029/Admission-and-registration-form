@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
@@ -29,6 +29,8 @@ export default function StudentManagement() {
   const isSuperAdmin = user?.role === 'super_admin';
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [courseFilter, setCourseFilter] = useState('');
+  const [levelFilter, setLevelFilter] = useState('');
   const [page, setPage] = useState(1);
   const [selectedId, setSelectedId] = useState(null);
   const [searchInput, setSearchInput] = useState('');
@@ -36,9 +38,32 @@ export default function StudentManagement() {
   const [confirmStudent, setConfirmStudent] = useState(null);
 
   const { data } = useQuery({
-    queryKey: ['students', page, search, statusFilter],
-    queryFn: () => api.get('/students', { params: { page, limit: 20, search, status: statusFilter || undefined } }).then(r => r.data.data || r.data),
+    queryKey: ['students', page, search, statusFilter, courseFilter, levelFilter],
+    queryFn: () => api.get('/students', {
+      params: {
+        page, limit: 20, search,
+        status: statusFilter || undefined,
+        course_id: courseFilter || undefined,
+        level_id: levelFilter || undefined,
+      },
+    }).then(r => r.data.data || r.data),
   });
+
+  const { data: coursesData } = useQuery({
+    queryKey: ['courses'],
+    queryFn: () => api.get('/courses').then(r => r.data.data.courses || []),
+  });
+  const courses = Array.isArray(coursesData) ? coursesData : [];
+
+  const { data: levelsData } = useQuery({
+    queryKey: ['program-levels'],
+    queryFn: () => api.get('/program-levels').then(r => r.data.data || []),
+  });
+  const allLevels = Array.isArray(levelsData) ? levelsData : [];
+  const filteredLevels = useMemo(
+    () => allLevels.filter((l) => !courseFilter || String(l.course_id?._id || l.course_id) === String(courseFilter)),
+    [allLevels, courseFilter]
+  );
 
   const students = data?.students || [];
   const pagination = data?.pagination || { page: 1, pages: 1, total: 0 };
@@ -64,7 +89,14 @@ export default function StudentManagement() {
   });
 
   const deleteAllMutation = useMutation({
-    mutationFn: () => api.delete('/students', { params: { search, status: statusFilter || undefined } }),
+    mutationFn: () => api.delete('/students', {
+      params: {
+        search,
+        status: statusFilter || undefined,
+        course_id: courseFilter || undefined,
+        level_id: levelFilter || undefined,
+      },
+    }),
     onSuccess: (res) => {
       toast.success(res.data?.message || 'Students deleted.');
       setShowDeleteAll(false);
@@ -87,6 +119,17 @@ export default function StudentManagement() {
     setPage(1);
   };
 
+  const handleCourseChange = (e) => {
+    setCourseFilter(e.target.value);
+    setLevelFilter('');
+    setPage(1);
+  };
+
+  const handleLevelChange = (e) => {
+    setLevelFilter(e.target.value);
+    setPage(1);
+  };
+
   const student = detail?.student || detail;
   const payment = detail?.payments?.[0];
 
@@ -103,7 +146,7 @@ export default function StudentManagement() {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-surface border border-outline-variant rounded-lg text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none shadow-sm"
-            placeholder="Search by name, ID, or mobile..."
+            placeholder="Search by name, mobile, ID or application code..."
           />
         </form>
         {isSuperAdmin && (
@@ -131,6 +174,18 @@ export default function StudentManagement() {
         ))}
       </div>
 
+      <div className="flex flex-wrap gap-3 items-center pb-2 border-b border-outline-variant/50">
+        <span className="text-label-sm text-on-surface-variant uppercase tracking-wider">Filter:</span>
+        <select value={courseFilter} onChange={handleCourseChange} className="h-10 px-3 rounded-lg border border-outline-variant bg-surface text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+          <option value="">All Courses</option>
+          {courses.map((c) => <option key={c._id} value={c._id}>{c.name || c.title}</option>)}
+        </select>
+        <select value={levelFilter} onChange={handleLevelChange} className="h-10 px-3 rounded-lg border border-outline-variant bg-surface text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+          <option value="">All Program Levels</option>
+          {filteredLevels.map((l) => <option key={l._id} value={l._id}>{l.name}</option>)}
+        </select>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
         <section className={`${selectedId ? 'md:col-span-8' : 'md:col-span-12'} bg-surface rounded-xl shadow-[0_4px_20px_-10px_rgba(0,53,95,0.15)] border border-outline-variant overflow-hidden`}>
           <div className="overflow-x-auto">
@@ -139,7 +194,7 @@ export default function StudentManagement() {
                 <tr>
                   <th className="px-4 py-4 text-label-md text-on-surface-variant font-semibold">Name</th>
                   <th className="px-4 py-4 text-label-md text-on-surface-variant font-semibold">Mobile</th>
-                  <th className="px-4 py-4 text-label-md text-on-surface-variant font-semibold">Course & Batch</th>
+                  <th className="px-4 py-4 text-label-md text-on-surface-variant font-semibold">Course / Level / Batch</th>
                   <th className="px-4 py-4 text-label-md text-on-surface-variant font-semibold">Amount</th>
                   <th className="px-4 py-4 text-label-md text-on-surface-variant font-semibold">Date</th>
                   <th className="px-4 py-4 text-label-md text-on-surface-variant font-semibold">Status</th>
@@ -166,15 +221,24 @@ export default function StudentManagement() {
                           )}
                         </div>
                         <div>
-                          <div className="font-medium text-on-surface">{s.student_name || s.name}</div>
+                          <div className="font-medium text-on-surface max-w-[200px] truncate">{s.student_name || s.name}</div>
                           <div className="text-xs text-on-surface-variant mt-0.5">ID: {s.student_id_number || s._id?.slice(-6)}</div>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-on-surface-variant">{s.mobile}</td>
                     <td className="px-4 py-3">
-                      <div>{s.course_id?.name || s.course_id?.title || '—'}</div>
-                      <div className="text-xs text-on-surface-variant">{s.batch_id?.name || s.batch_id?.code || ''}</div>
+                      <div className="max-w-[200px] truncate">{s.course_id?.name || s.course_id?.title || '—'}</div>
+                      <div className="text-xs text-on-surface-variant mt-0.5 flex items-center gap-1.5">
+                        {s.level_id?.name && (
+                          <span className="inline-flex items-center gap-1 truncate">
+                            <span className="material-symbols-outlined text-[13px] shrink-0">bar_chart</span>
+                            {s.level_id.name}
+                          </span>
+                        )}
+                        {s.level_id?.name && (s.batch_id?.name || s.batch_id?.code) && <span className="text-outline shrink-0">·</span>}
+                        <span className="truncate">{s.batch_id?.name || s.batch_id?.code || ''}</span>
+                      </div>
                     </td>
                     <td className="px-4 py-3 font-medium">৳{s.payment_amount || s.amount || '—'}</td>
                     <td className="px-4 py-3 text-on-surface-variant">{s.createdAt ? new Date(s.createdAt).toLocaleDateString() : '—'}</td>
