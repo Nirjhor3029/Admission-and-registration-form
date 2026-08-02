@@ -28,6 +28,9 @@ const listStudents = async (req, res, next) => {
         { student_name: { $regex: search, $options: 'i' } },
         { mobile: { $regex: search, $options: 'i' } },
         { email: { $regex: search, $options: 'i' } },
+        { application_code: { $regex: search, $options: 'i' } },
+        { draft_code: { $regex: search, $options: 'i' } },
+        { student_id_number: { $regex: search, $options: 'i' } },
       ];
     }
     if (status) filter.status = status;
@@ -265,6 +268,9 @@ const deleteStudentsBulk = async (req, res, next) => {
         { student_name: { $regex: search, $options: 'i' } },
         { mobile: { $regex: search, $options: 'i' } },
         { email: { $regex: search, $options: 'i' } },
+        { application_code: { $regex: search, $options: 'i' } },
+        { draft_code: { $regex: search, $options: 'i' } },
+        { student_id_number: { $regex: search, $options: 'i' } },
       ];
     }
     if (status) filter.status = status;

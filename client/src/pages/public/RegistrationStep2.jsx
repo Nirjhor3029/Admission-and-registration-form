@@ -27,7 +27,12 @@ export default function RegistrationStep2() {
 
   const { register, handleSubmit, setValue, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { method: 'bkash', trxid: '', amount: levelFee ? String(levelFee) : '' },
+    defaultValues: {
+      method: 'bkash',
+      trxid: '',
+      amount: levelFee ? String(levelFee) : '',
+      payment_date: new Date().toISOString().slice(0, 10),
+    },
   });
 
   const { data: configData } = useQuery({
@@ -71,12 +76,21 @@ export default function RegistrationStep2() {
       formData.append('payment_date', data.payment_date);
       if (screenshotFile) formData.append('screenshot', screenshotFile);
 
-      await api.post(`/registrations/${studentData.studentId}/payment`, formData, {
+      const res = await api.post(`/registrations/${studentData.studentId}/payment`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       localStorage.removeItem('fars_draft');
+      const d = res.data.data || {};
+      const confirmState = {
+        ...studentData,
+        payment: d.payment,
+        courseName: d.course?.name,
+        levelName: d.level?.name,
+        levelFee: d.level?.fee ?? studentData.levelFee,
+        applicationCode: d.student?.application_code,
+      };
       toast.success('Payment submitted! Your application is under review.');
-      navigate('/register/confirmed', { state: studentData });
+      navigate('/register/confirmed', { state: confirmState });
     } catch (err) {
       const msg = err.response?.data?.message || err.response?.data?.error || 'Payment submission failed. Please try again.';
       toast.error(msg);

@@ -2,6 +2,7 @@ const Student = require('../models/Student');
 const Payment = require('../models/Payment');
 const Batch = require('../models/Batch');
 const ProgramLevel = require('../models/ProgramLevel');
+const Course = require('../models/Course');
 const AppError = require('../utils/AppError');
 
 const BD_MOBILE_REGEX = /^01[3-9]\d{8}$/;
@@ -13,6 +14,15 @@ const generateDraftCode = () => {
     code += chars[Math.floor(Math.random() * chars.length)];
   }
   return `DRF-${code}`;
+};
+
+const generateApplicationCode = () => {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 6; i += 1) {
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return `APP-${code}`;
 };
 
 const pickStudentFields = (body) => {
@@ -197,6 +207,7 @@ const createRegistration = async (req, res, next) => {
       });
       if (photoUrl) student.student_photo_url = photoUrl;
       student.referral_source = referral_source || student.referral_source || 'other';
+      student.application_code = student.application_code || generateApplicationCode();
       student.status = 'draft';
       await student.save();
     } else {
@@ -205,6 +216,7 @@ const createRegistration = async (req, res, next) => {
         student_photo_url: photoUrl, address, course_id, level_id,
         ...(batch_id ? { batch_id } : {}),
         referral_source: referral_source || 'other',
+        application_code: generateApplicationCode(),
         status: 'draft',
       });
     }
@@ -216,6 +228,7 @@ const createRegistration = async (req, res, next) => {
           id: student._id,
           name: student.student_name,
           mobile: student.mobile,
+          application_code: student.application_code,
           status: student.status,
         },
       },
@@ -240,11 +253,16 @@ const submitPayment = async (req, res, next) => {
       return next(new AppError('Payment already submitted for this registration.', 400));
     }
 
+    let level = null;
     if (student.level_id) {
-      const level = await ProgramLevel.findById(student.level_id);
+      level = await ProgramLevel.findById(student.level_id);
       if (level && typeof level.fee === 'number' && Number(amount) !== level.fee) {
         return next(new AppError('Payment amount must match the program level fee.', 400));
       }
+    }
+
+    if (!student.application_code) {
+      student.application_code = generateApplicationCode();
     }
 
     if (!method || !amount || !trxid || !payment_date) {
@@ -285,12 +303,16 @@ const submitPayment = async (req, res, next) => {
     student.status = 'payment_under_review';
     await student.save();
 
+    const course = student.course_id ? await Course.findById(student.course_id).select('name') : null;
+
     res.status(201).json({
       success: true,
       data: {
         student: {
           id: student._id,
           name: student.student_name,
+          mobile: student.mobile,
+          application_code: student.application_code,
           status: student.status,
         },
         payment: {
@@ -298,8 +320,11 @@ const submitPayment = async (req, res, next) => {
           method: payment.method,
           amount: payment.amount,
           trxid: payment.trxid,
+          payment_date: payment.payment_date,
           status: payment.status,
         },
+        course: course ? { name: course.name } : null,
+        level: level ? { name: level.name, fee: level.fee } : null,
       },
       message: 'Payment submitted successfully. Your application is under review.',
     });

@@ -75,6 +75,11 @@ const studentSchema = new mongoose.Schema(
       unique: true,
       sparse: true,
     },
+    application_code: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
     student_id_number: {
       type: String,
       unique: true,

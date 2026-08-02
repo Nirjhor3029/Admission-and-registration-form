@@ -20,3 +20,21 @@ body {
 .delay-100 { animation-delay: 100ms; }
 .delay-200 { animation-delay: 200ms; }
 .delay-300 { animation-delay: 300ms; }
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #print-receipt,
+  #print-receipt * {
+    visibility: visible;
+  }
+  #print-receipt {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: block !important;
+  }
+}
+
