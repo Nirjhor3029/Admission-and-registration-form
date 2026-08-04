@@ -48,14 +48,14 @@ export default function DraftSaved() {
 
   const downloadTxt = () => {
     const content = [
-      'FARS - Draft Resume Card',
+      'SARS - Draft Resume Card',
       '',
       `Draft Code: ${code}`,
       `Mobile: ${mobile}`,
       `Name: ${name}`,
       `Saved: ${formatDate()}`,
       '',
-      'Resume your application on the FARS registration page.',
+      'Resume your application on the SARS registration page.',
       'Use the draft code or mobile number above to continue.',
       '',
     ].join('\n');
@@ -84,7 +84,7 @@ export default function DraftSaved() {
     ctx.textAlign = 'left';
     ctx.fillStyle = '#ffffff';
     ctx.font = '700 40px Inter, Arial, sans-serif';
-    ctx.fillText('FARS', 60, 70);
+    ctx.fillText('SARS', 60, 70);
     ctx.fillStyle = 'rgba(255,255,255,0.8)';
     ctx.font = '400 18px Inter, Arial, sans-serif';
     ctx.fillText('Admission & Registration', 60, 98);
@@ -118,7 +118,7 @@ export default function DraftSaved() {
 
     ctx.fillStyle = 'rgba(255,255,255,0.85)';
     ctx.font = '400 16px Inter, Arial, sans-serif';
-    ctx.fillText('Keep this card safe to resume your FARS application.', 400, 465);
+    ctx.fillText('Keep this card safe to resume your SARS application.', 400, 465);
 
     const link = document.createElement('a');
     link.download = 'fars-draft-card.png';
@@ -136,7 +136,10 @@ export default function DraftSaved() {
       <header className="w-full bg-surface-container-lowest border-b border-outline-variant px-4 md:px-10 h-16 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-3">
           <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>school</span>
-          <span className="text-headline-md font-bold text-primary tracking-tight">FARS</span>
+          <div className="flex flex-col justify-center leading-none">
+            <span className="text-headline-md font-bold text-primary tracking-tight">SARS</span>
+            <span className="text-[10px] md:text-[11px] uppercase tracking-wider text-on-surface-variant mt-0.5">Online Admission &amp; Registration System</span>
+          </div>
         </div>
         <button
           type="button"

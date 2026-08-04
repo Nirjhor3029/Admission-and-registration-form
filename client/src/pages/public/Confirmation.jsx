@@ -117,7 +117,10 @@ export default function Confirmation() {
                   <span className="w-9 h-9 rounded-full bg-primary text-on-primary flex items-center justify-center">
                     <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>school</span>
                   </span>
-                  <span className="text-headline-md font-bold text-on-surface tracking-tight">FARS</span>
+                  <div className="flex flex-col justify-center leading-none">
+                    <span className="text-headline-md font-bold text-on-surface tracking-tight">SARS</span>
+                    <span className="text-[10px] md:text-[11px] uppercase tracking-wider text-on-surface-variant mt-0.5">Online Admission &amp; Registration System</span>
+                  </div>
                 </div>
                 <span className="text-label-sm text-on-surface-variant uppercase tracking-widest">Payment Receipt</span>
               </div>
@@ -303,7 +306,7 @@ export default function Confirmation() {
           <div className="bg-white text-black font-sans p-6 max-w-sm mx-auto">
             <div className="flex items-center justify-center gap-2 mb-4">
               <span className="material-symbols-outlined text-2xl">school</span>
-              <span className="text-xl font-bold tracking-tight">FARS</span>
+              <span className="text-xl font-bold tracking-tight">SARS</span>
             </div>
             <p className="text-center text-xs tracking-widest uppercase mb-6">Payment Receipt</p>
 
@@ -354,7 +357,7 @@ export default function Confirmation() {
             </div>
 
             <div className="border-t border-dashed border-black/40 mt-6 pt-4 text-center text-xs">
-              Thank you for registering with FARS.
+              Thank you for registering with SARS.
             </div>
           </div>
         </div>

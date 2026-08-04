@@ -18,7 +18,7 @@ export default function AdminLayout() {
       {/* Desktop Sidebar */}
       <nav className="hidden md:flex bg-surface-container-low text-on-surface text-label-md w-[280px] border-r border-outline-variant flex-col py-8 z-40">
         <div className="px-6 mb-8">
-          <h1 className="text-headline-lg font-black text-primary">FARS</h1>
+          <h1 className="text-headline-lg font-black text-primary">SARS</h1>
         </div>
         <div className="flex items-center gap-4 px-6 mb-8">
           <div className="w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center flex-shrink-0">

@@ -10,7 +10,10 @@ export default function Landing() {
         <div className="flex justify-between items-center w-full h-full px-4 md:px-10 max-w-[1280px] mx-auto">
           <div className="flex items-center gap-3">
             <span className="material-symbols-outlined text-primary text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>school</span>
-            <span className="text-headline-md font-bold text-primary tracking-tight">FARS</span>
+            <div className="flex flex-col justify-center leading-none">
+              <span className="text-headline-md font-bold text-primary tracking-tight">SARS</span>
+              <span className="text-[10px] md:text-[11px] uppercase tracking-wider text-on-surface-variant mt-0.5">Online Admission &amp; Registration System</span>
+            </div>
           </div>
           <nav className="hidden md:flex items-center gap-6">
             <a className="text-primary font-bold hover:bg-surface-variant transition-colors px-3 py-2 rounded-lg" href="/">Home</a>
@@ -35,7 +38,7 @@ export default function Landing() {
               <span className="text-label-sm text-primary font-medium">New Semester Enrollment Open</span>
             </div>
             <h1 className="text-headline-xl md:text-5xl lg:text-6xl text-primary font-extrabold leading-tight">
-              Advance Your Academic Journey with FARS
+              Advance Your Academic Journey with SARS
             </h1>
             <p className="text-body-lg text-on-surface-variant max-w-xl">
               Experience a seamless, secure, and intuitive platform designed to streamline your registration, course management, and academic progress tracking.
@@ -119,13 +122,13 @@ export default function Landing() {
       {/* Footer */}
       <footer className="w-full bg-primary text-on-primary mt-auto">
         <div className="max-w-[1280px] mx-auto py-8 px-4 md:px-10 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-label-md uppercase tracking-wider font-bold">FARS Platform</div>
+          <div className="text-label-md uppercase tracking-wider font-bold">SARS Platform</div>
           <div className="flex flex-wrap justify-center gap-6">
             <a className="text-body-sm text-on-primary/80 hover:text-[#ffb95f] transition-colors" href="#">Privacy Policy</a>
             <a className="text-body-sm text-on-primary/80 hover:text-[#ffb95f] transition-colors" href="#">Terms of Service</a>
             <a className="text-body-sm text-on-primary/80 hover:text-[#ffb95f] transition-colors" href="#">Contact Support</a>
           </div>
-          <div className="text-body-sm text-on-primary/60">© 2024 FARS Platform. All rights reserved.</div>
+          <div className="text-body-sm text-on-primary/60">© 2024 SARS Platform. All rights reserved.</div>
         </div>
       </footer>
     </div>

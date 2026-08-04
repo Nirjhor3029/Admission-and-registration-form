@@ -298,7 +298,10 @@ export default function RegistrationStep1() {
       <header className="w-full bg-surface-container-lowest border-b border-outline-variant px-4 md:px-10 h-16 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-3">
           <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>school</span>
-          <span className="text-headline-md font-bold text-primary tracking-tight">FARS</span>
+          <div className="flex flex-col justify-center leading-none">
+            <span className="text-headline-md font-bold text-primary tracking-tight">SARS</span>
+            <span className="text-[10px] md:text-[11px] uppercase tracking-wider text-on-surface-variant mt-0.5">Online Admission &amp; Registration System</span>
+          </div>
         </div>
         <button
           type="button"

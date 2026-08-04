@@ -47,7 +47,7 @@ export default function AdminLogin() {
             <div className="w-16 h-16 bg-surface-container-low rounded-full flex items-center justify-center mb-2 border border-outline-variant/30">
               <span className="material-symbols-outlined text-[32px] text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>school</span>
             </div>
-            <h1 className="text-headline-xl text-primary tracking-tight font-bold">FARS</h1>
+            <h1 className="text-headline-xl text-primary tracking-tight font-bold">SARS</h1>
             <p className="text-body-md text-on-surface-variant">Administrator Portal</p>
           </header>
 

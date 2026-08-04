@@ -336,7 +336,7 @@ export default function StudentDashboard() {
       <header className="fixed top-0 w-full z-50 flex justify-between items-center px-4 h-16 bg-surface shadow-sm">
         <div className="flex items-center gap-3">
           <span className="material-symbols-outlined text-primary text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>school</span>
-          <h1 className="text-headline-md font-bold text-primary tracking-tight">FARS</h1>
+          <h1 className="text-headline-md font-bold text-primary tracking-tight">SARS</h1>
         </div>
         <div className="flex items-center gap-2">
           {isFetching && !data && (
