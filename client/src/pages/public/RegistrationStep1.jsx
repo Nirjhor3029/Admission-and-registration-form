@@ -294,33 +294,51 @@ export default function RegistrationStep1() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface-container-low antialiased">
-      <header className="w-full bg-surface-container-lowest border-b border-outline-variant px-4 md:px-10 h-16 flex items-center justify-between sticky top-0 z-50">
-        <div className="flex items-center gap-3">
-          <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>school</span>
-          <div className="flex flex-col justify-center leading-none">
-            <span className="text-headline-md font-bold text-primary tracking-tight">SARS</span>
-            <span className="text-[10px] md:text-[11px] uppercase tracking-wider text-on-surface-variant mt-0.5">Online Admission &amp; Registration System</span>
+    <div className="min-h-screen flex flex-col bg-surface antialiased relative overflow-x-hidden">
+      {/* Decorative Background Elements */}
+      <div className="fixed top-0 left-0 w-full h-96 bg-gradient-to-br from-primary/10 to-transparent -z-10 pointer-events-none" />
+      <div className="fixed -top-32 -right-32 w-96 h-96 bg-primary-fixed rounded-full mix-blend-multiply filter blur-3xl opacity-50 -z-10 pointer-events-none" />
+      <div className="fixed top-1/4 -left-32 w-80 h-80 bg-tertiary-fixed rounded-full mix-blend-multiply filter blur-3xl opacity-30 -z-10 pointer-events-none" />
+
+      {/* Premium Brand Header */}
+      <header className="w-full relative">
+        <div className="absolute inset-0 bg-primary z-0 overflow-hidden">
+          <img alt="Students" className="w-full h-full object-cover opacity-20 mix-blend-overlay" src="https://lh3.googleusercontent.com/aida/AP1WRLuS_j7vLGZ_R2g5AuR3GRmBCiSMhbooFMJ43dnaibuMgqPGn6RhPJHIr0Xe-VaVurNRKTnis8i9Rlh-LuSekR_LbhqBnjD2HiJ_9FT635vuqIyEtdiV72eMDZGgesur0eTRDFPCZ3-qHwnVn4eQb7LmgTq34NltU1Av_02J2zq11dd43ynHjrZ2KM7rlgZWJncp6SjyVNFVeZwE7rlTGr3ShMcRsUuidtbeMuIbq-WbDuAvifnIcefFzHpg" />
+          <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/80 to-primary/40" />
+        </div>
+        <div className="relative z-10 w-full max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop py-6 md:py-8 flex flex-col justify-center min-h-[180px]">
+          <div className="absolute top-4 right-4 md:right-8 flex items-center">
+            <button type="button" onClick={() => navigate('/')} className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
+              <span className="font-label-sm text-label-sm uppercase tracking-wider hidden md:block">Cancel</span>
+              <span className="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <div className="flex items-start gap-4">
+            <div className="w-16 h-16 rounded-2xl bg-white shadow-lg flex items-center justify-center flex-shrink-0">
+              <span className="material-symbols-outlined text-primary text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>school</span>
+            </div>
+            <div className="flex flex-col">
+              <h1 className="font-headline-xl text-headline-lg-mobile md:text-headline-xl font-bold text-white tracking-tight drop-shadow-sm">SARS</h1>
+              <p className="font-body-sm text-body-sm text-white/80 mt-1">Nanosoft Training Institute</p>
+              <p className="font-body-sm text-body-sm text-white/60 mt-0.5">Sister concern of Nano Information Technology (Nanosoft)</p>
+              <p className="font-body-sm text-body-sm text-white/80 mt-1">Online Admission &amp; Registration System</p>
+            </div>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={() => navigate('/')}
-          className="flex items-center gap-2 text-on-surface-variant hover:text-on-surface transition-colors"
-        >
-          <span className="text-label-sm uppercase tracking-wider hidden md:block">Cancel</span>
-          <span className="material-symbols-outlined">close</span>
-        </button>
       </header>
 
-      <main className="flex-1 w-full max-w-3xl mx-auto px-4 md:px-10 py-8">
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-label-md text-primary">Step 1 of 2</span>
-            <span className="text-label-sm text-on-surface-variant">Personal & Course Info</span>
+      {/* Main Content Area */}
+      <main className="flex-1 w-full max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop pb-stack-lg relative z-20 -mt-6">
+        {/* Progress Indicator (Glassmorphism) */}
+        <div className="bg-white/80 backdrop-blur-md rounded-xl p-4 shadow-sm border border-white mb-stack-lg flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <span className="font-label-md text-label-md text-primary font-bold uppercase tracking-wider">Step 1 of 2</span>
+            <span className="font-label-sm text-label-sm text-on-surface-variant font-medium">Personal &amp; Course Info</span>
           </div>
-          <div className="w-full bg-surface-variant h-2 rounded-full overflow-hidden">
-            <div className="bg-primary h-full rounded-full w-1/2" />
+          <div className="w-full bg-surface-variant/50 h-2.5 rounded-full overflow-hidden">
+            <div className="bg-gradient-to-r from-primary to-primary-container h-full rounded-full transition-all duration-700 w-1/2 relative overflow-hidden">
+              <div className="absolute inset-0 bg-white/20 w-full h-full transform -skew-x-12 translate-x-full animate-shimmer" />
+            </div>
           </div>
         </div>
 
@@ -335,7 +353,9 @@ export default function RegistrationStep1() {
                 <p className="text-body-sm text-on-surface-variant">Click "Next: Payment" to submit, or "Save Draft" to update.</p>
               </div>
             </div>
-            <button type="button" onClick={handleDiscard} className="shrink-0 text-label-sm text-error hover:underline">Discard</button>
+            <button type="button" onClick={handleDiscard} className="shrink-0 text-on-error-container/60 hover:text-on-error-container">
+              <span className="material-symbols-outlined">close</span>
+            </button>
           </div>
         )}
 
@@ -366,7 +386,7 @@ export default function RegistrationStep1() {
           )}
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="bg-surface-container-lowest rounded-xl shadow-[0_10px_25px_-5px_rgba(0,53,95,0.05)] border border-outline-variant/30 p-4 md:p-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-stack-lg">
           {serverError && (
             <div className="flex items-start gap-3 p-4 mb-6 bg-error-container text-on-error-container rounded-lg border border-error/20">
               <span className="material-symbols-outlined shrink-0 mt-0.5">error</span>
@@ -388,114 +408,126 @@ export default function RegistrationStep1() {
               </button>
             </div>
           )}
-          <div className="mb-8">
-            <h2 className="text-headline-md text-on-surface mb-4 flex items-center gap-2 border-b border-surface-variant pb-2">
-              <span className="material-symbols-outlined text-primary/70">person</span>
-              Personal Information
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="col-span-1 md:col-span-2 flex flex-col gap-2 mb-2">
-                <label className="text-label-sm text-on-surface-variant">Profile Photo</label>
-                <div className="flex items-start gap-4">
-                  <div className="w-24 h-24 rounded-full bg-surface-container border-2 border-dashed border-outline-variant flex items-center justify-center overflow-hidden flex-shrink-0 relative group cursor-pointer transition-colors hover:border-primary">
+
+          {/* Section: Personal Info */}
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl shadow-primary/5 border border-white p-margin-mobile md:p-stack-lg transition-transform hover:-translate-y-1 duration-300">
+            <div className="flex items-center gap-3 mb-stack-md pb-4 border-b border-surface-variant">
+              <div className="w-10 h-10 rounded-full bg-primary-fixed/50 flex items-center justify-center">
+                <span className="material-symbols-outlined text-primary">person</span>
+              </div>
+              <h2 className="font-headline-md text-headline-md text-on-surface">Personal Information</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+              {/* Photo Upload */}
+              <div className="col-span-1 md:col-span-2 flex flex-col gap-stack-sm mb-4 bg-surface-container-low/50 p-4 rounded-xl border border-surface-variant/50">
+                <label className="premium-label" htmlFor="photo">Profile Photo</label>
+                <div className="flex items-center gap-6">
+                  <div className="w-24 h-24 rounded-full bg-white border-2 border-dashed border-primary/40 flex items-center justify-center overflow-hidden flex-shrink-0 relative group cursor-pointer transition-all hover:border-primary hover:shadow-md hover:scale-105">
                     {photoPreview ? (
                       <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
                     ) : (
-                      <span className="material-symbols-outlined text-outline-variant group-hover:text-primary transition-colors text-3xl">add_a_photo</span>
+                      <span className="material-symbols-outlined text-primary/60 group-hover:text-primary transition-colors text-3xl">add_a_photo</span>
                     )}
                     <input accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" type="file" onChange={handlePhotoChange} />
                   </div>
-                  <div className="flex flex-col justify-center pt-2">
-                    <span className="text-label-md text-on-surface">Upload a clear photo</span>
-                    <span className="text-body-sm text-on-surface-variant max-w-xs mt-1">This will be used for your student ID card. Max size: 5MB. Formats: JPG, PNG, WebP, GIF.</span>
+                  <div className="flex flex-col justify-center">
+                    <span className="font-label-md text-label-md text-on-surface mb-1">Upload a clear photo</span>
+                    <span className="font-body-sm text-body-sm text-on-surface-variant max-w-xs">This will be used for your student ID card. Max size: 5MB. Formats: JPG, PNG, WebP, GIF.</span>
                   </div>
                 </div>
               </div>
 
+              {/* Full Name */}
               <div className="col-span-1 md:col-span-2 flex flex-col gap-1.5">
-                <label className="text-label-sm text-on-surface-variant" htmlFor="fullName">Full Name (as per documents) <span className="text-error">*</span></label>
-                <div className="relative">
-                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">badge</span>
-                  <input id="fullName" placeholder="e.g. Jane Doe" className={`w-full h-12 pl-10 pr-3 border ${errors.fullName ? 'border-error' : 'border-outline-variant'} rounded-md bg-surface-container-lowest text-body-md text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm`} {...register('fullName')} />
+                <label className="premium-label" htmlFor="fullName">Full Name (as per documents) <span className="text-error">*</span></label>
+                <div className="relative group">
+                  <input id="fullName" placeholder="e.g. Jane Doe" className="premium-input peer" {...register('fullName')} />
+                  <span className="material-symbols-outlined premium-icon">badge</span>
                 </div>
                 {errors.fullName && <span className="text-body-sm text-error">{errors.fullName.message}</span>}
               </div>
 
+              {/* Mobile Number */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-label-sm text-on-surface-variant" htmlFor="mobile">Mobile Number <span className="text-error">*</span></label>
+                <label className="premium-label" htmlFor="mobile">Mobile Number <span className="text-error">*</span></label>
                 <div className="relative">
-                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">phone_iphone</span>
-                  <input id="mobile" placeholder="01XXXXXXXXX" type="tel" className={`w-full h-12 pl-10 pr-3 border ${errors.mobile ? 'border-error' : 'border-outline-variant'} rounded-md bg-surface-container-lowest text-body-md text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm`} {...register('mobile')} />
+                  <input id="mobile" placeholder="01XXXXXXXXX" type="tel" className="premium-input peer" {...register('mobile')} />
+                  <span className="material-symbols-outlined premium-icon">phone_iphone</span>
                 </div>
                 {errors.mobile && <span className="text-body-sm text-error">{errors.mobile.message}</span>}
               </div>
 
-              
-
+              {/* WhatsApp */}
               <div className="flex flex-col gap-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-label-sm text-on-surface-variant" htmlFor="whatsapp">WhatsApp Number</label>
+                <div className="flex items-center justify-between ml-1">
+                  <label className="premium-label" htmlFor="whatsapp">WhatsApp Number</label>
                   <label className="flex items-center gap-2 cursor-pointer group">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 rounded text-primary border-outline-variant focus:ring-primary/50 bg-surface-container-lowest"
+                      className="w-4 h-4 rounded text-primary border-outline-variant focus:ring-primary/50 bg-white"
                       checked={sameAsMobile}
                       onChange={(e) => {
                         setSameAsMobile(e.target.checked);
                         if (e.target.checked) setValue('whatsapp', mobileValue || '');
                       }}
                     />
-                    <span className="text-label-sm text-on-surface-variant group-hover:text-primary transition-colors">Same as Mobile</span>
+                    <span className="font-label-sm text-label-sm text-on-surface-variant group-hover:text-primary transition-colors">Same as Mobile</span>
                   </label>
                 </div>
                 <div className="relative">
-                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">chat</span>
-                  <input id="whatsapp" placeholder="For important updates" type="tel" className="w-full h-12 pl-10 pr-3 border border-outline-variant rounded-md bg-surface-container-lowest text-body-md text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" {...register('whatsapp')} disabled={sameAsMobile} />
+                  <input id="whatsapp" placeholder="For important updates" type="tel" className="premium-input peer" {...register('whatsapp')} disabled={sameAsMobile} />
+                  <span className="material-symbols-outlined premium-icon">chat</span>
                 </div>
                 {errors.whatsapp && <span className="text-body-sm text-error">{errors.whatsapp.message}</span>}
               </div>
 
+              {/* Email */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-label-sm text-on-surface-variant" htmlFor="email">Email Address</label>
+                <label className="premium-label" htmlFor="email">Email Address</label>
                 <div className="relative">
-                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">mail</span>
-                  <input id="email" placeholder="jane@example.com" type="email" className="w-full h-12 pl-10 pr-3 border border-outline-variant rounded-md bg-surface-container-lowest text-body-md text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" {...register('email')} />
+                  <input id="email" placeholder="jane@example.com" type="email" className="premium-input peer" {...register('email')} />
+                  <span className="material-symbols-outlined premium-icon">mail</span>
                 </div>
                 {errors.email && <span className="text-body-sm text-error">{errors.email.message}</span>}
               </div>
 
+              {/* Gender */}
               <div className="flex flex-col gap-1.5">
-                <label className="text-label-sm text-on-surface-variant" htmlFor="gender">Gender <span className="text-error">*</span></label>
+                <label className="premium-label" htmlFor="gender">Gender <span className="text-error">*</span></label>
                 <div className="relative">
-                  <select id="gender" className={`w-full h-12 pl-3 pr-10 border ${errors.gender ? 'border-error' : 'border-outline-variant'} rounded-md bg-surface-container-lowest text-body-md text-on-surface appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm`} {...register('gender')}>
+                  <select id="gender" className="premium-input peer appearance-none pr-10 pl-4" {...register('gender')}>
                     <option value="">Select Gender</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                     <option value="other">Other</option>
-                    {/* <option value="prefer_not_to_say">Prefer not to say</option> */}
                   </select>
-                  <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+                  <span className="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-outline-variant pointer-events-none">expand_more</span>
                 </div>
                 {errors.gender && <span className="text-body-sm text-error">{errors.gender.message}</span>}
               </div>
 
+              {/* Address */}
               <div className="col-span-1 md:col-span-2 flex flex-col gap-1.5 mt-2">
-                <label className="text-label-sm text-on-surface-variant" htmlFor="address">Current Address</label>
-                <textarea id="address" placeholder="Enter your full residential address..." rows="3" className="w-full p-3 border border-outline-variant rounded-md bg-surface-container-lowest text-body-md text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm resize-y" {...register('address')} />
+                <label className="premium-label" htmlFor="address">Current Address</label>
+                <textarea id="address" placeholder="Enter your full residential address..." rows="3" className="w-full p-4 border border-outline-variant/60 rounded-xl bg-white/80 font-body-md text-body-md text-on-surface placeholder:text-outline-variant focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all shadow-sm resize-y" {...register('address')} />
               </div>
             </div>
           </div>
 
-          <div className="mb-8">
-            <h2 className="text-headline-md text-on-surface mb-4 flex items-center gap-2 border-b border-surface-variant pb-2">
-              <span className="material-symbols-outlined text-primary/70">library_books</span>
-              Course Details
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Section: Course Details */}
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl shadow-primary/5 border border-white p-margin-mobile md:p-stack-lg transition-transform hover:-translate-y-1 duration-300">
+            <div className="flex items-center gap-3 mb-stack-md pb-4 border-b border-surface-variant">
+              <div className="w-10 h-10 rounded-full bg-tertiary-fixed-dim/30 flex items-center justify-center">
+                <span className="material-symbols-outlined text-tertiary-container">library_books</span>
+              </div>
+              <h2 className="font-headline-md text-headline-md text-on-surface">Course Details</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+              {/* Qualification */}
               <div className="col-span-1 md:col-span-2 flex flex-col gap-1.5">
-                <label className="text-label-sm text-on-surface-variant" htmlFor="qualification">Highest Educational Qualification <span className="text-error">*</span></label>
+                <label className="premium-label" htmlFor="qualification">Highest Educational Qualification <span className="text-error">*</span></label>
                 <div className="relative">
-                  <select id="qualification" className={`w-full h-12 pl-3 pr-10 border ${errors.qualification ? 'border-error' : 'border-outline-variant'} rounded-md bg-surface-container-lowest text-body-md text-on-surface appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm`} {...register('qualification')}>
+                  <select id="qualification" className="premium-input peer appearance-none pr-10 pl-4" {...register('qualification')}>
                     <option value="">Select Qualification</option>
                     <option value="high_school">High School Diploma</option>
                     <option value="bachelors">Bachelor's Degree</option>
@@ -503,15 +535,16 @@ export default function RegistrationStep1() {
                     <option value="phd">Doctorate / PhD</option>
                     <option value="other">Other</option>
                   </select>
-                  <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+                  <span className="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-outline-variant pointer-events-none">expand_more</span>
                 </div>
                 {errors.qualification && <span className="text-body-sm text-error">{errors.qualification.message}</span>}
               </div>
 
+              {/* Course */}
               <div className="col-span-1 md:col-span-2 flex flex-col gap-1.5">
-                <label className="text-label-sm text-on-surface-variant" htmlFor="course_id">Desired Course <span className="text-error">*</span></label>
+                <label className="premium-label" htmlFor="course_id">Desired Course <span className="text-error">*</span></label>
                 <div className="relative">
-                  <select id="course_id" className={`w-full h-12 pl-3 pr-10 border ${errors.course_id ? 'border-error' : 'border-outline-variant'} rounded-md bg-surface-container-lowest text-body-md text-on-surface appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm`} value={selectedCourse} onChange={handleCourseChange}>
+                  <select id="course_id" className="premium-input peer appearance-none pr-10 pl-4" value={selectedCourse} onChange={handleCourseChange}>
                     <option value="">Select Course</option>
                     {categories.map((cat) => {
                       const catCourses = courses.filter(c => (typeof c.category_id === 'object' ? c.category_id._id : c.category_id) === cat._id);
@@ -539,43 +572,46 @@ export default function RegistrationStep1() {
                       );
                     })()}
                   </select>
-                  <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+                  <span className="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-outline-variant pointer-events-none">expand_more</span>
                 </div>
                 {errors.course_id && <span className="text-body-sm text-error">{errors.course_id.message}</span>}
               </div>
 
+              {/* Level */}
               <div className="col-span-1 md:col-span-2 flex flex-col gap-1.5">
-                <label className="text-label-sm text-on-surface-variant" htmlFor="level_id">Program Level <span className="text-error">*</span></label>
+                <label className="premium-label" htmlFor="level_id">Program Level <span className="text-error">*</span></label>
                 <div className="relative">
-                  <select id="level_id" className={`w-full h-12 pl-3 pr-10 border ${errors.level_id ? 'border-error' : 'border-outline-variant'} rounded-md bg-surface-container-lowest text-body-md text-on-surface appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm`} value={selectedLevel} onChange={handleLevelChange}>
+                  <select id="level_id" className="premium-input peer appearance-none pr-10 pl-4" value={selectedLevel} onChange={handleLevelChange}>
                     <option value="">Select Level</option>
                     {levels.map((l) => (
                       <option key={l._id} value={l._id}>{l.name} — ৳{l.fee} ({l.duration})</option>
                     ))}
                   </select>
-                  <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+                  <span className="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-outline-variant pointer-events-none">expand_more</span>
                 </div>
                 {errors.level_id && <span className="text-body-sm text-error">{errors.level_id.message}</span>}
               </div>
 
+              {/* Batch */}
               <div className="col-span-1 md:col-span-2 flex flex-col gap-1.5">
-                <label className="text-label-sm text-on-surface-variant" htmlFor="batch_id">Preferred Batch <span className="text-label-sm text-on-surface-variant">(Optional)</span></label>
+                <label className="premium-label" htmlFor="batch_id">Preferred Batch <span className="text-label-sm text-on-surface-variant">(Optional)</span></label>
                 <div className="relative">
-                  <select id="batch_id" className={`w-full h-12 pl-3 pr-10 border ${errors.batch_id ? 'border-error' : 'border-outline-variant'} rounded-md bg-surface-container-lowest text-body-md text-on-surface appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm`} {...register('batch_id')}>
+                  <select id="batch_id" className="premium-input peer appearance-none pr-10 pl-4" {...register('batch_id')}>
                     <option value="">Select Batch (optional)</option>
                     {batches.map((b) => (
                       <option key={b._id} value={b._id}>{b.batch_name} — {b.class_schedule || ''}</option>
                     ))}
                   </select>
-                  <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+                  <span className="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-outline-variant pointer-events-none">expand_more</span>
                 </div>
                 {errors.batch_id && <span className="text-body-sm text-error">{errors.batch_id.message}</span>}
               </div>
 
-              <div className="col-span-1 md:col-span-2 flex flex-col gap-1.5">
-                <label className="text-label-sm text-on-surface-variant" htmlFor="referral_source">How did you hear about us?</label>
+              {/* Referral Source */}
+              <div className="col-span-1 md:col-span-2 flex flex-col gap-1.5 mt-2">
+                <label className="premium-label" htmlFor="referral_source">How did you hear about us?</label>
                 <div className="relative">
-                  <select id="referral_source" className="w-full h-12 pl-3 pr-10 border border-outline-variant rounded-md bg-surface-container-lowest text-body-md text-on-surface appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" {...register('referral_source')}>
+                  <select id="referral_source" className="premium-input peer appearance-none pr-10 pl-4" {...register('referral_source')}>
                     <option value="">Select Source</option>
                     <option value="facebook_ad">Facebook Ad</option>
                     <option value="facebook_page">Facebook Page</option>
@@ -584,28 +620,29 @@ export default function RegistrationStep1() {
                     <option value="youtube">YouTube</option>
                     <option value="other">Other</option>
                   </select>
-                  <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+                  <span className="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-outline-variant pointer-events-none">expand_more</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="pt-4 border-t border-surface-variant mt-4 flex flex-col-reverse md:flex-row items-center justify-end gap-4">
-            <button type="button" onClick={handleSaveDraft} disabled={savingDraft} className="w-full md:w-auto h-12 px-6 rounded-lg text-label-md text-primary bg-transparent hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
+          {/* Form Actions (Sticky on Mobile, Integrated on Desktop) */}
+          <div className="sticky bottom-4 md:static md:bottom-auto z-40 bg-white/95 md:bg-transparent backdrop-blur-xl md:backdrop-blur-none p-4 md:p-0 rounded-2xl md:rounded-none shadow-2xl md:shadow-none border border-outline-variant/20 md:border-none flex flex-col-reverse md:flex-row items-center justify-between gap-4 mt-2">
+            <button type="button" onClick={handleSaveDraft} disabled={savingDraft} className="w-full md:w-auto h-14 md:h-12 px-8 rounded-xl font-label-md text-label-md text-primary bg-primary-fixed/30 hover:bg-primary-fixed/50 transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
               {savingDraft && <span className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />}
               {savingDraft ? 'Saving...' : 'Save Draft'}
               {!savingDraft && <span className="material-symbols-outlined text-lg">save</span>}
             </button>
-            <button type="submit" disabled={isSubmitting} className="w-full md:w-auto h-12 px-8 rounded-lg text-label-md text-on-primary bg-primary hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-md flex items-center justify-center gap-2 active:scale-95 group disabled:opacity-50 disabled:cursor-not-allowed">
+            <button type="submit" disabled={isSubmitting} className="w-full md:w-auto h-14 md:h-12 px-10 rounded-xl font-label-md text-label-md text-white bg-gradient-to-r from-primary to-primary-container hover:shadow-lg hover:shadow-primary/30 transition-all flex items-center justify-center gap-2 active:scale-[0.98] group disabled:opacity-50 disabled:cursor-not-allowed">
               {isSubmitting && <span className="w-4 h-4 border-2 border-on-primary border-t-transparent rounded-full animate-spin" />}
               {isSubmitting ? 'Submitting...' : 'Next: Payment'}
-              {!isSubmitting && <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>}
+              {!isSubmitting && <span className="material-symbols-outlined text-xl group-hover:translate-x-1.5 transition-transform">arrow_forward</span>}
             </button>
           </div>
         </form>
 
-        <p className="text-center mt-4 text-body-sm text-on-surface-variant">
-          Need help with your registration? <a className="text-primary hover:underline font-medium" href="#">Contact Support</a>
+        <p className="text-center mt-8 pb-8 font-body-sm text-body-sm text-on-surface-variant/80">
+          Need help with your registration? <a className="text-primary hover:text-primary-container transition-colors font-medium underline underline-offset-4" href="#">Contact Support</a>
         </p>
       </main>
     </div>
