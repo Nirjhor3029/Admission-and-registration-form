@@ -1,10 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import { z } from 'zod';
+import FormHeader from '../../components/FormHeader';
+import TopBar from '../../components/TopBar';
 import api from '../../services/api';
 
 const schema = z.object({
@@ -295,51 +297,29 @@ export default function RegistrationStep1() {
 
   return (
     <div className="min-h-screen flex flex-col bg-surface antialiased relative overflow-x-hidden">
+      <TopBar />
       {/* Decorative Background Elements */}
       <div className="fixed top-0 left-0 w-full h-96 bg-gradient-to-br from-primary/10 to-transparent -z-10 pointer-events-none" />
       <div className="fixed -top-32 -right-32 w-96 h-96 bg-primary-fixed rounded-full mix-blend-multiply filter blur-3xl opacity-50 -z-10 pointer-events-none" />
       <div className="fixed top-1/4 -left-32 w-80 h-80 bg-tertiary-fixed rounded-full mix-blend-multiply filter blur-3xl opacity-30 -z-10 pointer-events-none" />
 
       {/* Premium Brand Header */}
-      <header className="w-full relative">
-        <div className="absolute inset-0 bg-primary z-0 overflow-hidden">
-          <img alt="Students" className="w-full h-full object-cover opacity-20 mix-blend-overlay" src="https://lh3.googleusercontent.com/aida/AP1WRLuS_j7vLGZ_R2g5AuR3GRmBCiSMhbooFMJ43dnaibuMgqPGn6RhPJHIr0Xe-VaVurNRKTnis8i9Rlh-LuSekR_LbhqBnjD2HiJ_9FT635vuqIyEtdiV72eMDZGgesur0eTRDFPCZ3-qHwnVn4eQb7LmgTq34NltU1Av_02J2zq11dd43ynHjrZ2KM7rlgZWJncp6SjyVNFVeZwE7rlTGr3ShMcRsUuidtbeMuIbq-WbDuAvifnIcefFzHpg" />
-          <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/80 to-primary/40" />
-        </div>
-        <div className="relative z-10 w-full max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop py-6 md:py-8 flex flex-col justify-center min-h-[180px]">
-          <div className="absolute top-4 right-4 md:right-8 flex items-center">
-            <button type="button" onClick={() => navigate('/')} className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
-              <span className="font-label-sm text-label-sm uppercase tracking-wider hidden md:block">Cancel</span>
-              <span className="material-symbols-outlined">close</span>
-            </button>
-          </div>
-          <div className="flex items-start gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-white shadow-lg flex items-center justify-center flex-shrink-0">
-              <span className="material-symbols-outlined text-primary text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>school</span>
-            </div>
-            <div className="flex flex-col">
-              <h1 className="font-headline-xl text-headline-lg-mobile md:text-headline-xl font-bold text-white tracking-tight drop-shadow-sm">SARS</h1>
-              <p className="font-body-sm text-body-sm text-white/80 mt-1">Nanosoft Training Institute</p>
-              <p className="font-body-sm text-body-sm text-white/60 mt-0.5">Sister concern of Nano Information Technology (Nanosoft)</p>
-              <p className="font-body-sm text-body-sm text-white/80 mt-1">Online Admission &amp; Registration System</p>
-            </div>
-          </div>
-        </div>
-      </header>
+      <FormHeader/>
 
       {/* Main Content Area */}
       <main className="flex-1 w-full max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop pb-stack-lg relative z-20 -mt-6">
+        
         {/* Progress Indicator (Glassmorphism) */}
         <div className="bg-white/80 backdrop-blur-md rounded-xl p-4 shadow-sm border border-white mb-stack-lg flex flex-col gap-3">
-          <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between">
             <span className="font-label-md text-label-md text-primary font-bold uppercase tracking-wider">Step 1 of 2</span>
             <span className="font-label-sm text-label-sm text-on-surface-variant font-medium">Personal &amp; Course Info</span>
-          </div>
-          <div className="w-full bg-surface-variant/50 h-2.5 rounded-full overflow-hidden">
-            <div className="bg-gradient-to-r from-primary to-primary-container h-full rounded-full transition-all duration-700 w-1/2 relative overflow-hidden">
-              <div className="absolute inset-0 bg-white/20 w-full h-full transform -skew-x-12 translate-x-full animate-shimmer" />
             </div>
-          </div>
+            <div className="w-full bg-surface-variant/50 h-2.5 rounded-full overflow-hidden">
+            <div className="bg-gradient-to-r from-primary to-primary-container h-full rounded-full transition-all duration-700 w-1/2 relative overflow-hidden">
+                <div className="absolute inset-0 bg-white/20 w-full h-full transform -skew-x-12 translate-x-full animate-shimmer" />
+            </div>
+            </div>
         </div>
 
         {draftInfo && (

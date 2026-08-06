@@ -1,10 +1,12 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { z } from 'zod';
+import FormHeader from '../../components/FormHeader';
+import TopBar from '../../components/TopBar';
 import api from '../../services/api';
 
 const schema = z.object({
@@ -110,21 +112,13 @@ export default function RegistrationStep2() {
 
   return (
     <div className="bg-background text-on-background min-h-screen antialiased">
-      <header className="sticky top-0 w-full z-50 flex justify-between items-center px-4 h-16 bg-surface shadow-sm">
-        <div className="flex items-center gap-3">
-          <span className="material-symbols-outlined text-primary text-2xl">school</span>
-          <div className="flex flex-col justify-center leading-none">
-            <span className="text-headline-md font-bold text-primary">SARS</span>
-            <span className="text-[10px] md:text-[11px] uppercase tracking-wider text-on-surface-variant mt-0.5">Online Admission &amp; Registration System</span>
-          </div>
-        </div>
-        <div className="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant flex items-center justify-center">
-          <span className="material-symbols-outlined text-outline text-[20px]">person</span>
-        </div>
-      </header>
+      <TopBar />
+      
+      {/* Premium Brand Header */}
+      <FormHeader/>
 
       <main className="w-full pb-8">
-        <div className="max-w-md mx-auto px-4 pt-8 flex flex-col gap-8">
+        <div className="max-w-md mx-auto px-4 pt-24 flex flex-col gap-8">
           <section className="flex flex-col gap-2">
             <div className="flex items-center gap-3 mb-2">
               <span className="text-label-sm text-primary uppercase tracking-widest">Step 2 of 2</span>
