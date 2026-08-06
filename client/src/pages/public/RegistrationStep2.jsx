@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import FormHeader from '../../components/FormHeader';
+import ProgressIndicator from '../../components/ProgressIndicator';
 import TopBar from '../../components/TopBar';
 import api from '../../services/api';
 
@@ -117,7 +118,10 @@ export default function RegistrationStep2() {
       {/* Premium Brand Header */}
       <FormHeader/>
 
-      <main className="w-full pb-8">
+      <main className=" pb-8    flex-1 w-full max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop pb-stack-lg relative z-20 -mt-6">
+
+        <ProgressIndicator />
+
         <div className="max-w-md mx-auto px-4 pt-24 flex flex-col gap-8">
           <section className="flex flex-col gap-2">
             <div className="flex items-center gap-3 mb-2">

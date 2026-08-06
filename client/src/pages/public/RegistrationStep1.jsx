@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import FormHeader from '../../components/FormHeader';
+import ProgressIndicator from '../../components/ProgressIndicator';
 import TopBar from '../../components/TopBar';
 import api from '../../services/api';
 
@@ -306,21 +307,12 @@ export default function RegistrationStep1() {
       {/* Premium Brand Header */}
       <FormHeader/>
 
+      
+
       {/* Main Content Area */}
       <main className="flex-1 w-full max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop pb-stack-lg relative z-20 -mt-6">
         
-        {/* Progress Indicator (Glassmorphism) */}
-        <div className="bg-white/80 backdrop-blur-md rounded-xl p-4 shadow-sm border border-white mb-stack-lg flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-            <span className="font-label-md text-label-md text-primary font-bold uppercase tracking-wider">Step 1 of 2</span>
-            <span className="font-label-sm text-label-sm text-on-surface-variant font-medium">Personal &amp; Course Info</span>
-            </div>
-            <div className="w-full bg-surface-variant/50 h-2.5 rounded-full overflow-hidden">
-            <div className="bg-gradient-to-r from-primary to-primary-container h-full rounded-full transition-all duration-700 w-1/2 relative overflow-hidden">
-                <div className="absolute inset-0 bg-white/20 w-full h-full transform -skew-x-12 translate-x-full animate-shimmer" />
-            </div>
-            </div>
-        </div>
+        <ProgressIndicator />
 
         {draftInfo && (
           <div className="mb-4 flex items-center justify-between gap-3 p-4 bg-primary-container/30 text-on-primary-container rounded-lg border border-primary/20">
